@@ -57,6 +57,12 @@ public abstract class IHelper {
         return this;
     }
 
+
+    public IHelper adapter(RecyclerView.Adapter adapter) {
+        recyclerView.setAdapter(adapter);
+        return this;
+    }
+
     Context getContext() {return recyclerView.getContext();}
 
     public abstract void init();

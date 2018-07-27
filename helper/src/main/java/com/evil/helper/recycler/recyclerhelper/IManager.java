@@ -46,4 +46,5 @@ public abstract class IManager<T extends RecyclerView.LayoutManager> extends IHe
         this.init();
         return new SpaceDecoration(recyclerView);
     }
+
 }
