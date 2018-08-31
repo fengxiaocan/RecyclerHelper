@@ -8,8 +8,8 @@ import android.view.View;
  * @create 12/6/18
  * @desc ...
  */
-public class SimpleRecyclerHolder  extends BaseRecyclerHolder{
-    public SimpleRecyclerHolder(View itemView) {
+public class HeadTallRecyclerHolder extends BaseRecyclerHolder{
+    public HeadTallRecyclerHolder(View itemView) {
         super(itemView);
     }
 

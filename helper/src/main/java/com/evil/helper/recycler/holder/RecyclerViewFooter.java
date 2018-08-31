@@ -19,7 +19,7 @@ public class RecyclerViewFooter {
 
     public RecyclerViewFooter(int viewType,View rootView) {
         this.viewType = viewType;
-        this.holder = new SimpleRecyclerHolder(rootView);
+        this.holder = new HeadTallRecyclerHolder(rootView);
     }
 
     public BaseRecyclerHolder getHolder() {

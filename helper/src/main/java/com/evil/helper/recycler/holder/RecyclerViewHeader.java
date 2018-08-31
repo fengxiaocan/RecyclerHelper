@@ -27,7 +27,7 @@ public class RecyclerViewHeader {
 
     public RecyclerViewHeader(int viewType,View rootView) {
         this.viewType =viewType;
-        this.holder = new SimpleRecyclerHolder(rootView);
+        this.holder = new HeadTallRecyclerHolder(rootView);
     }
 
     public int getViewType() {
