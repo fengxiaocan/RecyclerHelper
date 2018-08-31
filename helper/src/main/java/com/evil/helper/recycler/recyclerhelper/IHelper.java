@@ -56,8 +56,7 @@ public abstract class IHelper {
         snapHelper.attachToRecyclerView(recyclerView);
         return this;
     }
-
-
+    
     public IHelper adapter(RecyclerView.Adapter adapter) {
         recyclerView.setAdapter(adapter);
         return this;
