@@ -3,6 +3,7 @@ package com.evil.recyclerhelper;
 import android.view.View;
 
 import com.evil.helper.recycler.adapter.ComRecyclerViewAdapter;
+import com.evil.helper.recycler.holder.BaseRecyclerHolder;
 import com.evil.helper.recycler.holder.ComRecyclerViewHolder;
 import com.evil.helper.recycler.inface.IRecycleData;
 
@@ -29,7 +30,13 @@ public class TestAdapter extends ComRecyclerViewAdapter<IRecycleData,ComRecycler
             }
         };
     }
-
+    
+    @Override
+    protected void setDefaultItemData(
+            BaseRecyclerHolder holder,int position) {
+    
+    }
+    
     @Override
     public int onCreateLayoutRes(int viewType) {
         return R.layout.holder_test;

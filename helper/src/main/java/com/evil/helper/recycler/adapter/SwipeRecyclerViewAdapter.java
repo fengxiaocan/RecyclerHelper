@@ -73,7 +73,7 @@ public abstract class SwipeRecyclerViewAdapter<T extends IRecycleData,V extends 
     }
 
     @Override
-    protected void setDefaultItemData(BaseRecyclerHolder holder,final int position) {
+    public void setDefaultItemData(BaseRecyclerHolder holder,final int position) {
         if (mOnMenuItemClickListener != null) {
             if (holder instanceof SwipeRecyclerViewHolder) {
                 View menuView = ((SwipeRecyclerViewHolder)holder).menuView;

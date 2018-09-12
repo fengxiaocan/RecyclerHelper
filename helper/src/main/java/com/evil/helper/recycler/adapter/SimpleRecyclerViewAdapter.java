@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.evil.helper.recycler.holder.BaseRecyclerHolder;
+import com.evil.helper.recycler.holder.EmptyViewHolder;
 import com.evil.helper.recycler.holder.SimpleRecyclerViewHolder;
 import com.evil.helper.recycler.inface.OnAdapterItemClickListener;
 
@@ -18,14 +20,12 @@ import java.util.List;
  * @param <T> the type parameter
  * @param <V> the type parameter
  */
-public abstract class SimpleRecyclerViewAdapter<T,V extends SimpleRecyclerViewHolder<T>>
-		extends RecyclerView.Adapter<V> implements IExtendAdapter<T>
-{
+public abstract class SimpleRecyclerViewAdapter<T,V extends SimpleRecyclerViewHolder<T>> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
+	protected View mEmptyView;
 	/**
 	 * The M datas.
 	 */
 	List<T> mDatas;
-	
 	private OnAdapterItemClickListener mOnItemClickListener;
 	
 	/**
@@ -51,6 +51,15 @@ public abstract class SimpleRecyclerViewAdapter<T,V extends SimpleRecyclerViewHo
 	 *
 	 * @param datas the datas
 	 */
+	public void setDatas(List<T> datas) {
+		mDatas = datas;
+	}
+	
+	/**
+	 * Sets datas.
+	 *
+	 * @param datas the datas
+	 */
 	public void setDatas(T... datas) {
 		if (datas != null) {
 			if (mDatas == null) {
@@ -61,15 +70,6 @@ public abstract class SimpleRecyclerViewAdapter<T,V extends SimpleRecyclerViewHo
 				mDatas.add(data);
 			}
 		}
-	}
-	
-	/**
-	 * Sets datas.
-	 *
-	 * @param datas the datas
-	 */
-	public void setDatas(List<T> datas) {
-		mDatas = datas;
 	}
 	
 	/**
@@ -295,27 +295,33 @@ public abstract class SimpleRecyclerViewAdapter<T,V extends SimpleRecyclerViewHo
 	}
 	
 	@Override
-	public void onBindViewHolder(@NonNull V holder,final int position) {
-		final List<T> datas = getDatas();
-		T t = null;
-		if (datas != null && position < datas.size()) {
-			t = datas.get(position);
-		}
-		
-		holder.setData(this,t,position);
-		if (mOnItemClickListener != null) {
-			holder.itemView.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					mOnItemClickListener.onItemClick(v,datas,position);
+	public void onBindViewHolder(@NonNull BaseRecyclerHolder holder,final int position) {
+		if (!isEmpty()) {
+			final List<T> datas = getDatas();
+			T t = null;
+			if (datas != null && position < datas.size()) {
+				t = datas.get(position);
+			}
+			if (holder instanceof SimpleRecyclerViewHolder) {
+				((SimpleRecyclerViewHolder)holder).setData(this,t,position);
+				if (mOnItemClickListener != null) {
+					holder.itemView.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							mOnItemClickListener.onItemClick(v,datas,position);
+						}
+					});
 				}
-			});
+			}
 		}
 	}
 	
 	@NonNull
 	@Override
-	public V onCreateViewHolder(@NonNull ViewGroup parent,int viewType) {
+	public BaseRecyclerHolder onCreateViewHolder(@NonNull ViewGroup parent,int viewType) {
+		if (isEmpty() && isHasEmptyView()) {
+			return new EmptyViewHolder(mEmptyView);
+		}
 		View view;
 		if (attachParent()) {
 			view = LayoutInflater.from(parent.getContext())
@@ -325,7 +331,7 @@ public abstract class SimpleRecyclerViewAdapter<T,V extends SimpleRecyclerViewHo
 			view = LayoutInflater.from(parent.getContext())
 			                     .inflate(onCreateLayoutRes(viewType),null);//解决宽度不能铺满
 		}
-		return createViewHolder(view,viewType);
+		return createViewHolder(view);
 	}
 	
 	/**
@@ -342,7 +348,18 @@ public abstract class SimpleRecyclerViewAdapter<T,V extends SimpleRecyclerViewHo
 	 * @param view the view
 	 * @return the v
 	 */
-	public abstract V createViewHolder(View view,int viewType);
+	public abstract V createViewHolder(View view);
+	
+	/**
+	 * 创建布局资源
+	 * @return
+	 */
+	public abstract int onCreateLayoutRes();
+	
+	@Override
+	public int onCreateLayoutRes(int viewType) {
+		return onCreateLayoutRes();
+	}
 	
 	@Override
 	public int getItemViewType(int position) {
@@ -356,10 +373,43 @@ public abstract class SimpleRecyclerViewAdapter<T,V extends SimpleRecyclerViewHo
 	
 	@Override
 	public int getItemCount() {
+		if (isEmpty() && isHasEmptyView()) {
+			return 1;
+		}
+		return getRealItemCount();
+	}
+	
+	@Override
+	public int getRealItemCount() {
 		if (mDatas != null) {
 			return mDatas.size();
 		}
 		return 0;
+	}
+	
+	@Override
+	public void setEmptyView(int layout,ViewGroup referenceViewGroup) {
+		if (referenceViewGroup != null) {
+			LayoutInflater from = LayoutInflater.from(referenceViewGroup.getContext());
+			mEmptyView = from.inflate(layout,referenceViewGroup,false);
+			notifyDataSetChanged();
+		}
+	}
+	
+	@Override
+	public void setEmptyView(View emptyView) {
+		mEmptyView = emptyView;
+		notifyDataSetChanged();
+	}
+	
+	@Override
+	public boolean isEmpty() {
+		return getRealItemCount() == 0;
+	}
+	
+	@Override
+	public boolean isHasEmptyView() {
+		return mEmptyView != null;
 	}
 	
 }
