@@ -363,6 +363,9 @@ public abstract class SimpleRecyclerViewAdapter<T,V extends SimpleRecyclerViewHo
 	
 	@Override
 	public int getItemViewType(int position) {
+		if (isEmpty() && isHasEmptyView()){
+			return EMPTY_VIEW_TYPE;
+		}
 		return 0;
 	}
 	
