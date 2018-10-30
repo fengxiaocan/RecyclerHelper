@@ -25,6 +25,7 @@ import java.util.List;
 public abstract class SimpleRecyclerViewAdapter<T,V extends SimpleRecyclerViewHolder<T>> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
 	protected View mEmptyView;
 	protected int mEmptyViewLayout;
+	protected int mEmptyType = EMPTY_VIEW_TYPE;
 	/**
 	 * The M datas.
 	 */
@@ -367,7 +368,7 @@ public abstract class SimpleRecyclerViewAdapter<T,V extends SimpleRecyclerViewHo
 	@Override
 	public int getItemViewType(int position) {
 		if (isEmpty() && isHasEmptyView()){
-			return EMPTY_VIEW_TYPE;
+			return mEmptyType;
 		}
 		return 0;
 	}
@@ -399,12 +400,15 @@ public abstract class SimpleRecyclerViewAdapter<T,V extends SimpleRecyclerViewHo
 			LayoutInflater from = LayoutInflater.from(referenceViewGroup.getContext());
 			mEmptyView = from.inflate(layout,referenceViewGroup,false);
 			mEmptyViewLayout = layout;
+			mEmptyType = mEmptyType == EMPTY_VIEW_TYPE?EMPTY_VIEW_TYPE2:EMPTY_VIEW_TYPE;
 			notifyDataSetChanged();
 		}
 	}
 	
 	@Override
 	public void setEmptyView(View emptyView) {
+		mEmptyViewLayout = 0;
+		mEmptyType = mEmptyType == EMPTY_VIEW_TYPE ? EMPTY_VIEW_TYPE2 : EMPTY_VIEW_TYPE;
 		mEmptyView = emptyView;
 		notifyDataSetChanged();
 	}

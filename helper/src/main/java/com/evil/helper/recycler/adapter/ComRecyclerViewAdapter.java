@@ -38,6 +38,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	protected LinkedList<RecyclerViewFooter> mFooters;
 	protected View mEmptyView;
 	protected int mEmptyViewLayout;
+	protected int mEmptyType = EMPTY_VIEW_TYPE;
 	private OnAdapterItemClickListener<T> mTOnAdapterItemClickListener;
 	private OnHeaderClickListener mOnHeaderClickListener;
 	private OnFooterClickListener mOnFooterClickListener;
@@ -312,7 +313,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	@Override
 	public int getItemViewType(int position) {
 		if (isEmpty() && isHasEmptyView()) {
-			return EMPTY_VIEW_TYPE;
+			return mEmptyType;
 		}
 		if (isHeaderOfPosition(position)) {
 			return mHeaders.get(position).getViewType();
@@ -501,12 +502,15 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 			LayoutInflater from = LayoutInflater.from(referenceViewGroup.getContext());
 			mEmptyView = from.inflate(layout,referenceViewGroup,false);
 			mEmptyViewLayout = layout;
+			mEmptyType = mEmptyType == EMPTY_VIEW_TYPE?EMPTY_VIEW_TYPE2:EMPTY_VIEW_TYPE;
 			notifyDataSetChanged();
 		}
 	}
 	
 	@Override
 	public void setEmptyView(View emptyView) {
+		mEmptyViewLayout = 0;
+		mEmptyType = mEmptyType == EMPTY_VIEW_TYPE ? EMPTY_VIEW_TYPE2 : EMPTY_VIEW_TYPE;
 		mEmptyView = emptyView;
 		notifyDataSetChanged();
 	}

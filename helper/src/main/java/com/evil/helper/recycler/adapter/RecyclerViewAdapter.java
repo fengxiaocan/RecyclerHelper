@@ -26,6 +26,7 @@ import java.util.List;
 public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
 	protected View mEmptyView;
 	protected int mEmptyViewLayout;
+	protected int mEmptyType = EMPTY_VIEW_TYPE;
 	/**
 	 * The M datas.
 	 */
@@ -55,6 +56,15 @@ public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> ext
 	 *
 	 * @param datas the datas
 	 */
+	public void setDatas(List<T> datas) {
+		mDatas = datas;
+	}
+	
+	/**
+	 * Sets datas.
+	 *
+	 * @param datas the datas
+	 */
 	public void setDatas(T... datas) {
 		if (datas != null) {
 			if (mDatas == null) {
@@ -65,15 +75,6 @@ public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> ext
 				mDatas.add(data);
 			}
 		}
-	}
-	
-	/**
-	 * Sets datas.
-	 *
-	 * @param datas the datas
-	 */
-	public void setDatas(List<T> datas) {
-		mDatas = datas;
 	}
 	
 	@Override
@@ -360,7 +361,7 @@ public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> ext
 	@Override
 	public int getItemViewType(int position) {
 		if (isHasEmptyView() && isEmpty()) {
-			return EMPTY_VIEW_TYPE;
+			return mEmptyType;
 		}
 		return 0;
 	}
@@ -431,12 +432,15 @@ public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> ext
 			LayoutInflater from = LayoutInflater.from(referenceViewGroup.getContext());
 			mEmptyView = from.inflate(layout,referenceViewGroup,false);
 			mEmptyViewLayout = layout;
+			mEmptyType = mEmptyType == EMPTY_VIEW_TYPE ? EMPTY_VIEW_TYPE2 : EMPTY_VIEW_TYPE;
 			notifyDataSetChanged();
 		}
 	}
 	
 	@Override
 	public void setEmptyView(View emptyView) {
+		mEmptyViewLayout = 0;
+		mEmptyType = mEmptyType == EMPTY_VIEW_TYPE ? EMPTY_VIEW_TYPE2 : EMPTY_VIEW_TYPE;
 		mEmptyView = emptyView;
 		notifyDataSetChanged();
 	}
