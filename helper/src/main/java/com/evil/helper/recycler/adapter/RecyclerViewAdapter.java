@@ -1,9 +1,10 @@
 package com.evil.helper.recycler.adapter;
 
-import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import java.util.List;
  */
 public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
 	protected View mEmptyView;
+	protected int mEmptyViewLayout;
 	/**
 	 * The M datas.
 	 */
@@ -53,15 +55,6 @@ public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> ext
 	 *
 	 * @param datas the datas
 	 */
-	public void setDatas(List<T> datas) {
-		mDatas = datas;
-	}
-	
-	/**
-	 * Sets datas.
-	 *
-	 * @param datas the datas
-	 */
 	public void setDatas(T... datas) {
 		if (datas != null) {
 			if (mDatas == null) {
@@ -72,6 +65,15 @@ public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> ext
 				mDatas.add(data);
 			}
 		}
+	}
+	
+	/**
+	 * Sets datas.
+	 *
+	 * @param datas the datas
+	 */
+	public void setDatas(List<T> datas) {
+		mDatas = datas;
 	}
 	
 	@Override
@@ -357,7 +359,7 @@ public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> ext
 	
 	@Override
 	public int getItemViewType(int position) {
-		if (isHasEmptyView()&&isEmpty()){
+		if (isHasEmptyView() && isEmpty()) {
 			return EMPTY_VIEW_TYPE;
 		}
 		return 0;
@@ -385,10 +387,50 @@ public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> ext
 	}
 	
 	@Override
+	public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+		super.onAttachedToRecyclerView(recyclerView);
+		final RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+		if (manager instanceof GridLayoutManager) {
+			((GridLayoutManager)manager).setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+				@Override
+				public int getSpanSize(int position) {
+					//如果是头布局或者是脚布局返回为1;
+					if (isEmpty() && isHasEmptyView()) {
+						return ((GridLayoutManager)manager).getSpanCount();
+					}
+					return 1;
+				}
+			});
+		}
+	}
+	
+	/**
+	 * 针对流式布局
+	 *
+	 * @param holder
+	 */
+	@Override
+	public void onViewAttachedToWindow(@NonNull BaseRecyclerHolder holder) {
+		super.onViewAttachedToWindow(holder);
+		int layoutPosition = holder.getLayoutPosition();
+		if ((isEmpty() && isHasEmptyView())) {
+			ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
+			if (layoutParams != null) {
+				if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
+					StaggeredGridLayoutManager.LayoutParams params = (StaggeredGridLayoutManager.LayoutParams)layoutParams;
+					//占领全部空间;
+					params.setFullSpan(true);
+				}
+			}
+		}
+	}
+	
+	@Override
 	public void setEmptyView(int layout,ViewGroup referenceViewGroup) {
-		if (referenceViewGroup != null) {
+		if (referenceViewGroup != null && mEmptyViewLayout != layout) {
 			LayoutInflater from = LayoutInflater.from(referenceViewGroup.getContext());
 			mEmptyView = from.inflate(layout,referenceViewGroup,false);
+			mEmptyViewLayout = layout;
 			notifyDataSetChanged();
 		}
 	}

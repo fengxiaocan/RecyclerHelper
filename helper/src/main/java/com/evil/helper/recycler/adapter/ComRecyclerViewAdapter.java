@@ -1,6 +1,5 @@
 package com.evil.helper.recycler.adapter;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,6 +37,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	protected LinkedList<RecyclerViewHeader> mHeaders;
 	protected LinkedList<RecyclerViewFooter> mFooters;
 	protected View mEmptyView;
+	protected int mEmptyViewLayout;
 	private OnAdapterItemClickListener<T> mTOnAdapterItemClickListener;
 	private OnHeaderClickListener mOnHeaderClickListener;
 	private OnFooterClickListener mOnFooterClickListener;
@@ -82,7 +82,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	public int getItemCount() {
 		int itemCount = getAllItemCount();
 		if (itemCount == 0) {
-			if (isHasEmptyView()){
+			if (isHasEmptyView()) {
 				return 1;
 			}
 		}
@@ -91,6 +91,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	
 	/**
 	 * 获取所有条目的数量
+	 *
 	 * @return
 	 */
 	public int getAllItemCount() {
@@ -184,7 +185,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 				@Override
 				public int getSpanSize(int position) {
 					//如果是头布局或者是脚布局返回为1;
-					if (isEmpty()&&isHasEmptyView()){
+					if (isEmpty() && isHasEmptyView()) {
 						return ((GridLayoutManager)manager).getSpanCount();
 					}
 					int itemViewType = getItemViewType(position);
@@ -209,7 +210,10 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	public void onViewAttachedToWindow(@NonNull BaseRecyclerHolder holder) {
 		super.onViewAttachedToWindow(holder);
 		int layoutPosition = holder.getLayoutPosition();
-		if (isHeaderOfPosition(layoutPosition) || isFooterOfPosition(layoutPosition)) {
+		if ((isEmpty() && isHasEmptyView())
+		    || isHeaderOfPosition(layoutPosition)
+		    || isFooterOfPosition(layoutPosition))
+		{
 			ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
 			if (layoutParams != null) {
 				if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
@@ -234,9 +238,10 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	public BaseRecyclerHolder onCreateViewHolder(
 			@NonNull ViewGroup parent,int viewType)
 	{
-		if (isEmpty() &&  isHasEmptyView()) {
+		if (isEmpty() && isHasEmptyView()) {
 			return new EmptyViewHolder(mEmptyView);
-		}else if (isFooter(viewType)) {
+		}
+		else if (isFooter(viewType)) {
 			return getFooterHolder(viewType);
 		}
 		else if (isHeader(viewType)) {
@@ -266,8 +271,9 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	
 	@Override
 	public void onBindViewHolder(@NonNull BaseRecyclerHolder holder,int position) {
-		if (isEmpty() &&  isHasEmptyView()) {
-		}else if (isHeaderOfPosition(position)) {
+		if (isEmpty() && isHasEmptyView()) {
+		}
+		else if (isHeaderOfPosition(position)) {
 			if (mOnHeaderClickListener != null) {
 				holder.itemView.setOnClickListener(new TOnClickListener<Integer>(position) {
 					@Override
@@ -305,7 +311,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	
 	@Override
 	public int getItemViewType(int position) {
-		if (isEmpty() && isHasEmptyView()){
+		if (isEmpty() && isHasEmptyView()) {
 			return EMPTY_VIEW_TYPE;
 		}
 		if (isHeaderOfPosition(position)) {
@@ -491,9 +497,10 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	
 	@Override
 	public void setEmptyView(int layout,ViewGroup referenceViewGroup) {
-		if (referenceViewGroup != null) {
+		if (referenceViewGroup != null && mEmptyViewLayout != layout) {
 			LayoutInflater from = LayoutInflater.from(referenceViewGroup.getContext());
 			mEmptyView = from.inflate(layout,referenceViewGroup,false);
+			mEmptyViewLayout = layout;
 			notifyDataSetChanged();
 		}
 	}
