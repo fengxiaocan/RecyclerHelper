@@ -39,9 +39,19 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	protected View mEmptyView;
 	protected int mEmptyViewLayout;
 	protected int mEmptyType = EMPTY_VIEW_TYPE;
-	private OnAdapterItemClickListener<T> mTOnAdapterItemClickListener;
-	private OnHeaderClickListener mOnHeaderClickListener;
-	private OnFooterClickListener mOnFooterClickListener;
+	protected OnAdapterItemClickListener<T> mTOnAdapterItemClickListener;
+	protected OnHeaderClickListener mOnHeaderClickListener;
+	protected OnFooterClickListener mOnFooterClickListener;
+	protected int headersNumber;
+	protected int footersNumber;
+	
+	public void clearHeadersNumber() {
+		this.headersNumber = 0;
+	}
+
+	public void clearFootersNumber() {
+		this.footersNumber = 0;
+	}
 	
 	private synchronized void checkHeader() {
 		if (mHeaders == null) {
@@ -50,14 +60,16 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	}
 	
 	public void addHeader(View header) {
+		headersNumber++;
 		checkHeader();
-		mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE - mHeaders.size(),header));
+		mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE - headersNumber,header));
 		notifyDataSetChanged();
 	}
 	
 	public void addHeader(BaseRecyclerHolder header) {
+		headersNumber++;
 		checkHeader();
-		mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE - mHeaders.size(),header));
+		mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE - headersNumber,header));
 		notifyDataSetChanged();
 	}
 	
@@ -68,14 +80,16 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	}
 	
 	public void addFooter(View footer) {
+		footersNumber++;
 		checkFooter();
-		mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE - mFooters.size(),footer));
+		mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE - footersNumber,footer));
 		notifyDataSetChanged();
 	}
 	
 	public void addFooter(BaseRecyclerHolder footer) {
+		footersNumber++;
 		checkFooter();
-		mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE - mFooters.size(),footer));
+		mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE - footersNumber,footer));
 		notifyDataSetChanged();
 	}
 	
@@ -502,7 +516,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 			LayoutInflater from = LayoutInflater.from(referenceViewGroup.getContext());
 			mEmptyView = from.inflate(layout,referenceViewGroup,false);
 			mEmptyViewLayout = layout;
-			mEmptyType = mEmptyType == EMPTY_VIEW_TYPE?EMPTY_VIEW_TYPE2:EMPTY_VIEW_TYPE;
+			mEmptyType = mEmptyType == EMPTY_VIEW_TYPE ? EMPTY_VIEW_TYPE2 : EMPTY_VIEW_TYPE;
 			notifyDataSetChanged();
 		}
 	}
