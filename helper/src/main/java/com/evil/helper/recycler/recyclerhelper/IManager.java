@@ -37,6 +37,11 @@ public abstract class IManager<T extends RecyclerView.LayoutManager> extends IHe
         return new CommonDecoration(recyclerView);
     }
 
+    public AroundDecoration addAroundDecoration() {
+        this.init();
+        return new AroundDecoration(recyclerView);
+    }
+
     public DividerDecoration addDividerDecoration() {
         this.init();
         return new DividerDecoration(recyclerView);

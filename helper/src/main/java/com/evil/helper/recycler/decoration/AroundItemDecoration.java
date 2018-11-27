@@ -3,29 +3,35 @@ package com.evil.helper.recycler.decoration;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.SparseArray;
 import android.view.View;
 
-public class CommonItemDecoration extends RecyclerView.ItemDecoration {
+import com.evil.helper.recycler.inface.OnPositionListener;
+
+public class AroundItemDecoration extends RecyclerView.ItemDecoration {
+	//	public static final int FAR_FIRST = 0x0001;
+	//	public static final int FAR_LAST = 0x0010;
+	//	public static final int CENTER = 0x0100;
+	//	public static final int ALL = FAR_FIRST | FAR_LAST | CENTER;
+	private SparseArray<AroundDecorationProps> mPropMap; // itemType -> prop
+	private AroundDecorationProps mItemDecorationProps;
 	private boolean mIgnoreViewType;//是否忽略ViewType
-	private SparseArray<ItemDecorationProps> mPropMap; // itemType -> prop
-	private ItemDecorationProps mItemDecorationProps;
 	private int decorationColor = -1;
 	
-	public CommonItemDecoration(SparseArray<ItemDecorationProps> propMap) {
+	public AroundItemDecoration(SparseArray<AroundDecorationProps> propMap) {
 		mPropMap = propMap;
 	}
 	
-	public CommonItemDecoration(ItemDecorationProps propMap) {
+	public AroundItemDecoration(
+			AroundDecorationProps center)
+	{
 		mIgnoreViewType = true;
-		mItemDecorationProps = propMap;
+		mItemDecorationProps = center;
 	}
 	
-	public CommonItemDecoration(int itemType,ItemDecorationProps itemDecorationProps) {
+	public AroundItemDecoration(int itemType,AroundDecorationProps itemDecorationProps) {
 		mPropMap = new SparseArray<>();
 		mPropMap.put(itemType,itemDecorationProps);
 	}
@@ -34,8 +40,8 @@ public class CommonItemDecoration extends RecyclerView.ItemDecoration {
 		return new Builder();
 	}
 	
-	public CommonItemDecoration addDecoration(
-			int itemType,ItemDecorationProps itemDecorationProps)
+	public AroundItemDecoration addDecoration(
+			int itemType,AroundDecorationProps itemDecorationProps)
 	{
 		mIgnoreViewType = false;
 		if (mPropMap == null) {
@@ -45,15 +51,15 @@ public class CommonItemDecoration extends RecyclerView.ItemDecoration {
 		return this;
 	}
 	
-	public CommonItemDecoration setDecoration(
-			ItemDecorationProps itemDecorationProps)
+	public AroundItemDecoration setDecoration(
+			AroundDecorationProps itemDecorationProps)
 	{
 		mIgnoreViewType = true;
 		mItemDecorationProps = itemDecorationProps;
 		return this;
 	}
 	
-	public CommonItemDecoration setDecorationColor(int decorationColor) {
+	public AroundItemDecoration setDecorationColor(int decorationColor) {
 		this.decorationColor = decorationColor;
 		return this;
 	}
@@ -76,7 +82,7 @@ public class CommonItemDecoration extends RecyclerView.ItemDecoration {
 		RecyclerView.Adapter adapter = parent.getAdapter();
 		int itemType = adapter.getItemViewType(position);
 		
-		ItemDecorationProps props;
+		AroundDecorationProps props;
 		if (mIgnoreViewType) {
 			props = mItemDecorationProps;
 		}
@@ -92,18 +98,14 @@ public class CommonItemDecoration extends RecyclerView.ItemDecoration {
 			return;
 		}
 		int spanIndex = 0;
-		int spanSize = 1;
 		int spanCount = 1;
-		int orientation = OrientationHelper.VERTICAL;
 		if (parent.getLayoutManager() instanceof GridLayoutManager) {
 			GridLayoutManager.LayoutParams lp = (GridLayoutManager.LayoutParams)view
 					.getLayoutParams();
 			spanIndex = lp.getSpanIndex();
-			spanSize = lp.getSpanSize();
 			GridLayoutManager layoutManager = (GridLayoutManager)parent.getLayoutManager();
 			spanCount = layoutManager
 					.getSpanCount(); // Assume that there're spanCount items in this row/column.
-			orientation = layoutManager.getOrientation();
 		}
 		else if (parent.getLayoutManager() instanceof StaggeredGridLayoutManager) {
 			StaggeredGridLayoutManager.LayoutParams lp = (StaggeredGridLayoutManager.LayoutParams)view
@@ -113,12 +115,6 @@ public class CommonItemDecoration extends RecyclerView.ItemDecoration {
 					.getLayoutManager();
 			spanCount = layoutManager
 					.getSpanCount(); // Assume that there're spanCount items in this row/column.
-			spanSize = lp.isFullSpan() ? spanCount : 1;
-			orientation = layoutManager.getOrientation();
-		}
-		else if (parent.getLayoutManager() instanceof LinearLayoutManager) {
-			LinearLayoutManager layoutManager = (LinearLayoutManager)parent.getLayoutManager();
-			orientation = layoutManager.getOrientation();
 		}
 		
 		boolean isFirstRowOrColumn, isLastRowOrColumn;
@@ -142,102 +138,62 @@ public class CommonItemDecoration extends RecyclerView.ItemDecoration {
 		                    || (!mIgnoreViewType && itemType != adapter
 				.getItemViewType(nextRowPos));
 		
-		int left = 0, top = 0, right = 0, bottom = 0;
+		int left, top, right, bottom;
 		
-		if (orientation == GridLayoutManager.VERTICAL) {
-			if (props.getHasVerticalEdge()) {
-				left = props.getVerticalSpace() * (spanCount - spanIndex) / spanCount;
-				right = props.getVerticalSpace() * (spanIndex + (spanSize - 1) + 1) / spanCount;
-			}
-			else {
-				left = props.getVerticalSpace() * spanIndex / spanCount;
-				right = props.getVerticalSpace() * (spanCount - (spanIndex + spanSize - 1) - 1)
-				        / spanCount;
-			}
-			
-			if (isFirstRowOrColumn) { // First row
-				if (props.isHasSetFarFirstEdge()) {
-					top = props.getFarFirstSpace();
-				}
-				else if (props.getHasHorizontalEdge()) {
-					top = props.getHorizontalSpace();
-				}
-			}
-			if (isLastRowOrColumn) { // Last row
-				if (props.isHasSetFarLastEdge()) {
-					bottom = props.getFarLastSpace();
-				}
-				else if (props.getHasHorizontalEdge()) {
-					bottom = props.getHorizontalSpace();
-				}
-			}
-			else {
-				bottom = props.getHorizontalSpace();
-			}
-		}
-		else {
-			if (props.getHasHorizontalEdge()) {
-				top = props.getHorizontalSpace() * (spanCount - spanIndex) / spanCount;
-				bottom = props.getHorizontalSpace() * (spanIndex + (spanSize - 1) + 1) / spanCount;
-			}
-			else {
-				top = props.getHorizontalSpace() * spanIndex / spanCount;
-				bottom = props.getHorizontalSpace() * (spanCount - (spanIndex + spanSize - 1) - 1)
-				         / spanCount;
-			}
-			
-			if (isFirstRowOrColumn) { // First column
-				if (props.isHasSetFarFirstEdge()) {
-					left = props.getFarFirstSpace();
-				}
-				else if (props.getHasVerticalEdge()) {
-					left = props.getVerticalSpace();
-				}
-			}
-			if (isLastRowOrColumn) { // Last column
-				if (props.isHasSetFarLastEdge()) {
-					right = props.getFarLastSpace();
-				}
-				else if (props.getHasVerticalEdge()) {
-					right = props.getVerticalSpace();
-				}
-			}
-			else {
-				right = props.getVerticalSpace();
-			}
-		}
+		left = props.getLeftSpace();
+		right = props.getRightSpace();
+		top = props.getTopSpace();
+		bottom = props.getBottomSpace();
 		
 		outRect.set(left,top,right,bottom);
+		
+		OnPositionListener listener = props.getOnPositionListener();
+		if (listener != null){
+			listener.onLocation(position,outRect);
+		}
+		
+		if (isFirstRowOrColumn) {
+			if (listener != null){
+				listener.onFirstLocation(outRect);
+			}
+		}
+		if (isLastRowOrColumn) { // Last row
+			if (listener != null){
+				listener.onLastLocation(outRect);
+			}
+		}
+		
+		
 	}
 	
 	public static class Builder {
-		private SparseArray<ItemDecorationProps> mPropMap; // itemType -> prop
-		private ItemDecorationProps mItemDecorationProps;
-		private boolean mIgnoreViewType;//是否忽略ViewType
+		private SparseArray<AroundDecorationProps> mPropMap; // itemType -> prop
+		private AroundDecorationProps mItemDecorationProps;
 		
+		private boolean mIgnoreViewType;//是否忽略ViewType
 		
 		public Builder() {
 			mPropMap = new SparseArray<>();
 		}
 		
-		public Builder(SparseArray<ItemDecorationProps> propMap) {
+		public Builder(SparseArray<AroundDecorationProps> propMap) {
 			mPropMap = propMap;
 		}
 		
-		public Builder(int itemType,ItemDecorationProps itemDecorationProps) {
+		public Builder(int itemType,AroundDecorationProps itemDecorationProps) {
 			mPropMap = new SparseArray<>();
 			mPropMap.put(itemType,itemDecorationProps);
 		}
 		
-		public CommonItemDecoration build() {
+		public AroundItemDecoration build() {
 			if (mIgnoreViewType) {
-				return new CommonItemDecoration(mItemDecorationProps);
+				return new AroundItemDecoration(mItemDecorationProps);
 			}
-			return new CommonItemDecoration(mPropMap);
+			return new AroundItemDecoration(mPropMap);
 		}
 		
 		public Builder addDecoration(
-				int itemType,ItemDecorationProps itemDecorationProps)
+				int itemType,AroundDecorationProps itemDecorationProps)
 		{
 			if (mPropMap == null) {
 				mPropMap = new SparseArray<>();
@@ -247,7 +203,7 @@ public class CommonItemDecoration extends RecyclerView.ItemDecoration {
 		}
 		
 		public Builder addDecoration(
-				ItemDecorationProps itemDecorationProps)
+				AroundDecorationProps itemDecorationProps)
 		{
 			mIgnoreViewType = true;
 			mItemDecorationProps = itemDecorationProps;
