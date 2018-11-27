@@ -52,13 +52,13 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	
 	public void addHeader(View header) {
 		checkHeader();
-		mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE,header));
+		mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE-mHeaders.size(),header));
 		notifyDataSetChanged();
 	}
 	
 	public void addHeader(BaseRecyclerHolder header) {
 		checkHeader();
-		mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE ,header));
+		mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE-mHeaders.size() ,header));
 		notifyDataSetChanged();
 	}
 	
@@ -70,13 +70,13 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	
 	public void addFooter(View footer) {
 		checkFooter();
-		mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE ,footer));
+		mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE-mFooters.size() ,footer));
 		notifyDataSetChanged();
 	}
 	
 	public void addFooter(BaseRecyclerHolder footer) {
 		checkFooter();
-		mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE ,footer));
+		mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE-mFooters.size() ,footer));
 		notifyDataSetChanged();
 	}
 	
