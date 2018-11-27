@@ -42,16 +42,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	protected OnAdapterItemClickListener<T> mTOnAdapterItemClickListener;
 	protected OnHeaderClickListener mOnHeaderClickListener;
 	protected OnFooterClickListener mOnFooterClickListener;
-	protected int headersNumber;
-	protected int footersNumber;
 	
-	public void clearHeadersNumber() {
-		this.headersNumber = 0;
-	}
-
-	public void clearFootersNumber() {
-		this.footersNumber = 0;
-	}
 	
 	private synchronized void checkHeader() {
 		if (mHeaders == null) {
@@ -60,16 +51,14 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	}
 	
 	public void addHeader(View header) {
-		headersNumber++;
 		checkHeader();
-		mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE - headersNumber,header));
+		mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE,header));
 		notifyDataSetChanged();
 	}
 	
 	public void addHeader(BaseRecyclerHolder header) {
-		headersNumber++;
 		checkHeader();
-		mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE - headersNumber,header));
+		mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE ,header));
 		notifyDataSetChanged();
 	}
 	
@@ -80,16 +69,14 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	}
 	
 	public void addFooter(View footer) {
-		footersNumber++;
 		checkFooter();
-		mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE - footersNumber,footer));
+		mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE ,footer));
 		notifyDataSetChanged();
 	}
 	
 	public void addFooter(BaseRecyclerHolder footer) {
-		footersNumber++;
 		checkFooter();
-		mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE - footersNumber,footer));
+		mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE ,footer));
 		notifyDataSetChanged();
 	}
 	
