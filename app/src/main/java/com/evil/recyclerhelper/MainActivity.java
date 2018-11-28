@@ -34,20 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		mTestAdapter = new TestAdapter();
 		RecyclerHelper.with(mRecyclerView).linearManager().matchWidth().addAroundDecoration()
 		              .space(50,50,50,50,new SimplePositionListener(){
-			              @Override
-			              public void onLocation(int position,Rect outRect) {
-				              Log.e("noah","position = "+position);
-			              }
-			
-			              @Override
-			              public void onFirstLocation(Rect outRect) {
-				              outRect.set(0,10,20,30);
-			              }
-			
-			              @Override
-			              public void onLastLocation(Rect outRect) {
-				              outRect.set(5,0,30,100);
-			              }
+			            
 		              }).animation().adapter(mTestAdapter).init();
 		//		mTestAdapter.setEmptyView(LayoutInflater.from(this).inflate(R.layout.view_empty,mRecyclerView,false));
 		mTestAdapter.setEmptyView(R.layout.view_empty,mRecyclerView);
