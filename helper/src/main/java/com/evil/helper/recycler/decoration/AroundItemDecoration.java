@@ -149,17 +149,17 @@ public class AroundItemDecoration extends RecyclerView.ItemDecoration {
 		
 		OnPositionListener listener = props.getOnPositionListener();
 		if (listener != null){
-			listener.onLocation(position,outRect);
+			listener.onLocation(position,spanIndex,outRect);
 		}
 		
 		if (isFirstRowOrColumn) {
 			if (listener != null){
-				listener.onFirstLocation(outRect);
+				listener.onFirstLocation(spanIndex,outRect);
 			}
 		}
 		if (isLastRowOrColumn) { // Last row
 			if (listener != null){
-				listener.onLastLocation(outRect);
+				listener.onLastLocation(spanIndex,outRect);
 			}
 		}
 		

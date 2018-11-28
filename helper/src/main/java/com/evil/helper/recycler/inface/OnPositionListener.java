@@ -3,9 +3,9 @@ package com.evil.helper.recycler.inface;
 import android.graphics.Rect;
 
 public interface OnPositionListener {
-	void onLocation(int position,Rect outRect);
+	void onLocation(int position,int spanIndex,Rect outRect);
 	
-	void onFirstLocation(Rect outRect);
+	void onFirstLocation(int spanIndex,Rect outRect);
 	
-	void onLastLocation(Rect outRect);
+	void onLastLocation(int spanIndex,Rect outRect);
 }
