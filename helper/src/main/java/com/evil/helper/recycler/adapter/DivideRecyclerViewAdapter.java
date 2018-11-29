@@ -310,7 +310,7 @@ public abstract class DivideRecyclerViewAdapter<T,V extends DivideRecyclerViewHo
 			for (int i = 0;i < divideNumber();i++) {
 				if (realPosition < getRealItemCount()) {
 					((DivideRecyclerViewHolder)holder)
-							.setData(this,i,getData(realPosition),realPosition);
+							.setData(this,i,getData(realPosition+i),realPosition+i);
 				}
 				else {
 					((DivideRecyclerViewHolder)holder).noneData(this,i);
