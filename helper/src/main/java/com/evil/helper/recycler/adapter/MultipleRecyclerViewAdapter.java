@@ -31,8 +31,8 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecycleData,V exten
 	/**
 	 * The M datas.
 	 */
-	List<T> mDatas;
-	private OnAdapterItemClickListener mOnItemClickListener;
+	protected List<T> mDatas;
+	protected OnAdapterItemClickListener mOnItemClickListener;
 	
 	/**
 	 * Sets on item click listener.

@@ -10,20 +10,20 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.evil.helper.recycler.holder.BaseRecyclerHolder;
+import com.evil.helper.recycler.holder.DivideRecyclerViewHolder;
 import com.evil.helper.recycler.holder.EmptyViewHolder;
-import com.evil.helper.recycler.holder.RecyclerViewHolder;
-import com.evil.helper.recycler.inface.OnAdapterItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The type Recycler view adapter.
+ * 一个可以分割几份的adapter
  *
  * @param <T> the type parameter
  * @param <V> the type parameter
  */
-public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
+public abstract class DivideRecyclerViewAdapter<T,V extends DivideRecyclerViewHolder<T>> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
 	protected View mEmptyView;
 	protected int mEmptyViewLayout;
 	protected int mEmptyType = EMPTY_VIEW_TYPE;
@@ -31,15 +31,21 @@ public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> ext
 	 * The M datas.
 	 */
 	protected List<T> mDatas;
-	protected OnAdapterItemClickListener mOnItemClickListener;
 	
-	/**
-	 * Sets on item click listener.
-	 *
-	 * @param onItemClickListener the on item click listener
-	 */
-	public void setOnItemClickListener(OnAdapterItemClickListener onItemClickListener) {
-		mOnItemClickListener = onItemClickListener;
+	protected abstract int divideNumber();
+	
+	public int getDivideCount() {
+		int realItemCount = getRealItemCount();
+		return realItemCount / divideNumber() + realItemCount % divideNumber();
+	}
+	
+	@Override
+	public int getItemCount() {
+		//		return super.getItemCount();
+		if (isEmpty() && isHasEmptyView()) {
+			return 1;
+		}
+		return getDivideCount();
 	}
 	
 	/**
@@ -49,6 +55,15 @@ public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> ext
 	 */
 	public List<T> getDatas() {
 		return mDatas;
+	}
+	
+	/**
+	 * Sets datas.
+	 *
+	 * @param datas the datas
+	 */
+	public void setDatas(List<T> datas) {
+		mDatas = datas;
 	}
 	
 	/**
@@ -66,15 +81,6 @@ public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> ext
 				mDatas.add(data);
 			}
 		}
-	}
-	
-	/**
-	 * Sets datas.
-	 *
-	 * @param datas the datas
-	 */
-	public void setDatas(List<T> datas) {
-		mDatas = datas;
 	}
 	
 	@Override
@@ -298,25 +304,15 @@ public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> ext
 	
 	@Override
 	public void onBindViewHolder(@NonNull BaseRecyclerHolder holder,final int position) {
-		//		if (!isEmpty()) {
 		holder.onBindData(this,position);
-		final List<T> datas = getDatas();
-		T t = null;
-		if (datas != null && position < datas.size()) {
-			t = datas.get(position);
-		}
-		if (holder instanceof RecyclerViewHolder) {
-			((RecyclerViewHolder)holder).setData(this,t,position);
-			if (mOnItemClickListener != null) {
-				holder.itemView.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						mOnItemClickListener.onItemClick(v,datas,position);
-					}
-				});
+		if (holder instanceof DivideRecyclerViewHolder) {
+			int realItemCount = getRealItemCount();
+			int realPosition = realItemCount * getDivideCount();
+			for (int i = 0;i < getDivideCount();i++) {
+				((DivideRecyclerViewHolder)holder)
+						.setData(this,i,getData(realPosition),realPosition);
 			}
 		}
-		//		}
 	}
 	
 	@NonNull
@@ -370,14 +366,6 @@ public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> ext
 	@Override
 	public long getItemId(int position) {
 		return 0;
-	}
-	
-	@Override
-	public int getItemCount() {
-		if (isEmpty() && isHasEmptyView()) {
-			return 1;
-		}
-		return getRealItemCount();
 	}
 	
 	@Override
