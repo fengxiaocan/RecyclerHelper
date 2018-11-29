@@ -19,8 +19,6 @@ public interface IExtendAdapter<T> {
 	int EMPTY_VIEW_TYPE = -0x888888;
 	int EMPTY_VIEW_TYPE2 = -0x888889;
 	
-	//设置item点击事件
-	void setOnItemClickListener(OnAdapterItemClickListener<T> listener);
 	
 	//获取数据集
 	List<T> getDatas();

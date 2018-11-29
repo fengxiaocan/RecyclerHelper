@@ -306,8 +306,7 @@ public abstract class DivideRecyclerViewAdapter<T,V extends DivideRecyclerViewHo
 	public void onBindViewHolder(@NonNull BaseRecyclerHolder holder,final int position) {
 		holder.onBindData(this,position);
 		if (holder instanceof DivideRecyclerViewHolder) {
-			int realItemCount = getRealItemCount();
-			int realPosition = realItemCount * getDivideCount();
+			int realPosition = position * getDivideCount();
 			for (int i = 0;i < getDivideCount();i++) {
 				if (realPosition < getRealItemCount()) {
 					((DivideRecyclerViewHolder)holder)
