@@ -329,7 +329,6 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Re
 		}
 	}
 	
-	@Override
 	public void setOnItemClickListener(OnAdapterItemClickListener<T> listener) {
 		mTOnAdapterItemClickListener = listener;
 	}
