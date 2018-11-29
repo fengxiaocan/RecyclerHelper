@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import com.evil.helper.recycler.holder.BaseRecyclerHolder;
 import com.evil.helper.recycler.holder.EmptyViewHolder;
-import com.evil.helper.recycler.holder.SimpleRecyclerViewHolder;
+import com.evil.helper.recycler.holder.RecyclerViewHolder;
 import com.evil.helper.recycler.inface.OnAdapterItemClickListener;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import java.util.List;
  * @param <T> the type parameter
  * @param <V> the type parameter
  */
-public abstract class SimpleRecyclerViewAdapter<T,V extends SimpleRecyclerViewHolder<T>> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
+public abstract class SimpleRecyclerViewAdapter<T,V extends RecyclerViewHolder<T,A>,A extends RecyclerView.Adapter> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
 	protected View mEmptyView;
 	protected int mEmptyViewLayout;
 	protected int mEmptyType = EMPTY_VIEW_TYPE;
@@ -300,14 +300,15 @@ public abstract class SimpleRecyclerViewAdapter<T,V extends SimpleRecyclerViewHo
 	
 	@Override
 	public void onBindViewHolder(@NonNull BaseRecyclerHolder holder,final int position) {
-		if (!isEmpty()) {
+		holder.onBindData(this, position);
+//		if (!isEmpty()) {
 			final List<T> datas = getDatas();
 			T t = null;
 			if (datas != null && position < datas.size()) {
 				t = datas.get(position);
 			}
-			if (holder instanceof SimpleRecyclerViewHolder) {
-				((SimpleRecyclerViewHolder)holder).setData(this,t,position);
+			if (holder instanceof RecyclerViewHolder) {
+				((RecyclerViewHolder)holder).setData(this,t,position);
 				if (mOnItemClickListener != null) {
 					holder.itemView.setOnClickListener(new View.OnClickListener() {
 						@Override
@@ -317,7 +318,7 @@ public abstract class SimpleRecyclerViewAdapter<T,V extends SimpleRecyclerViewHo
 					});
 				}
 			}
-		}
+//		}
 	}
 	
 	@NonNull

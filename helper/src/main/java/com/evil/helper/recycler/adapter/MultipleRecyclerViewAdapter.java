@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.evil.helper.recycler.holder.BaseRecyclerHolder;
 import com.evil.helper.recycler.holder.EmptyViewHolder;
-import com.evil.helper.recycler.holder.MultipleRecyclerViewHolder;
+import com.evil.helper.recycler.holder.RecyclerViewHolder;
 import com.evil.helper.recycler.inface.IRecycleData;
 import com.evil.helper.recycler.inface.OnAdapterItemClickListener;
 
@@ -24,7 +24,7 @@ import java.util.List;
  * @param <T> the type parameter
  * @param <V> the type parameter
  */
-public abstract class MultipleRecyclerViewAdapter<T extends IRecycleData,V extends MultipleRecyclerViewHolder<T>> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
+public abstract class MultipleRecyclerViewAdapter<T extends IRecycleData,V extends RecyclerViewHolder<T,A>,A extends RecyclerView.Adapter> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
 	protected View mEmptyView;
 	protected int mEmptyViewLayout;
 	protected int mEmptyType = EMPTY_VIEW_TYPE;
@@ -57,6 +57,15 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecycleData,V exten
 	 *
 	 * @param datas the datas
 	 */
+	public void setDatas(List<T> datas) {
+		mDatas = datas;
+	}
+	
+	/**
+	 * Sets datas.
+	 *
+	 * @param datas the datas
+	 */
 	public void setDatas(T... datas) {
 		if (datas != null) {
 			if (mDatas == null) {
@@ -67,15 +76,6 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecycleData,V exten
 				mDatas.add(data);
 			}
 		}
-	}
-	
-	/**
-	 * Sets datas.
-	 *
-	 * @param datas the datas
-	 */
-	public void setDatas(List<T> datas) {
-		mDatas = datas;
 	}
 	
 	/**
@@ -302,24 +302,25 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecycleData,V exten
 	
 	@Override
 	public void onBindViewHolder(@NonNull BaseRecyclerHolder holder,final int position) {
-		if (!isEmpty()) {
-			final List<T> datas = getDatas();
-			T t = null;
-			if (datas != null && position < datas.size()) {
-				t = datas.get(position);
-			}
-			if (holder instanceof MultipleRecyclerViewHolder) {
-				((MultipleRecyclerViewHolder)holder).setData(this,t,position);
-				if (mOnItemClickListener != null) {
-					holder.itemView.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							mOnItemClickListener.onItemClick(v,datas,position);
-						}
-					});
-				}
+		holder.onBindData(this,position);
+		//		if (!isEmpty()) {
+		final List<T> datas = getDatas();
+		T t = null;
+		if (datas != null && position < datas.size()) {
+			t = datas.get(position);
+		}
+		if (holder instanceof RecyclerViewHolder) {
+			((RecyclerViewHolder)holder).setData(this,t,position);
+			if (mOnItemClickListener != null) {
+				holder.itemView.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						mOnItemClickListener.onItemClick(v,datas,position);
+					}
+				});
 			}
 		}
+		//		}
 	}
 	
 	@NonNull
@@ -436,11 +437,11 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecycleData,V exten
 	
 	@Override
 	public void setEmptyView(int layout,ViewGroup referenceViewGroup) {
-		if (referenceViewGroup != null&&mEmptyViewLayout!=layout) {
+		if (referenceViewGroup != null && mEmptyViewLayout != layout) {
 			LayoutInflater from = LayoutInflater.from(referenceViewGroup.getContext());
 			mEmptyView = from.inflate(layout,referenceViewGroup,false);
 			mEmptyViewLayout = layout;
-			mEmptyType = mEmptyType == EMPTY_VIEW_TYPE?EMPTY_VIEW_TYPE2:EMPTY_VIEW_TYPE;
+			mEmptyType = mEmptyType == EMPTY_VIEW_TYPE ? EMPTY_VIEW_TYPE2 : EMPTY_VIEW_TYPE;
 			notifyDataSetChanged();
 		}
 	}

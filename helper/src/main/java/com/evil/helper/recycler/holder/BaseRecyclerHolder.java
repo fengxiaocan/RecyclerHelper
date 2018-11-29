@@ -25,4 +25,6 @@ public abstract class BaseRecyclerHolder extends RecyclerView.ViewHolder {
     public View getItemView(){
         return itemView;
     }
+    
+    public<A extends RecyclerView.Adapter> void onBindData(A adapter,int position){}
 }

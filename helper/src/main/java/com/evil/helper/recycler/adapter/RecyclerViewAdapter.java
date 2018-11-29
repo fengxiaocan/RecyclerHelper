@@ -23,7 +23,7 @@ import java.util.List;
  * @param <T> the type parameter
  * @param <V> the type parameter
  */
-public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
+public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T,A>,A extends RecyclerView.Adapter> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
 	protected View mEmptyView;
 	protected int mEmptyViewLayout;
 	protected int mEmptyType = EMPTY_VIEW_TYPE;
@@ -56,15 +56,6 @@ public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> ext
 	 *
 	 * @param datas the datas
 	 */
-	public void setDatas(List<T> datas) {
-		mDatas = datas;
-	}
-	
-	/**
-	 * Sets datas.
-	 *
-	 * @param datas the datas
-	 */
 	public void setDatas(T... datas) {
 		if (datas != null) {
 			if (mDatas == null) {
@@ -75,6 +66,15 @@ public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> ext
 				mDatas.add(data);
 			}
 		}
+	}
+	
+	/**
+	 * Sets datas.
+	 *
+	 * @param datas the datas
+	 */
+	public void setDatas(List<T> datas) {
+		mDatas = datas;
 	}
 	
 	@Override
@@ -298,24 +298,25 @@ public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> ext
 	
 	@Override
 	public void onBindViewHolder(@NonNull BaseRecyclerHolder holder,final int position) {
-		if (!isEmpty()) {
-			final List<T> datas = getDatas();
-			T t = null;
-			if (datas != null && position < datas.size()) {
-				t = datas.get(position);
-			}
-			if (holder instanceof RecyclerViewHolder) {
-				((RecyclerViewHolder)holder).setData(this,t,position);
-				if (mOnItemClickListener != null) {
-					holder.itemView.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							mOnItemClickListener.onItemClick(v,datas,position);
-						}
-					});
-				}
+		//		if (!isEmpty()) {
+		holder.onBindData(this,position);
+		final List<T> datas = getDatas();
+		T t = null;
+		if (datas != null && position < datas.size()) {
+			t = datas.get(position);
+		}
+		if (holder instanceof RecyclerViewHolder) {
+			((RecyclerViewHolder)holder).setData(this,t,position);
+			if (mOnItemClickListener != null) {
+				holder.itemView.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						mOnItemClickListener.onItemClick(v,datas,position);
+					}
+				});
 			}
 		}
+		//		}
 	}
 	
 	@NonNull

@@ -1,12 +1,13 @@
 package com.evil.helper.recycler.adapter;
 
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.evil.helper.recycler.holder.BaseRecyclerHolder;
-import com.evil.helper.recycler.holder.ComRecyclerViewHolder;
+import com.evil.helper.recycler.holder.RecyclerViewHolder;
 import com.evil.helper.recycler.holder.SwipeRecyclerViewHolder;
 import com.evil.helper.recycler.inface.IRecycleData;
 import com.evil.helper.recycler.inface.OnMenuItemClickListener;
@@ -18,8 +19,8 @@ import com.evil.helper.recycler.menu.MenuDragLayout;
  * @create 20/6/18
  * @desc ...
  */
-public abstract class SwipeRecyclerViewAdapter<T extends IRecycleData,V extends ComRecyclerViewHolder<T>>
-        extends ComRecyclerViewAdapter<T,V>
+public abstract class SwipeRecyclerViewAdapter<T extends IRecycleData,V extends SwipeRecyclerViewHolder<T,A>,A extends RecyclerView.Adapter>
+        extends ComRecyclerViewAdapter<T,V,A>
 {
     protected OnMenuItemClickListener mOnMenuItemClickListener;
 
@@ -71,44 +72,42 @@ public abstract class SwipeRecyclerViewAdapter<T extends IRecycleData,V extends 
             return createViewHolder(view,viewType);
         }
     }
-
+    
     @Override
-    public void setDefaultItemData(BaseRecyclerHolder holder,final int position) {
+    protected  void onBindDefaultData(V holder,final int position) {
         if (mOnMenuItemClickListener != null) {
-            if (holder instanceof SwipeRecyclerViewHolder) {
-                View menuView = ((SwipeRecyclerViewHolder)holder).menuView;
-                if (menuView instanceof ViewGroup) {
-                    for (int i = 0;i < ((ViewGroup)menuView).getChildCount();i++) {
-                        View child = ((ViewGroup)menuView).getChildAt(i);
-                        final int childPosition = i;
-                        if (child != null) {
-                            child.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    mOnMenuItemClickListener.onMenuItemClick(v,position,childPosition);
-                                }
-                            });
-                        }
+            View menuView = holder.menuView;
+            if (menuView instanceof ViewGroup) {
+                for (int i = 0;i < ((ViewGroup)menuView).getChildCount();i++) {
+                    View child = ((ViewGroup)menuView).getChildAt(i);
+                    final int childPosition = i;
+                    if (child != null) {
+                        child.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mOnMenuItemClickListener.onMenuItemClick(v,position,childPosition);
+                            }
+                        });
                     }
-                }else {
-                    menuView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mOnMenuItemClickListener.onMenuItemClick(v,position,0);
-                        }
-                    });
                 }
+            }else {
+                menuView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mOnMenuItemClickListener.onMenuItemClick(v,position,0);
+                    }
+                });
             }
         }
     }
-
+    
     /**
      * 创建一个带侧滑菜单的ViewHolder
      * @param layout
      * @param viewType
      * @return
      */
-    public abstract  SwipeRecyclerViewHolder<T> onCreateWithMenuHolder(
+    public abstract  SwipeRecyclerViewHolder<T,A> onCreateWithMenuHolder(
             MenuDragLayout layout,int viewType
     );
 

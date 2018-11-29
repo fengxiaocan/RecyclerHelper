@@ -9,10 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.evil.helper.recycler.holder.BaseRecyclerHolder;
-import com.evil.helper.recycler.holder.ComRecyclerViewHolder;
 import com.evil.helper.recycler.holder.EmptyViewHolder;
 import com.evil.helper.recycler.holder.RecyclerViewFooter;
 import com.evil.helper.recycler.holder.RecyclerViewHeader;
+import com.evil.helper.recycler.holder.RecyclerViewHolder;
 import com.evil.helper.recycler.inface.IRecycleData;
 import com.evil.helper.recycler.inface.OnAdapterItemClickListener;
 import com.evil.helper.recycler.inface.OnFooterClickListener;
@@ -29,7 +29,7 @@ import java.util.List;
  * @desc 一个可以添加头部跟尾部View的 recyclerview adapter
  * @注意 viewType尽量不要使用负数,使用也不能小等于 -0x11111
  */
-public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends ComRecyclerViewHolder<T>> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
+public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends RecyclerViewHolder<T,A>,A extends RecyclerView.Adapter> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
 	public static final int EXTEND_RECYCLER_HEADER_TYPE = -0x11111;//头部
 	public static final int EXTEND_RECYCLER_FOOTER_TYPE = -0xfffff;//脚部
 	
@@ -52,13 +52,13 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	
 	public void addHeader(View header) {
 		checkHeader();
-		mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE-mHeaders.size(),header));
+		mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE - mHeaders.size(),header));
 		notifyDataSetChanged();
 	}
 	
 	public void addHeader(BaseRecyclerHolder header) {
 		checkHeader();
-		mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE-mHeaders.size() ,header));
+		mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE - mHeaders.size(),header));
 		notifyDataSetChanged();
 	}
 	
@@ -70,13 +70,13 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	
 	public void addFooter(View footer) {
 		checkFooter();
-		mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE-mFooters.size() ,footer));
+		mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE - mFooters.size(),footer));
 		notifyDataSetChanged();
 	}
 	
 	public void addFooter(BaseRecyclerHolder footer) {
 		checkFooter();
-		mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE-mFooters.size() ,footer));
+		mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE - mFooters.size(),footer));
 		notifyDataSetChanged();
 	}
 	
@@ -273,6 +273,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 	
 	@Override
 	public void onBindViewHolder(@NonNull BaseRecyclerHolder holder,int position) {
+		holder.onBindData(this,position);
 		if (isEmpty() && isHasEmptyView()) {
 		}
 		else if (isHeaderOfPosition(position)) {
@@ -299,17 +300,18 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData,V extends Co
 		}
 		else {
 			int realPosition = position - getHeaderCount();
-			if (holder instanceof ComRecyclerViewHolder) {
-				((ComRecyclerViewHolder)holder).setData(this,getData(realPosition),realPosition);
+			if (holder instanceof RecyclerViewHolder) {
+				RecyclerViewHolder viewHolder = (RecyclerViewHolder)holder;
+				viewHolder.setData(this,getData(realPosition),realPosition);
+				onBindDefaultData((V)holder,realPosition);
 			}
-			if (holder != null && mTOnAdapterItemClickListener != null) {
+			if (mTOnAdapterItemClickListener != null) {
 				holder.getItemView().setOnClickListener(new OnItemClick(realPosition));
 			}
-			setDefaultItemData(holder,realPosition);
 		}
 	}
 	
-	protected abstract void setDefaultItemData(BaseRecyclerHolder holder,int position);
+	protected abstract void onBindDefaultData(V holder,int position);
 	
 	@Override
 	public int getItemViewType(int position) {
