@@ -62,6 +62,15 @@ public abstract class DivideRecyclerViewAdapter<T,V extends DivideRecyclerViewHo
 	 *
 	 * @param datas the datas
 	 */
+	public void setDatas(List<T> datas) {
+		mDatas = datas;
+	}
+	
+	/**
+	 * Sets datas.
+	 *
+	 * @param datas the datas
+	 */
 	public void setDatas(T... datas) {
 		if (datas != null) {
 			if (mDatas == null) {
@@ -72,15 +81,6 @@ public abstract class DivideRecyclerViewAdapter<T,V extends DivideRecyclerViewHo
 				mDatas.add(data);
 			}
 		}
-	}
-	
-	/**
-	 * Sets datas.
-	 *
-	 * @param datas the datas
-	 */
-	public void setDatas(List<T> datas) {
-		mDatas = datas;
 	}
 	
 	@Override
@@ -312,6 +312,9 @@ public abstract class DivideRecyclerViewAdapter<T,V extends DivideRecyclerViewHo
 				if (realPosition < getRealItemCount()) {
 					((DivideRecyclerViewHolder)holder)
 							.setData(this,i,getData(realPosition),realPosition);
+				}
+				else {
+					((DivideRecyclerViewHolder)holder).noneData(this,i);
 				}
 			}
 		}

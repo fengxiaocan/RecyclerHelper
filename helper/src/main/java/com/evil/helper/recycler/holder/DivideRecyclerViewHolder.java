@@ -11,4 +11,6 @@ public abstract class DivideRecyclerViewHolder<T> extends BaseRecyclerHolder {
 	
 	public abstract void setData(
 			RecyclerView.Adapter adapter,int index,T t,int realPosition);
+	
+	public abstract void noneData(RecyclerView.Adapter adapter,int index);
 }
