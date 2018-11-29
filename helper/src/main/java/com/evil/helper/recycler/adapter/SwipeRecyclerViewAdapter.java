@@ -19,8 +19,8 @@ import com.evil.helper.recycler.menu.MenuDragLayout;
  * @create 20/6/18
  * @desc ...
  */
-public abstract class SwipeRecyclerViewAdapter<T extends IRecycleData,V extends SwipeRecyclerViewHolder<T,A>,A extends RecyclerView.Adapter>
-        extends ComRecyclerViewAdapter<T,V,A>
+public abstract class SwipeRecyclerViewAdapter<T extends IRecycleData,V extends SwipeRecyclerViewHolder<T>>
+        extends ComRecyclerViewAdapter<T,V>
 {
     protected OnMenuItemClickListener mOnMenuItemClickListener;
 
@@ -107,7 +107,7 @@ public abstract class SwipeRecyclerViewAdapter<T extends IRecycleData,V extends 
      * @param viewType
      * @return
      */
-    public abstract  SwipeRecyclerViewHolder<T,A> onCreateWithMenuHolder(
+    public abstract  SwipeRecyclerViewHolder<T> onCreateWithMenuHolder(
             MenuDragLayout layout,int viewType
     );
 

@@ -23,7 +23,7 @@ import java.util.List;
  * @param <T> the type parameter
  * @param <V> the type parameter
  */
-public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T,A>,A extends RecyclerView.Adapter> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
+public abstract class RecyclerViewAdapter<T,V extends RecyclerViewHolder<T>> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
 	protected View mEmptyView;
 	protected int mEmptyViewLayout;
 	protected int mEmptyType = EMPTY_VIEW_TYPE;

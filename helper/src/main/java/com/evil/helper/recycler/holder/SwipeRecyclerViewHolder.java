@@ -12,7 +12,7 @@ import com.evil.helper.recycler.menu.MenuDragLayout;
  * @create 20/6/18
  * @desc ...
  */
-public abstract class SwipeRecyclerViewHolder<T extends IRecycleData,A extends RecyclerView.Adapter> extends RecyclerViewHolder<T,A> {
+public abstract class SwipeRecyclerViewHolder<T extends IRecycleData> extends RecyclerViewHolder<T> {
 	public View contentView;
 	public View menuView;
 	
