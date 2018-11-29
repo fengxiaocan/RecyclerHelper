@@ -30,7 +30,7 @@ import java.util.List;
  * @desc 一个可以添加头部跟尾部View的 recyclerview adapter
  * @注意 viewType尽量不要使用负数,使用也不能小等于 -0x11111
  */
-public abstract class ComDivideRecyclerViewAdapter<T extends IRecycleData,V extends RecyclerViewHolder<T>> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
+public abstract class ComDivideRecyclerViewAdapter<T extends IRecycleData,V extends DivideRecyclerViewHolder<T>> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
 	public static final int EXTEND_RECYCLER_HEADER_TYPE = -0x11111;//头部
 	public static final int EXTEND_RECYCLER_FOOTER_TYPE = -0xfffff;//脚部
 	
@@ -321,8 +321,6 @@ public abstract class ComDivideRecyclerViewAdapter<T extends IRecycleData,V exte
 			}
 		}
 	}
-	
-	protected abstract void onBindDefaultData(V holder,int position);
 	
 	@Override
 	public int getItemViewType(int position) {
