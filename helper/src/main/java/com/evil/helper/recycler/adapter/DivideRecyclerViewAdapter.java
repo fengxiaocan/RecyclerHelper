@@ -308,7 +308,7 @@ public abstract class DivideRecyclerViewAdapter<T,V extends DivideRecyclerViewHo
 		if (holder instanceof DivideRecyclerViewHolder) {
 			int realPosition = position * divideNumber();
 			for (int i = 0;i < divideNumber();i++) {
-				if (realPosition < getRealItemCount()) {
+				if (realPosition+i < getRealItemCount()) {
 					((DivideRecyclerViewHolder)holder)
 							.setData(this,i,getData(realPosition+i),realPosition+i);
 				}
