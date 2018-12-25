@@ -30,14 +30,14 @@ public abstract class SimpleRecyclerViewAdapter<T,V extends RecyclerViewHolder<T
 	 * The M datas.
 	 */
 	protected List<T> mDatas;
-	protected OnAdapterItemClickListener mOnItemClickListener;
+	protected OnAdapterItemClickListener<T> mOnItemClickListener;
 	
 	/**
 	 * Sets on item click listener.
 	 *
 	 * @param onItemClickListener the on item click listener
 	 */
-	public void setOnItemClickListener(OnAdapterItemClickListener onItemClickListener) {
+	public void setOnItemClickListener(OnAdapterItemClickListener<T> onItemClickListener) {
 		mOnItemClickListener = onItemClickListener;
 	}
 	
