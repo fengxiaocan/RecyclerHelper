@@ -279,4 +279,13 @@ public class MenuDragLayout extends FrameLayout {
     enum State {
         close,open
     }
+    
+    @Override
+    protected void onDetachedFromWindow() {
+        if (SwipeMenuManager.getInstance().haveOpened(this)) {
+            SwipeMenuManager.getInstance().close();
+            SwipeMenuManager.getInstance().clear();
+        }
+        super.onDetachedFromWindow();
+    }
 }

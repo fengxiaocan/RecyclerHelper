@@ -13,14 +13,30 @@ import com.evil.helper.recycler.menu.MenuDragLayout;
  * @desc ...
  */
 public abstract class SwipeRecyclerViewHolder<T extends IRecycleData> extends RecyclerViewHolder<T> {
-	public View contentView;
-	public View menuView;
+	protected View contentView;
+	protected View menuView;
 	
 	public SwipeRecyclerViewHolder(MenuDragLayout layout) {
 		super(layout);
 	}
 	
 	public abstract void initMenu(View menuLayout);
+	
+	public View getContentView() {
+		return contentView;
+	}
+	
+	public void setContentView(View contentView) {
+		this.contentView = contentView;
+	}
+	
+	public View getMenuView() {
+		return menuView;
+	}
+	
+	public void setMenuView(View menuView) {
+		this.menuView = menuView;
+	}
 	
 	@Override
 	public View getItemView() {

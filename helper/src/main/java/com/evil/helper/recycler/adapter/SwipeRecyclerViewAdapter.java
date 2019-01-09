@@ -64,8 +64,8 @@ public abstract class SwipeRecyclerViewAdapter<T extends IRecycleData,V extends 
                 dragLayout.addView(dragView);
                 dragLayout.setDragView(dragView);
                 SwipeRecyclerViewHolder holder = onCreateWithMenuHolder(dragLayout,viewType);
-                holder.menuView = dragView;
-                holder.contentView = view;
+                holder.setMenuView(dragView);
+                holder.setContentView(view);
                 holder.initMenu(dragView);
                 return holder;
             }
@@ -76,7 +76,7 @@ public abstract class SwipeRecyclerViewAdapter<T extends IRecycleData,V extends 
     @Override
     protected  void onBindDefaultData(V holder,final int position) {
         if (mOnMenuItemClickListener != null) {
-            View menuView = holder.menuView;
+            View menuView = holder.getMenuView();
             if (menuView instanceof ViewGroup) {
                 for (int i = 0;i < ((ViewGroup)menuView).getChildCount();i++) {
                     View child = ((ViewGroup)menuView).getChildAt(i);
@@ -107,9 +107,7 @@ public abstract class SwipeRecyclerViewAdapter<T extends IRecycleData,V extends 
      * @param viewType
      * @return
      */
-    public abstract  SwipeRecyclerViewHolder<T> onCreateWithMenuHolder(
-            MenuDragLayout layout,int viewType
-    );
+    public abstract  SwipeRecyclerViewHolder<T> onCreateWithMenuHolder(MenuDragLayout layout,int viewType);
 
     public abstract int onCreateRightMenuLayout(int viewType);
 }

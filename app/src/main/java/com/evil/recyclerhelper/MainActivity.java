@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.evil.helper.recycler.inface.IRecycleData;
 import com.evil.helper.recycler.inface.OnAdapterItemClickListener;
+import com.evil.helper.recycler.inface.OnMenuItemClickListener;
 import com.evil.helper.recycler.inface.SimplePositionListener;
 import com.evil.helper.recycler.recyclerhelper.RecyclerHelper;
 
@@ -32,18 +33,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	private void initView() {
 		mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
 		mTestAdapter = new TestAdapter();
+		mTestAdapter.setOnItemClickListener(new OnAdapterItemClickListener<IRecycleData>() {
+			public void onItemClick(View view,List<IRecycleData> list,int position) {
+				Toast.makeText(MainActivity.this, "点击content", Toast.LENGTH_SHORT).show();
+			}
+		});
+		mTestAdapter.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+			public void onMenuItemClick(View v,int position,int menuPosition) {
+				Toast.makeText(MainActivity.this, "点击menu", Toast.LENGTH_SHORT).show();
+			}
+		});
 		RecyclerHelper.with(mRecyclerView).linearManager().matchWidth().addAroundDecoration()
 		              .space(50,50,50,50,new SimplePositionListener(){
 			            
 		              }).animation().adapter(mTestAdapter).init();
 		//		mTestAdapter.setEmptyView(LayoutInflater.from(this).inflate(R.layout.view_empty,mRecyclerView,false));
-		mTestAdapter.setEmptyView(R.layout.view_empty,mRecyclerView);
-		mTestAdapter.setOnItemClickListener(new OnAdapterItemClickListener<IRecycleData>() {
-			@Override
-			public void onItemClick(View view,List<IRecycleData> list,int position) {
-				Toast.makeText(MainActivity.this,"点击了" + position,Toast.LENGTH_SHORT).show();
-			}
-		});
+
+
 		//		RxThread.newThread().open().observeOnMain().subscriber(new RxSubscriber<RecyclerData>() {
 		//			@Override
 		//			public void onSubscribe(RxEmitter<RecyclerData> rxEmitter) {
