@@ -20,7 +20,7 @@ import com.evil.helper.recycler.menu.MenuDragLayout;
  * @desc ...
  */
 public abstract class SwipeRecyclerViewAdapter<T extends IRecycleData,V extends SwipeRecyclerViewHolder<T>>
-        extends ComRecyclerViewAdapter<T,V>
+        extends ComRecyclerViewAdapter<T,RecyclerViewHolder<T>>
 {
     protected OnMenuItemClickListener mOnMenuItemClickListener;
 
@@ -74,29 +74,33 @@ public abstract class SwipeRecyclerViewAdapter<T extends IRecycleData,V extends 
     }
     
     @Override
-    protected  void onBindDefaultData(V holder,final int position) {
-        if (mOnMenuItemClickListener != null) {
-            View menuView = holder.getMenuView();
-            if (menuView instanceof ViewGroup) {
-                for (int i = 0;i < ((ViewGroup)menuView).getChildCount();i++) {
-                    View child = ((ViewGroup)menuView).getChildAt(i);
-                    final int childPosition = i;
-                    if (child != null) {
-                        child.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mOnMenuItemClickListener.onMenuItemClick(v,position,childPosition);
-                            }
-                        });
+    protected  void onBindDefaultData(RecyclerViewHolder<T> holder,final int position) {
+        if (holder instanceof SwipeRecyclerViewHolder) {
+            if (mOnMenuItemClickListener != null) {
+                View menuView = ((SwipeRecyclerViewHolder<T>)holder).getMenuView();
+                if (menuView instanceof ViewGroup) {
+                    for (int i = 0;i < ((ViewGroup)menuView).getChildCount();i++) {
+                        View child = ((ViewGroup)menuView).getChildAt(i);
+                        final int childPosition = i;
+                        if (child != null) {
+                            child.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mOnMenuItemClickListener
+                                            .onMenuItemClick(v,position,childPosition);
+                                }
+                            });
+                        }
                     }
                 }
-            }else {
-                menuView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mOnMenuItemClickListener.onMenuItemClick(v,position,0);
-                    }
-                });
+                else {
+                    menuView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mOnMenuItemClickListener.onMenuItemClick(v,position,0);
+                        }
+                    });
+                }
             }
         }
     }

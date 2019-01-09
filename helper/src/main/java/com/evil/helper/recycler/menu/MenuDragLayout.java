@@ -285,6 +285,7 @@ public class MenuDragLayout extends FrameLayout {
         if (SwipeMenuManager.getInstance().haveOpened(this)) {
             SwipeMenuManager.getInstance().close();
             SwipeMenuManager.getInstance().clear();
+            state = State.close;
         }
         super.onDetachedFromWindow();
     }
