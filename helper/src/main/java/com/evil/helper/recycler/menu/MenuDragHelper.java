@@ -7,18 +7,18 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 public class MenuDragHelper implements IMenuDrag {
-	float downX, downY;//按下的x y
-	private ViewDragHelper viewDragHelper;
+	public float downX, downY;//按下的x y
+	public ViewDragHelper viewDragHelper;
 	private FrameLayout mMenuDragLayout;
-	private View contentView;
-	private View dragView;
-	private int contentHeight;
-	private int contentWidth;
-	private int deleteWidth;
-	private float moveX;
-	private float moveY;
-	private float downIX;
-	private float downIY;
+	public View contentView;
+	public View dragView;
+	public int contentHeight;
+	public int contentWidth;
+	public int deleteWidth;
+	public float moveX;
+	public float moveY;
+	public float downIX;
+	public float downIY;
 	
 	//默认状态是关闭
 	private MenuDragLayout.State state = MenuDragLayout.State.close;
