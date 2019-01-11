@@ -8,7 +8,7 @@ package com.evil.helper.recycler.menu;
  */
 public class SwipeMenuManager {
 	private static SwipeMenuManager sSwipeMenuManager = new SwipeMenuManager();
-	private MenuDragLayout swipeDeleteItem;
+	private IMenuDrag swipeDeleteItem;
 	
 	private SwipeMenuManager() {
 	}
@@ -17,7 +17,7 @@ public class SwipeMenuManager {
 		return sSwipeMenuManager;
 	}
 	
-	public void setMenuDragLayout(MenuDragLayout s) {
+	public void setMenuDragLayout(IMenuDrag s) {
 		swipeDeleteItem = s;
 	}
 	
@@ -42,7 +42,7 @@ public class SwipeMenuManager {
 	/**
 	 * 是否有item已经打开
 	 */
-	public boolean haveOpened(MenuDragLayout s) {
+	public boolean haveOpened(IMenuDrag s) {
 		//如果为空 表示没有打开的item
 		return swipeDeleteItem != null && swipeDeleteItem == s;
 		// true 表示 两个item不是同一个 有一个已经打开的item

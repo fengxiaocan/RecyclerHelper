@@ -1,10 +1,8 @@
 package com.evil.helper.recycler.holder;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.evil.helper.recycler.inface.IRecycleData;
-import com.evil.helper.recycler.menu.MenuDragLayout;
 
 /**
  * @author noah
@@ -16,7 +14,7 @@ public abstract class SwipeRecyclerViewHolder<T extends IRecycleData> extends Re
 	protected View contentView;
 	protected View menuView;
 	
-	public SwipeRecyclerViewHolder(MenuDragLayout layout) {
+	public SwipeRecyclerViewHolder(View layout) {
 		super(layout);
 	}
 	

@@ -1,35 +1,41 @@
 package com.evil.recyclerhelper;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
-import com.evil.helper.recycler.adapter.ComRecyclerViewAdapter;
 import com.evil.helper.recycler.adapter.SwipeRecyclerViewAdapter;
-import com.evil.helper.recycler.holder.RecyclerViewHolder;
-import com.evil.helper.recycler.holder.SimpleRecyclerViewHolder;
 import com.evil.helper.recycler.holder.SwipeRecyclerViewHolder;
 import com.evil.helper.recycler.inface.IRecycleData;
+import com.evil.helper.recycler.menu.IMenuDragView;
 import com.evil.helper.recycler.menu.MenuDragLayout;
 
 public class TestAdapter extends SwipeRecyclerViewAdapter<IRecycleData,SwipeRecyclerViewHolder<IRecycleData>> {
 	
 	@Override
 	public SwipeRecyclerViewHolder<IRecycleData> onCreateWithMenuHolder(
-			MenuDragLayout layout,int viewType)
+			View layout,int viewType)
 	{
 		return new SwipeRecyclerViewHolder<IRecycleData>(layout) {
-			public void initMenu(View menuLayout) {
+			private TextView mTextView;
 			
+			public void initMenu(View menuLayout) {
 			}
 			
 			public void setData(
 					RecyclerView.Adapter adapter,IRecycleData iRecycleData,int position)
 			{
-			
+				String text = "哈哈哈";
+				for (int i = 0;i < position;i++) {
+					text += "\n哈哈哈";
+				}
+				mTextView.setText(text);
 			}
 			
 			public void initView(View rootView) {
-			
+				mTextView = findViewById(R.id.tv_title);
 			}
 		};
 	}
