@@ -1,9 +1,9 @@
 package com.evil.helper.recycler.adapter;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +13,7 @@ import com.evil.helper.recycler.holder.DivideRecyclerViewHolder;
 import com.evil.helper.recycler.holder.EmptyViewHolder;
 import com.evil.helper.recycler.holder.RecyclerViewFooter;
 import com.evil.helper.recycler.holder.RecyclerViewHeader;
-import com.evil.helper.recycler.holder.RecyclerViewHolder;
 import com.evil.helper.recycler.inface.IRecycleData;
-import com.evil.helper.recycler.inface.OnAdapterItemClickListener;
 import com.evil.helper.recycler.inface.OnFooterClickListener;
 import com.evil.helper.recycler.inface.OnHeaderClickListener;
 

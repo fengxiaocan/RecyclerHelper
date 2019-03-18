@@ -1,7 +1,7 @@
 package com.evil.helper.recycler.menu;
 
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.ViewDragHelper;
+import androidx.core.view.ViewCompat;
+import androidx.customview.widget.ViewDragHelper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;

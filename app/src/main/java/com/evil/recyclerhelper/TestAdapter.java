@@ -1,16 +1,13 @@
 package com.evil.recyclerhelper;
 
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.evil.helper.recycler.adapter.SwipeRecyclerViewAdapter;
 import com.evil.helper.recycler.holder.SwipeRecyclerViewHolder;
 import com.evil.helper.recycler.inface.IRecycleData;
-import com.evil.helper.recycler.menu.IMenuDragView;
-import com.evil.helper.recycler.menu.MenuDragLayout;
 
 public class TestAdapter extends SwipeRecyclerViewAdapter<IRecycleData,SwipeRecyclerViewHolder<IRecycleData>> {
 	

@@ -1,6 +1,6 @@
 package com.evil.helper.recycler.recyclerhelper;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.evil.helper.recycler.decoration.SpacesItemDecoration;
 

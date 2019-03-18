@@ -1,6 +1,6 @@
 package com.evil.helper.recycler.holder;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 public abstract class DivideRecyclerViewHolder<T> extends BaseRecyclerHolder {

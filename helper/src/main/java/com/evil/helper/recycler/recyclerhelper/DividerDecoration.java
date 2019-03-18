@@ -1,9 +1,9 @@
 package com.evil.helper.recycler.recyclerhelper;
 
 import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.DrawableRes;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.RecyclerView;
 import android.widget.LinearLayout;
 
 

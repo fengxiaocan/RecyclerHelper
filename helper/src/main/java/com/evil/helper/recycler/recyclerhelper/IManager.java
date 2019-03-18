@@ -1,6 +1,6 @@
 package com.evil.helper.recycler.recyclerhelper;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @author noah
@@ -50,6 +50,11 @@ public abstract class IManager<T extends RecyclerView.LayoutManager> extends IHe
     public SpaceDecoration addSpaceDecoration() {
         this.init();
         return new SpaceDecoration(recyclerView);
+    }
+
+    public LineDecoration addLineDecoration() {
+        this.init();
+        return new LineDecoration(recyclerView);
     }
 
 }
