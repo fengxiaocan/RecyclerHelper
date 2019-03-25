@@ -26,8 +26,6 @@ import java.util.List;
  */
 public abstract class MultipleRecyclerViewAdapter<T extends IRecycleData,V extends RecyclerViewHolder<T>> extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
 	protected View mEmptyView;
-	protected int mEmptyViewLayout;
-	protected int mEmptyType = EMPTY_VIEW_TYPE;
 	/**
 	 * The M datas.
 	 */
@@ -370,7 +368,7 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecycleData,V exten
 	@Override
 	public int getItemViewType(int position) {
 		if (isEmpty() && isHasEmptyView()) {
-			return mEmptyType;
+			return EMPTY_VIEW_TYPE;
 		}
 		return mDatas.get(position).getRecycleType();
 	}
@@ -395,7 +393,7 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecycleData,V exten
 		}
 		return 0;
 	}
-	
+
 	@Override
 	public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
 		super.onAttachedToRecyclerView(recyclerView);
@@ -413,7 +411,7 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecycleData,V exten
 			});
 		}
 	}
-	
+
 	/**
 	 * 针对流式布局
 	 *
@@ -434,34 +432,20 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecycleData,V exten
 			}
 		}
 	}
-	
-	@Override
-	public void setEmptyView(int layout,ViewGroup referenceViewGroup) {
-		if (referenceViewGroup != null && mEmptyViewLayout != layout) {
-			LayoutInflater from = LayoutInflater.from(referenceViewGroup.getContext());
-			mEmptyView = from.inflate(layout,referenceViewGroup,false);
-			mEmptyViewLayout = layout;
-			mEmptyType = mEmptyType == EMPTY_VIEW_TYPE ? EMPTY_VIEW_TYPE2 : EMPTY_VIEW_TYPE;
+
+	public void setEmptyView(View emptyView) {
+		if (mEmptyView != emptyView) {
+			mEmptyView = emptyView;
 			notifyDataSetChanged();
 		}
 	}
-	
-	@Override
-	public void setEmptyView(View emptyView) {
-		mEmptyViewLayout = 0;
-		mEmptyType = mEmptyType == EMPTY_VIEW_TYPE ? EMPTY_VIEW_TYPE2 : EMPTY_VIEW_TYPE;
-		mEmptyView = emptyView;
-		notifyDataSetChanged();
-	}
-	
-	@Override
+
 	public boolean isEmpty() {
 		return getRealItemCount() == 0;
 	}
-	
-	@Override
+
 	public boolean isHasEmptyView() {
 		return mEmptyView != null;
 	}
-	
+
 }
