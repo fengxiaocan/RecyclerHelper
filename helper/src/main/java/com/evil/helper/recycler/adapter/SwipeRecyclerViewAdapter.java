@@ -31,12 +31,15 @@ public abstract class SwipeRecyclerViewAdapter<T extends IRecycleData,V extends 
 	public BaseRecyclerHolder onCreateViewHolder(
 			@NonNull ViewGroup parent,int viewType)
 	{
-		if (isFooter(viewType)) {
-			//暂时不支持footer及Header添加侧滑删除功能
+		if (isEmptyView(viewType)) {
+			return emptyRecyclerView.getHolder();
+		} else if (isLoadingView(viewType)) {
+			return loadingRecyclerView.getHolder();
+		} else if (isErrorView(viewType)) {
+			return errorRecyclerView.getHolder();
+		} else if (isFooter(viewType)) {
 			return getFooterHolder(viewType);
-		}
-		else if (isHeader(viewType)) {
-			//暂时不支持footer及Header添加侧滑删除功能
+		} else if (isHeader(viewType)) {
 			return getHeaderHolder(viewType);
 		}
 		else {
