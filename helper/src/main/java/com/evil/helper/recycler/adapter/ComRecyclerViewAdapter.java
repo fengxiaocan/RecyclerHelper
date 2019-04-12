@@ -388,18 +388,14 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
                 if (holder instanceof RecyclerViewHolder) {
                     RecyclerViewHolder viewHolder = (RecyclerViewHolder) holder;
                     viewHolder.setData(this, getData(realPosition), realPosition);
-                    onBindDefaultData((V) holder, realPosition);
                 }
                 if (mTOnAdapterItemClickListener != null) {
                     holder.getItemView().setOnClickListener(new OnItemClick(realPosition));
                 }
-            } else {
-
             }
         }
     }
 
-    protected abstract void onBindDefaultData(V holder, int position);
 
     @Override
     public int getItemViewType(int position) {
@@ -727,5 +723,10 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
                 mTOnAdapterItemClickListener.onItemClick(v, getDatas(), position);
             }
         }
+    }
+
+    @Override
+    public void registerAdapterDataObserver(@NonNull RecyclerView.AdapterDataObserver observer) {
+        super.registerAdapterDataObserver(observer);
     }
 }

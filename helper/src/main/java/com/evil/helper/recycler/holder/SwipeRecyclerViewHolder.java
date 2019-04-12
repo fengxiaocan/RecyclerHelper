@@ -1,8 +1,13 @@
 package com.evil.helper.recycler.holder;
 
 import android.view.View;
+import android.view.ViewGroup;
 
+import com.evil.helper.recycler.adapter.SwipeRecyclerViewAdapter;
 import com.evil.helper.recycler.inface.IRecycleData;
+import com.evil.helper.recycler.inface.OnMenuItemClickListener;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @author noah
@@ -39,5 +44,36 @@ public abstract class SwipeRecyclerViewHolder<T extends IRecycleData> extends Re
 	@Override
 	public View getItemView() {
 		return contentView;
+	}
+
+	@Override
+	public void onBindData(RecyclerView.Adapter adapter, final int position) {
+		SwipeRecyclerViewAdapter viewAdapter = (SwipeRecyclerViewAdapter) adapter;
+		final OnMenuItemClickListener onMenuItemClickListener = viewAdapter.getOnMenuItemClickListener();
+		if (onMenuItemClickListener != null) {
+			if (menuView instanceof ViewGroup) {
+				for (int i = 0;i < ((ViewGroup)menuView).getChildCount();i++) {
+					View child = ((ViewGroup)menuView).getChildAt(i);
+					final int childPosition = i;
+					if (child != null) {
+						child.setOnClickListener(new View.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								onMenuItemClickListener
+										.onMenuItemClick(v,position,childPosition);
+							}
+						});
+					}
+				}
+			}
+			else {
+				menuView.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						onMenuItemClickListener.onMenuItemClick(v,position,0);
+					}
+				});
+			}
+		}
 	}
 }
