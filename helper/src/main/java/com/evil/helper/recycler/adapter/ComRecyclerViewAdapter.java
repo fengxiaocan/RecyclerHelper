@@ -47,12 +47,10 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
     protected LoadingRecyclerView loadingRecyclerView;//加载中布局
     protected ErrorRecyclerView errorRecyclerView;//错误布局
     protected boolean emptyCompatHeaderOrFooter = false;//空布局是否兼容头部或者脚步
-    private RecyclerType currentShowType = RecyclerType.NORMAL;
-
     protected OnAdapterItemClickListener<T> mTOnAdapterItemClickListener;
     protected OnHeaderClickListener mOnHeaderClickListener;
     protected OnFooterClickListener mOnFooterClickListener;
-
+    private RecyclerType currentShowType = RecyclerType.NORMAL;
 
     public void setEmptyCompatHeaderOrFooter(boolean emptyCompatHeaderOrFooter) {
         this.emptyCompatHeaderOrFooter = emptyCompatHeaderOrFooter;
@@ -458,10 +456,6 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
         return mDatas;
     }
 
-    public void setDatas(List<T> datas) {
-        mDatas = datas;
-    }
-
     public void setDatas(T... datas) {
         if (datas != null) {
             if (mDatas == null) {
@@ -472,6 +466,10 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
                 mDatas.add(data);
             }
         }
+    }
+
+    public void setDatas(List<T> datas) {
+        mDatas = datas;
     }
 
     public void setDatasAndNotify(T... datas) {
@@ -706,8 +704,21 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
         return getRealItemCount() == 0;
     }
 
+    public boolean isNotRealEmpty() {
+        return getRealItemCount() > 0;
+    }
+
     public boolean isEmpty() {
         return getAllItemCount() == 0;
+    }
+
+    public boolean isNotEmpty() {
+        return getAllItemCount() > 0;
+    }
+
+    @Override
+    public void registerAdapterDataObserver(@NonNull RecyclerView.AdapterDataObserver observer) {
+        super.registerAdapterDataObserver(observer);
     }
 
     private class OnItemClick implements View.OnClickListener {
@@ -723,10 +734,5 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
                 mTOnAdapterItemClickListener.onItemClick(v, getDatas(), position);
             }
         }
-    }
-
-    @Override
-    public void registerAdapterDataObserver(@NonNull RecyclerView.AdapterDataObserver observer) {
-        super.registerAdapterDataObserver(observer);
     }
 }

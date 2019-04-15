@@ -402,7 +402,13 @@ public abstract class SimpleRecyclerViewAdapter<T, V extends RecyclerViewHolder<
     public boolean isHasEmptyView() {
         return mEmptyView != null;
     }
+    public boolean isNotRealEmpty() {
+        return getRealItemCount() > 0;
+    }
 
+    public boolean isNotEmpty() {
+        return getItemCount() > 0;
+    }
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);

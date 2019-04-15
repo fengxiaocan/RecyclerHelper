@@ -434,4 +434,12 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
     public boolean isHasEmptyView() {
         return mEmptyView != null;
     }
+
+    public boolean isNotRealEmpty() {
+        return getRealItemCount() > 0;
+    }
+
+    public boolean isNotEmpty() {
+        return getItemCount() > 0;
+    }
 }

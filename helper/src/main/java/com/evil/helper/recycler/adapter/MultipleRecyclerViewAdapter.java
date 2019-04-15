@@ -444,4 +444,11 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecycleData, V exte
         return mEmptyView != null;
     }
 
+    public boolean isNotRealEmpty() {
+        return getRealItemCount() > 0;
+    }
+
+    public boolean isNotEmpty() {
+        return getItemCount() > 0;
+    }
 }
