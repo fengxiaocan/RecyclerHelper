@@ -435,11 +435,11 @@ public abstract class SimpleRecyclerViewAdapter<T, V extends RecyclerViewHolder<
     @Override
     public void onViewAttachedToWindow(@NonNull BaseRecyclerHolder holder) {
         super.onViewAttachedToWindow(holder);
-        int layoutPosition = holder.getLayoutPosition();
-        if ((isEmpty() && isHasEmptyView())) {
-            ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-            if (layoutParams != null) {
-                if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
+        //        int layoutPosition = holder.getLayoutPosition();
+        ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
+        if (layoutParams != null) {
+            if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
+                if (holder.isStaggeredGridFullSpan()) {
                     StaggeredGridLayoutManager.LayoutParams params =
                             (StaggeredGridLayoutManager.LayoutParams) layoutParams;
                     //占领全部空间;

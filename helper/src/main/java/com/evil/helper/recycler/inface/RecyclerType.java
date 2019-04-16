@@ -1,7 +1,7 @@
 package com.evil.helper.recycler.inface;
 
 public enum RecyclerType {
-    NORMAL(0),
+    DEFAULT(0),
     EMPTY(1),
     LOADING(2),
     ERROR(2);

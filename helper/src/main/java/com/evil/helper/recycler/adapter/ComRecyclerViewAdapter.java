@@ -36,8 +36,9 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  */
 public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends RecyclerViewHolder<T>>
         extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
-    public static final int EXTEND_RECYCLER_HEADER_TYPE = -0x11111;//头部
-    public static final int EXTEND_RECYCLER_FOOTER_TYPE = -0xfffff;//脚部
+    public static final int EXTEND_RECYCLER_HEADER_TYPE = -0x111111;//头部
+    public static final int EXTEND_RECYCLER_FOOTER_TYPE = -0xffffff;//脚部
+    public static final int MAX_EXTEND_RECYCLER_TYPE = Integer.MIN_VALUE + 3000;
 
     protected List<T> mDatas;
     protected LinkedList<RecyclerViewHeader> mHeaders;
@@ -47,10 +48,28 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
     protected LoadingRecyclerView loadingRecyclerView;//加载中布局
     protected ErrorRecyclerView errorRecyclerView;//错误布局
     protected boolean emptyCompatHeaderOrFooter = false;//空布局是否兼容头部或者脚步
+    protected boolean autoShowEmpty = false;//在currentShowType == RecyclerType.DEFAULT 情况下自动显示空布局
     protected OnAdapterItemClickListener<T> mTOnAdapterItemClickListener;
     protected OnHeaderClickListener mOnHeaderClickListener;
     protected OnFooterClickListener mOnFooterClickListener;
-    private RecyclerType currentShowType = RecyclerType.NORMAL;
+    protected RecyclerType currentShowType = RecyclerType.DEFAULT;
+    protected int OTHER_TYPE = Integer.MIN_VALUE;
+
+    /**
+     * 是否自动显示空布局,如果为false,则空布局只能通过调用showEmptyView来展示,为true,在调用showDefaultView,在数据为空时自动添加上空布局
+     *
+     * @param autoShowEmpty
+     */
+    public void setAutoShowEmpty(boolean autoShowEmpty) {
+        this.autoShowEmpty = autoShowEmpty;
+    }
+
+    protected void decrease() {
+        OTHER_TYPE++;
+        if (OTHER_TYPE >= MAX_EXTEND_RECYCLER_TYPE) {
+            OTHER_TYPE = Integer.MIN_VALUE;
+        }
+    }
 
     public void setEmptyCompatHeaderOrFooter(boolean emptyCompatHeaderOrFooter) {
         this.emptyCompatHeaderOrFooter = emptyCompatHeaderOrFooter;
@@ -71,13 +90,8 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
         notifyDataSetChanged();
     }
 
-    public void showNormalView() {
-        currentShowType = RecyclerType.NORMAL;
-        notifyDataSetChanged();
-    }
-
-    public void hideEmptyView() {
-        currentShowType = RecyclerType.NORMAL;
+    public void showDefaultView() {
+        currentShowType = RecyclerType.DEFAULT;
         notifyDataSetChanged();
     }
 
@@ -157,7 +171,36 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
                     return 0;
                 }
             default:
-                return getAllItemCount();
+                if (autoShowEmpty) {//自动显示空布局
+                    if (emptyCompatHeaderOrFooter) {//兼容头部尾巴
+                        if (isRealEmpty()) {//数据为空
+                            if (isHasEmptyView()) {//有空布局就加1
+                                return getHeaderCount() + getFooterCount() + 1;
+                            } else {//否则就返回头尾
+                                return getHeaderCount() + getFooterCount();
+                            }
+                        } else {//数据不为空就返回数据条数
+                            return getAllItemCount();
+                        }
+                    } else {
+                        //不兼容头尾
+                        if (isEmpty()) {//如果是空
+                            if (isHasEmptyView()) {
+                                //有空布局就返回1
+                                return 1;
+                            } else {
+                                //否则就返回0
+                                return 0;
+                            }
+                        } else {
+                            return getAllItemCount();
+                        }
+                    }
+                } else {
+                    //不自动显示空布局,返回所有数据条目
+                    return getAllItemCount();
+                }
+
         }
     }
 
@@ -236,14 +279,27 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
     }
 
     public boolean isFooterOfPosition(int position) {
-        if (currentShowType == RecyclerType.NORMAL) {
-            return hasFooter() && position >= getRealItemCount() + getHeaderCount();
+        if (currentShowType == RecyclerType.DEFAULT) {
+            if (autoShowEmpty) {
+                if (isRealEmpty()) {
+                    return hasFooter() && position >= 1 + getHeaderCount();
+                } else {
+                    return hasFooter() && position >= getRealItemCount() + getHeaderCount();
+                }
+            } else {
+                return hasFooter() && position >= getRealItemCount() + getHeaderCount();
+            }
         }
-        if (isHasOtherView()) {
+        if (isHasEmptyView() && currentShowType == RecyclerType.EMPTY) {
             return hasFooter() && position >= 1 + getHeaderCount();
-        } else {
-            return hasFooter() && position >= getHeaderCount();
         }
+        if (isHasErrorView() && currentShowType == RecyclerType.ERROR) {
+            return hasFooter() && position >= 1 + getHeaderCount();
+        }
+        if (isHasLoadingView() && currentShowType == RecyclerType.LOADING) {
+            return hasFooter() && position >= 1 + getHeaderCount();
+        }
+        return hasFooter() && position >= getHeaderCount();
     }
 
     public boolean isFooter(int viewType) {
@@ -266,6 +322,33 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
         }
     }
 
+    /**
+     * 获取GridLayoutManager情况下的SpanSize
+     *
+     * @param manager
+     * @param position
+     * @return
+     */
+    public int getGridLayoutSpanSize(GridLayoutManager manager, int position) {
+        if (currentShowType != RecyclerType.DEFAULT) {
+            return manager.getSpanCount();
+        }
+        //如果是头布局或者是脚布局返回为1;
+        int itemViewType = getItemViewType(position);
+        if (autoShowEmpty && isRealEmpty()) {
+            if (isEmptyView(itemViewType)) {
+                return manager.getSpanCount();
+            }
+        }
+        if (isHeader(itemViewType)) {
+            return manager.getSpanCount();
+        }
+        if (isFooter(itemViewType)) {
+            return manager.getSpanCount();
+        }
+        return 1;
+    }
+
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -274,18 +357,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
             ((GridLayoutManager) manager).setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override
                 public int getSpanSize(int position) {
-                    if (currentShowType != RecyclerType.NORMAL) {
-                        return ((GridLayoutManager) manager).getSpanCount();
-                    }
-                    //如果是头布局或者是脚布局返回为1;
-                    int itemViewType = getItemViewType(position);
-                    if (isHeader(itemViewType)) {
-                        return ((GridLayoutManager) manager).getSpanCount();
-                    }
-                    if (isFooter(itemViewType)) {
-                        return ((GridLayoutManager) manager).getSpanCount();
-                    }
-                    return 1;
+                    return getGridLayoutSpanSize((GridLayoutManager) manager, position);
                 }
             });
         }
@@ -299,13 +371,11 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
     @Override
     public void onViewAttachedToWindow(@NonNull BaseRecyclerHolder holder) {
         super.onViewAttachedToWindow(holder);
-        int layoutPosition = holder.getLayoutPosition();
+        //        int layoutPosition = holder.getLayoutPosition();
         ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
         if (layoutParams != null) {
             if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
-                boolean b = currentShowType != RecyclerType.NORMAL || isHeaderOfPosition(
-                        layoutPosition) || isFooterOfPosition(layoutPosition);
-                if (b) {
+                if (holder.isStaggeredGridFullSpan()) {
                     StaggeredGridLayoutManager.LayoutParams params =
                             (StaggeredGridLayoutManager.LayoutParams) layoutParams;
                     //占领全部空间;
@@ -381,7 +451,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
                 });
             }
         } else {
-            if (currentShowType == RecyclerType.NORMAL) {
+            if (currentShowType == RecyclerType.DEFAULT && isNotRealEmpty()) {
                 int realPosition = position - getHeaderCount();
                 if (holder instanceof RecyclerViewHolder) {
                     RecyclerViewHolder viewHolder = (RecyclerViewHolder) holder;
@@ -397,25 +467,47 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
 
     @Override
     public int getItemViewType(int position) {
-        if (currentShowType != RecyclerType.NORMAL) {
+        if (currentShowType != RecyclerType.DEFAULT) {
             if (emptyCompatHeaderOrFooter) {
                 //兼容
                 if (isHeaderOfPosition(position)) {
                     return mHeaders.get(position).getViewType();
-                } else if (isFooterOfPosition(position)) {
-                    return mFooters.get(position - (1 + getHeaderCount())).getViewType();
                 } else {
                     if (currentShowType == RecyclerType.EMPTY) {
                         if (isHasEmptyView()) {
+                            if (isFooterOfPosition(position)) {
+                                return mFooters.get(position - (1 + getHeaderCount()))
+                                               .getViewType();
+                            }
                             return emptyRecyclerView.getViewType();
+                        } else {
+                            if (isFooterOfPosition(position)) {
+                                return mFooters.get(position - (getHeaderCount())).getViewType();
+                            }
                         }
                     } else if (currentShowType == RecyclerType.ERROR) {
-                        if (isHasEmptyView()) {
+                        if (isHasErrorView()) {
+                            if (isFooterOfPosition(position)) {
+                                return mFooters.get(position - (1 + getHeaderCount()))
+                                               .getViewType();
+                            }
                             return errorRecyclerView.getViewType();
+                        } else {
+                            if (isFooterOfPosition(position)) {
+                                return mFooters.get(position - (getHeaderCount())).getViewType();
+                            }
                         }
                     } else if (currentShowType == RecyclerType.LOADING) {
-                        if (isHasEmptyView()) {
+                        if (isHasLoadingView()) {
+                            if (isFooterOfPosition(position)) {
+                                return mFooters.get(position - (1 + getHeaderCount()))
+                                               .getViewType();
+                            }
                             return loadingRecyclerView.getViewType();
+                        } else {
+                            if (isFooterOfPosition(position)) {
+                                return mFooters.get(position - (getHeaderCount())).getViewType();
+                            }
                         }
                     }
                     return 0;
@@ -426,11 +518,11 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
                         return emptyRecyclerView.getViewType();
                     }
                 } else if (currentShowType == RecyclerType.ERROR) {
-                    if (isHasEmptyView()) {
+                    if (isHasErrorView()) {
                         return errorRecyclerView.getViewType();
                     }
                 } else if (currentShowType == RecyclerType.LOADING) {
-                    if (isHasEmptyView()) {
+                    if (isHasLoadingView()) {
                         return loadingRecyclerView.getViewType();
                     }
                 }
@@ -439,11 +531,20 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
         } else {
             if (isHeaderOfPosition(position)) {
                 return mHeaders.get(position).getViewType();
-            } else if (isFooterOfPosition(position)) {
-                return mFooters.get(position - (getRealItemCount() + getHeaderCount()))
-                               .getViewType();
             } else {
-                return getData(position - getHeaderCount()).getRecycleType();
+                int realItemCount = getRealItemCount();
+                if (isFooterOfPosition(position)) {
+                    if (autoShowEmpty && realItemCount == 0 && isHasEmptyView()) {
+                        realItemCount = 1;
+                    }
+                    return mFooters.get(position - (realItemCount + getHeaderCount()))
+                                   .getViewType();
+                } else {
+                    if (autoShowEmpty && realItemCount == 0 && isHasEmptyView()) {
+                        return emptyRecyclerView.getViewType();
+                    }
+                    return getData(position - getHeaderCount()).getRecycleType();
+                }
             }
         }
     }
@@ -612,75 +713,93 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
 
     public void setEmptyView(int type, BaseRecyclerHolder holder) {
         emptyRecyclerView = new EmptyRecyclerView(type, holder);
+        decrease();
     }
 
     public void setEmptyView(View layotu) {
-        emptyRecyclerView = new EmptyRecyclerView(layotu);
+        emptyRecyclerView = new EmptyRecyclerView(OTHER_TYPE, layotu);
+        decrease();
     }
 
     public void setEmptyView(int viewType, View rootView) {
         emptyRecyclerView = new EmptyRecyclerView(viewType, rootView);
+        decrease();
     }
 
     public void setEmptyView(BaseRecyclerHolder holder) {
-        emptyRecyclerView = new EmptyRecyclerView(holder);
+        emptyRecyclerView = new EmptyRecyclerView(OTHER_TYPE, holder);
+        decrease();
     }
 
     public void setEmptyView(Context context, int viewType, int layoutId) {
         emptyRecyclerView = new EmptyRecyclerView(context, viewType, layoutId);
+        decrease();
     }
 
     public void setEmptyView(Context context, int layoutId) {
-        emptyRecyclerView = new EmptyRecyclerView(context, layoutId);
+        emptyRecyclerView = new EmptyRecyclerView(context, OTHER_TYPE, layoutId);
+        decrease();
     }
 
     public void setLoadingView(int type, BaseRecyclerHolder holder) {
         loadingRecyclerView = new LoadingRecyclerView(type, holder);
+        decrease();
     }
 
     public void setLoadingView(View layotu) {
-        loadingRecyclerView = new LoadingRecyclerView(layotu);
+        loadingRecyclerView = new LoadingRecyclerView(OTHER_TYPE, layotu);
+        decrease();
     }
 
     public void setLoadingView(int viewType, View rootView) {
         loadingRecyclerView = new LoadingRecyclerView(viewType, rootView);
+        decrease();
     }
 
     public void setLoadingView(BaseRecyclerHolder holder) {
-        loadingRecyclerView = new LoadingRecyclerView(holder);
+        loadingRecyclerView = new LoadingRecyclerView(OTHER_TYPE, holder);
+        decrease();
     }
 
     public void setLoadingView(Context context, int viewType, int layoutId) {
         loadingRecyclerView = new LoadingRecyclerView(context, viewType, layoutId);
+        decrease();
     }
 
     public void setLoadingView(Context context, int layoutId) {
-        loadingRecyclerView = new LoadingRecyclerView(context, layoutId);
+        loadingRecyclerView = new LoadingRecyclerView(context, OTHER_TYPE, layoutId);
+        decrease();
     }
 
 
     public void setErrorView(int type, BaseRecyclerHolder holder) {
         errorRecyclerView = new ErrorRecyclerView(type, holder);
+        decrease();
     }
 
     public void setErrorView(View layotu) {
-        errorRecyclerView = new ErrorRecyclerView(layotu);
+        errorRecyclerView = new ErrorRecyclerView(OTHER_TYPE, layotu);
+        decrease();
     }
 
     public void setErrorView(int viewType, View rootView) {
         errorRecyclerView = new ErrorRecyclerView(viewType, rootView);
+        decrease();
     }
 
     public void setErrorView(BaseRecyclerHolder holder) {
-        errorRecyclerView = new ErrorRecyclerView(holder);
+        errorRecyclerView = new ErrorRecyclerView(OTHER_TYPE, holder);
+        decrease();
     }
 
     public void setErrorView(Context context, int viewType, int layoutId) {
         errorRecyclerView = new ErrorRecyclerView(context, viewType, layoutId);
+        decrease();
     }
 
     public void setErrorView(Context context, int layoutId) {
-        errorRecyclerView = new ErrorRecyclerView(context, layoutId);
+        errorRecyclerView = new ErrorRecyclerView(context, OTHER_TYPE, layoutId);
+        decrease();
     }
 
 
@@ -693,7 +812,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
     }
 
     public boolean isHasErrorView() {
-        return loadingRecyclerView != null;
+        return errorRecyclerView != null;
     }
 
     protected boolean isHasOtherView() {

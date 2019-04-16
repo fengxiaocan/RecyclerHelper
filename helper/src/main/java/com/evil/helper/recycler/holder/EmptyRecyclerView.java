@@ -13,36 +13,27 @@ import com.evil.helper.recycler.adapter.IExtendAdapter;
  * @desc ...
  */
 public class EmptyRecyclerView {
-    private int viewType = IExtendAdapter.EMPTY_VIEW_TYPE;
+    private int viewType ;
     private BaseRecyclerHolder holder;
 
-    public EmptyRecyclerView(View layout) {
-        this.holder = new SimpleRecyclerHolder(layout);
-    }
 
     public EmptyRecyclerView(int viewType, View rootView) {
         this.viewType = viewType;
         this.holder = new SimpleRecyclerHolder(rootView);
-    }
-
-    public EmptyRecyclerView(BaseRecyclerHolder holder) {
-        this.holder = holder;
+        this.holder.isStaggeredGridFullSpan(true);
     }
 
     public EmptyRecyclerView(int viewType, BaseRecyclerHolder holder) {
         this.viewType = viewType;
         this.holder = holder;
+        this.holder.isStaggeredGridFullSpan(true);
     }
 
     public EmptyRecyclerView(Context context, int viewType, int layoutId) {
         this.viewType = viewType;
         this.holder = new SimpleRecyclerHolder(
                 LayoutInflater.from(context).inflate(layoutId, null));
-    }
-
-    public EmptyRecyclerView(Context context, int layoutId) {
-        this.holder = new SimpleRecyclerHolder(
-                LayoutInflater.from(context).inflate(layoutId, null));
+        this.holder.isStaggeredGridFullSpan(true);
     }
 
     public BaseRecyclerHolder getHolder() {
@@ -51,6 +42,7 @@ public class EmptyRecyclerView {
 
     public void setHolder(BaseRecyclerHolder holder) {
         this.holder = holder;
+        this.holder.isStaggeredGridFullSpan(true);
     }
 
     public int getViewType() {

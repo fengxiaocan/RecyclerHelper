@@ -4,8 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.evil.helper.recycler.adapter.IExtendAdapter;
-
 /**
  * @author noah
  * @email fengxiaocan@gmail.com
@@ -13,42 +11,36 @@ import com.evil.helper.recycler.adapter.IExtendAdapter;
  * @desc ...
  */
 public class LoadingRecyclerView {
-    private int viewType = IExtendAdapter.LOADING_VIEW_TYPE;
+    private int viewType;
     private BaseRecyclerHolder holder;
 
-    public LoadingRecyclerView(View layout) {
-        this.holder = new SimpleRecyclerHolder(layout);
-    }
 
     public LoadingRecyclerView(int viewType, View rootView) {
         this.viewType = viewType;
         this.holder = new SimpleRecyclerHolder(rootView);
-    }
-
-    public LoadingRecyclerView(BaseRecyclerHolder holder) {
-        this.holder = holder;
+        this.holder.isStaggeredGridFullSpan(true);
     }
 
     public LoadingRecyclerView(int viewType, BaseRecyclerHolder holder) {
         this.viewType = viewType;
         this.holder = holder;
+        this.holder.isStaggeredGridFullSpan(true);
     }
 
     public LoadingRecyclerView(Context context, int viewType, int layoutId) {
         this.viewType = viewType;
         this.holder = new SimpleRecyclerHolder(
                 LayoutInflater.from(context).inflate(layoutId, null));
+        this.holder.isStaggeredGridFullSpan(true);
     }
-    public LoadingRecyclerView(Context context, int layoutId) {
-        this.holder = new SimpleRecyclerHolder(
-                LayoutInflater.from(context).inflate(layoutId, null));
-    }
+
     public BaseRecyclerHolder getHolder() {
         return holder;
     }
 
     public void setHolder(BaseRecyclerHolder holder) {
         this.holder = holder;
+        this.holder.isStaggeredGridFullSpan(true);
     }
 
     public int getViewType() {

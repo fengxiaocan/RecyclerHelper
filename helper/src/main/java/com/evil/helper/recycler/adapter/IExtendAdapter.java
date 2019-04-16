@@ -1,8 +1,5 @@
 package com.evil.helper.recycler.adapter;
 
-import android.view.View;
-import android.view.ViewGroup;
-
 import java.util.List;
 
 import androidx.annotation.LayoutRes;
@@ -14,18 +11,16 @@ import androidx.annotation.LayoutRes;
  * @desc ...
  */
 public interface IExtendAdapter<T> {
-    int EMPTY_VIEW_TYPE = -0x888888;
-    int LOADING_VIEW_TYPE = -0x888889;
-    int ERROR_VIEW_TYPE = -0x888890;
+    int EMPTY_VIEW_TYPE = Integer.MIN_VALUE;
 
     //获取数据集
     List<T> getDatas();
 
     //设置数据集
-    void setDatas(List<T> datas);
+    void setDatas(T... datas);
 
     //设置数据集
-    void setDatas(T... datas);
+    void setDatas(List<T> datas);
 
     //设置数据并刷新
     void setDatasAndNotify(T... datas);

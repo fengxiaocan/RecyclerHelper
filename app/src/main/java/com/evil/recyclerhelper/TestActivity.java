@@ -54,7 +54,8 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         mTestAdapter.addHeader(LayoutInflater.from(this).inflate(R.layout.view_header,mRecyclerView,false));
         mTestAdapter.addFooter(LayoutInflater.from(this).inflate(R.layout.view_footer,mRecyclerView,false));
         mTestAdapter.setEmptyCompatHeaderOrFooter(true);
-        mTestAdapter.showEmptyView();
+        mTestAdapter.setAutoShowEmpty(true);
+        mTestAdapter.showDefaultView();
 
         mBtAdd = (Button) findViewById(R.id.bt_add);
         mBtAdd.setOnClickListener(this);
@@ -70,7 +71,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bt_add:
-                mTestAdapter.hideEmptyView();
+                mTestAdapter.showDefaultView();
                 mTestAdapter.addDataAndNotify(new RecyclerData());
                 break;
             case R.id.bt_empty:

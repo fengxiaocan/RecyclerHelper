@@ -39,10 +39,6 @@ public class TestAdapter2 extends
 		};
 	}
 
-	@Override
-	protected void onBindDefaultData(RecyclerViewHolder<IRecycleData> holder, int position) {
-
-	}
 
 	@Override
 	public int onCreateLayoutRes(int viewType) {

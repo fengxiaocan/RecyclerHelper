@@ -15,11 +15,13 @@ public class RecyclerViewFooter {
     public RecyclerViewFooter(int viewType,BaseRecyclerHolder holder) {
         this.viewType = viewType;
         this.holder = holder;
+        this.holder.isStaggeredGridFullSpan(true);
     }
 
     public RecyclerViewFooter(int viewType,View rootView) {
         this.viewType = viewType;
         this.holder = new HeadTallRecyclerHolder(rootView);
+        this.holder.isStaggeredGridFullSpan(true);
     }
 
     public BaseRecyclerHolder getHolder() {
@@ -28,6 +30,7 @@ public class RecyclerViewFooter {
 
     public void setHolder(BaseRecyclerHolder holder) {
         this.holder = holder;
+        this.holder.isStaggeredGridFullSpan(true);
     }
 
     public int getViewType() {

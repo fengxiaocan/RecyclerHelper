@@ -11,6 +11,7 @@ import android.view.View;
 public class HeadTallRecyclerHolder extends BaseRecyclerHolder{
     public HeadTallRecyclerHolder(View itemView) {
         super(itemView);
+        isStaggeredGridFullSpan = true;
     }
 
     @Override

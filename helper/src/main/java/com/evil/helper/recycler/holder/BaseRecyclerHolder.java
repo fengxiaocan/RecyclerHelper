@@ -1,9 +1,10 @@
 package com.evil.helper.recycler.holder;
 
 import android.content.Context;
+import android.view.View;
+
 import androidx.annotation.IdRes;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
 
 /**
  * @author noah
@@ -12,9 +13,19 @@ import android.view.View;
  * @desc ...
  */
 public abstract class BaseRecyclerHolder extends RecyclerView.ViewHolder {
+    protected boolean isStaggeredGridFullSpan = false;//在流式布局的情况下是否需要占满全屏
+
     public BaseRecyclerHolder(View itemView) {
         super(itemView);
         initView(itemView);
+    }
+
+    public boolean isStaggeredGridFullSpan() {
+        return isStaggeredGridFullSpan;
+    }
+
+    public void isStaggeredGridFullSpan(boolean isFull) {
+        isStaggeredGridFullSpan = isFull;
     }
 
     public Context getContext() {
@@ -22,13 +33,13 @@ public abstract class BaseRecyclerHolder extends RecyclerView.ViewHolder {
     }
 
     public abstract void initView(View rootView);
-    
-    public View getItemView(){
+
+    public View getItemView() {
         return itemView;
     }
-    
-    public void onBindData(RecyclerView.Adapter adapter,int position){}
-    
+
+    public void onBindData(RecyclerView.Adapter adapter, int position) {}
+
     public final <T extends View> T findViewById(@IdRes int id) {
         if (id == View.NO_ID) {
             return null;
