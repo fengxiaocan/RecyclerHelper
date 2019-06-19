@@ -2,6 +2,9 @@ package com.evil.helper.recycler.recyclerhelper;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * 滚动到指定位置并且有滚动视觉效果
+ */
 public class RecyclerScrollManager {
     private RecyclerView recyclerView;
     //目标项是否在最后一个可见项之后
