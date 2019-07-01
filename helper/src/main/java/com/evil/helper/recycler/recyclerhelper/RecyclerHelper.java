@@ -4,10 +4,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-/***
- * fengxiaocan@gmail.com
- * 一个Recycler的初始化类
- */
 public class RecyclerHelper {
     private RecyclerView mRecyclerView;
 
@@ -19,12 +15,6 @@ public class RecyclerHelper {
         return new RecyclerHelper(recyclerView);
     }
 
-    /**
-     * 是否滑动到底部
-     *
-     * @param recyclerView
-     * @return
-     */
     public static boolean isSlideToBottom(RecyclerView recyclerView) {
         if (recyclerView == null) {
             return false;
@@ -34,11 +24,6 @@ public class RecyclerHelper {
                 recyclerView.computeVerticalScrollRange());
     }
 
-    /**
-     * 滚动到指定位置并且在屏幕顶部
-     * @param recyclerView
-     * @param position
-     */
     public static void scrollToPosition(RecyclerView recyclerView, int position) {
         if (position > -1) {
             recyclerView.scrollToPosition(position);
@@ -60,23 +45,47 @@ public class RecyclerHelper {
         return new FullyGridManager(mRecyclerView);
     }
 
+    public GridManager fullyGridManager(FullyGridLayoutManager manager) {
+        return new FullyGridManager(mRecyclerView, manager);
+    }
+
     public LinearManager linearManager() {
         return new LinearManager(mRecyclerView);
+    }
+
+    public FullyLinearManager fullyLinearManager() {
+        return new FullyLinearManager(mRecyclerView);
     }
 
     public LinearManager linearManager(boolean matchWidth) {
         return new LinearManager(mRecyclerView, matchWidth);
     }
 
-    public LinearManager fullyLinearManager(boolean matchWidth) {
+    public LinearManager linearManager(LinearLayoutManager manager) {
+        return new LinearManager(mRecyclerView, manager);
+    }
+
+    public FullyLinearManager fullyLinearManager(boolean matchWidth) {
         return new FullyLinearManager(mRecyclerView, matchWidth);
+    }
+
+    public FullyLinearManager fullyLinearManager(FullyLinearLayoutManager manager) {
+        return new FullyLinearManager(mRecyclerView, manager);
     }
 
     public StaggeredGridManager staggeredManager() {
         return new StaggeredGridManager(mRecyclerView);
     }
 
+    public StaggeredGridManager staggeredManager(StaggeredGridLayoutManager manager) {
+        return new StaggeredGridManager(mRecyclerView, manager);
+    }
+
     public StaggeredGridManager fullyStaggeredManager() {
         return new FullyStaggeredGridManager(mRecyclerView);
+    }
+
+    public StaggeredGridManager fullyStaggeredManager(FullyStaggeredGridLayoutManager manager) {
+        return new FullyStaggeredGridManager(mRecyclerView, manager);
     }
 }

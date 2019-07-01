@@ -15,9 +15,13 @@ public class StaggeredGridManager extends IManager<StaggeredGridLayoutManager> {
         super(recyclerView);
     }
 
+    StaggeredGridManager(RecyclerView recyclerView, StaggeredGridLayoutManager manager) {
+        super(recyclerView, manager);
+    }
+
     @Override
     StaggeredGridLayoutManager createManager() {
-        return new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        return new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
     }
 
     @Override
@@ -40,6 +44,7 @@ public class StaggeredGridManager extends IManager<StaggeredGridLayoutManager> {
         mLayoutManager.setSpanCount(spanCount);
         return this;
     }
+
     public StaggeredGridManager gapStrategy(int gapStrategy) {
         //GAP_HANDLING_NONE
         //GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS

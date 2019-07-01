@@ -14,6 +14,10 @@ public class FullyGridManager extends GridManager {
         super(recyclerView);
     }
 
+    public FullyGridManager(RecyclerView recyclerView, GridLayoutManager manager) {
+        super(recyclerView, manager);
+    }
+
     @Override
     GridLayoutManager createManager() {
         return new FullyGridLayoutManager(getContext(),2);

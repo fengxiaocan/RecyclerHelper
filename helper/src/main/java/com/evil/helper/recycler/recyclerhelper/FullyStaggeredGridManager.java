@@ -15,9 +15,14 @@ public class FullyStaggeredGridManager extends StaggeredGridManager {
         super(recyclerView);
     }
 
+    public FullyStaggeredGridManager(RecyclerView recyclerView, StaggeredGridLayoutManager manager)
+    {
+        super(recyclerView, manager);
+    }
+
     @Override
     StaggeredGridLayoutManager createManager() {
-        return new FullyStaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL){
+        return new FullyStaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL) {
             @Override
             public RecyclerView.LayoutParams generateDefaultLayoutParams() {
                 return super.generateDefaultLayoutParams();

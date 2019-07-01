@@ -17,6 +17,11 @@ public abstract class IManager<T extends RecyclerView.LayoutManager> extends IHe
         mLayoutManager = createManager();
     }
 
+    IManager(RecyclerView recyclerView,T manager) {
+        super(recyclerView);
+        mLayoutManager = manager;
+    }
+
     abstract T createManager();
 
     public T getLayoutManager() {

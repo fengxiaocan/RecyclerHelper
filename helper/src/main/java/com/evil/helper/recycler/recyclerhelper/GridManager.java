@@ -19,6 +19,10 @@ public class GridManager extends IManager<GridLayoutManager> {
         return new GridLayoutManager(getContext(),2);
     }
 
+    GridManager(RecyclerView recyclerView, GridLayoutManager manager) {
+        super(recyclerView, manager);
+    }
+
     @Override
     public IManager orientation(boolean isHorizontal) {
         if (isHorizontal) {

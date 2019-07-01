@@ -1,10 +1,11 @@
 package com.evil.helper.recycler.recyclerhelper;
 
 import android.content.Context;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @author noah
@@ -20,14 +21,13 @@ public class FullyLinearLayoutManager extends LinearLayoutManager {
         super(context);
     }
 
-    public FullyLinearLayoutManager(Context context,int orientation,boolean reverseLayout) {
-        super(context,orientation,reverseLayout);
+    public FullyLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
+        super(context, orientation, reverseLayout);
     }
 
     @Override
-    public void onMeasure(
-            RecyclerView.Recycler recycler,RecyclerView.State state,int widthSpec,int heightSpec
-    )
+    public void onMeasure(RecyclerView.Recycler recycler, RecyclerView.State state, int widthSpec,
+            int heightSpec)
     {
 
         final int widthMode = View.MeasureSpec.getMode(widthSpec);
@@ -37,13 +37,11 @@ public class FullyLinearLayoutManager extends LinearLayoutManager {
 
         int width = 0;
         int height = 0;
-        for (int i = 0;i < getItemCount();i++) {
-            measureScrapChild(recycler,
-                              i,
-                              View.MeasureSpec.makeMeasureSpec(i,View.MeasureSpec.UNSPECIFIED),
-                              View.MeasureSpec.makeMeasureSpec(i,View.MeasureSpec.UNSPECIFIED),
-                              mMeasuredDimension
-            );
+        for (int i = 0; i < getItemCount(); i++) {
+            measureScrapChild(recycler, i,
+                    View.MeasureSpec.makeMeasureSpec(i, View.MeasureSpec.UNSPECIFIED),
+                    View.MeasureSpec.makeMeasureSpec(i, View.MeasureSpec.UNSPECIFIED),
+                    mMeasuredDimension);
 
             if (getOrientation() == HORIZONTAL) {
                 width = width + mMeasuredDimension[0];
@@ -71,36 +69,25 @@ public class FullyLinearLayoutManager extends LinearLayoutManager {
             case View.MeasureSpec.UNSPECIFIED:
         }
 
-        setMeasuredDimension(width,height);
+        setMeasuredDimension(width, height);
     }
 
-    private void measureScrapChild(
-            RecyclerView.Recycler recycler,
-            int position,
-            int widthSpec,
-            int heightSpec,
-            int[] measuredDimension
-    )
+    private void measureScrapChild(RecyclerView.Recycler recycler, int position, int widthSpec,
+            int heightSpec, int[] measuredDimension)
     {
         try {
             View view = recycler.getViewForPosition(0);//fix 动态添加时报IndexOutOfBoundsException
 
             if (view != null) {
-                RecyclerView.LayoutParams p = (RecyclerView.LayoutParams)view.getLayoutParams();
+                RecyclerView.LayoutParams p = (RecyclerView.LayoutParams) view.getLayoutParams();
 
                 int childWidthSpec = ViewGroup.getChildMeasureSpec(widthSpec,
-                                                                   getPaddingLeft() +
-                                                                   getPaddingRight(),
-                                                                   p.width
-                );
+                        getPaddingLeft() + getPaddingRight(), p.width);
 
                 int childHeightSpec = ViewGroup.getChildMeasureSpec(heightSpec,
-                                                                    getPaddingTop() +
-                                                                    getPaddingBottom(),
-                                                                    p.height
-                );
+                        getPaddingTop() + getPaddingBottom(), p.height);
 
-                view.measure(childWidthSpec,childHeightSpec);
+                view.measure(childWidthSpec, childHeightSpec);
                 measuredDimension[0] = view.getMeasuredWidth() + p.leftMargin + p.rightMargin;
                 measuredDimension[1] = view.getMeasuredHeight() + p.bottomMargin + p.topMargin;
                 recycler.recycleView(view);
