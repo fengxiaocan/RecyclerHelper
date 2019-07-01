@@ -2,9 +2,11 @@ package com.evil.helper.recycler.holder;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.IdRes;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 /**
  * @author noah
@@ -18,10 +20,6 @@ public abstract class BaseRecyclerHolder extends RecyclerView.ViewHolder {
     public BaseRecyclerHolder(View itemView) {
         super(itemView);
         initView(itemView);
-    }
-
-    public boolean isStaggeredGridFullSpan() {
-        return isStaggeredGridFullSpan;
     }
 
     public void isStaggeredGridFullSpan(boolean isFull) {
@@ -47,4 +45,24 @@ public abstract class BaseRecyclerHolder extends RecyclerView.ViewHolder {
         return itemView.findViewById(id);
     }
 
+    public void onViewRecycled(){ }
+
+    public void onViewAttachedToWindow(){
+        /**
+         * 针对流式布局
+         */
+        ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
+        if (layoutParams != null) {
+            if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
+                if (isStaggeredGridFullSpan) {
+                    StaggeredGridLayoutManager.LayoutParams params =
+                            (StaggeredGridLayoutManager.LayoutParams) layoutParams;
+                    //占领全部空间;
+                    params.setFullSpan(true);
+                }
+            }
+        }
+    }
+
+    public void onViewDetachedFromWindow(){ }
 }

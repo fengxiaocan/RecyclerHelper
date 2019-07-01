@@ -15,6 +15,7 @@ import com.evil.helper.recycler.recyclerhelper.RecyclerHelper;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -65,6 +66,17 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         mBtError.setOnClickListener(this);
         mBtLoad = (Button) findViewById(R.id.bt_load);
         mBtLoad.setOnClickListener(this);
+        mRecyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
+            @Override
+            public void onChildViewAttachedToWindow(@NonNull View view) {
+                RecyclerView.ViewHolder viewHolder = mRecyclerView.getChildViewHolder(view);
+            }
+
+            @Override
+            public void onChildViewDetachedFromWindow(@NonNull View view) {
+
+            }
+        });
     }
 
     @Override

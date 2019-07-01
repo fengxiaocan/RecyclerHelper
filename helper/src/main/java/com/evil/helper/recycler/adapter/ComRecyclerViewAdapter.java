@@ -5,6 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import com.evil.helper.recycler.holder.BaseRecyclerHolder;
 import com.evil.helper.recycler.holder.EmptyRecyclerView;
 import com.evil.helper.recycler.holder.ErrorRecyclerView;
@@ -21,11 +26,6 @@ import com.evil.helper.recycler.inface.RecyclerType;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 /**
  * @author noah
@@ -363,27 +363,6 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
         }
     }
 
-    /**
-     * 针对流式布局
-     *
-     * @param holder
-     */
-    @Override
-    public void onViewAttachedToWindow(@NonNull BaseRecyclerHolder holder) {
-        super.onViewAttachedToWindow(holder);
-        //        int layoutPosition = holder.getLayoutPosition();
-        ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-        if (layoutParams != null) {
-            if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
-                if (holder.isStaggeredGridFullSpan()) {
-                    StaggeredGridLayoutManager.LayoutParams params =
-                            (StaggeredGridLayoutManager.LayoutParams) layoutParams;
-                    //占领全部空间;
-                    params.setFullSpan(true);
-                }
-            }
-        }
-    }
 
     public void setOnHeaderClickListener(OnHeaderClickListener onHeaderClickListener) {
         mOnHeaderClickListener = onHeaderClickListener;
@@ -584,6 +563,9 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
     }
 
     public void addDatas(List<T> datas) {
+        if (ObjectUtils.isEmpty(datas)) {
+            return;
+        }
         if (mDatas == null) {
             mDatas = datas;
         } else {
@@ -592,8 +574,8 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
     }
 
     public void addDatas(T... datas) {
-        if (datas != null) {
-            setDatas(datas);
+        if (ObjectUtils.isEmpty(datas)) {
+            return;
         }
         if (mDatas == null) {
             mDatas = new ArrayList<>();
@@ -604,6 +586,9 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
     }
 
     public void addData(T data) {
+        if (data == null) {
+            return;
+        }
         if (mDatas == null) {
             mDatas = new ArrayList<>();
         }
@@ -840,6 +825,22 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
         super.registerAdapterDataObserver(observer);
     }
 
+    @Override
+    public void onViewRecycled(@NonNull BaseRecyclerHolder holder) {
+        holder.onViewRecycled();
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull BaseRecyclerHolder holder) {
+        holder.onViewDetachedFromWindow();
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull BaseRecyclerHolder holder) {
+        holder.onViewAttachedToWindow();
+    }
+
+
     private class OnItemClick implements View.OnClickListener {
         private int position;
 
@@ -854,4 +855,5 @@ public abstract class ComRecyclerViewAdapter<T extends IRecycleData, V extends R
             }
         }
     }
+
 }
