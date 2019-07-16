@@ -29,6 +29,5 @@
         Step 2. Add the dependency
         
         	dependencies {
-        	        //implementation 'com.github.fengxiaocan:RxThread:v1.0.0'
-        	        implementation 'com.github.fengxiaocan:RxThread:latest.release'//直接引用最新的
+        	        implementation 'com.github.fengxiaocan:RecyclerHelper:latest.release'//直接引用最新的
         	}
