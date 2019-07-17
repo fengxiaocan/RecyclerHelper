@@ -6,10 +6,12 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.evil.recycler.adapter.ComRecyclerViewAdapter;
+import com.evil.recycler.adapter.DiffRecyclerViewAdapter;
+import com.evil.recycler.adapter.RecyclerViewAdapter;
 import com.evil.recycler.holder.RecyclerViewHolder;
 
-public class TestAdapter2
-        extends ComRecyclerViewAdapter<RecyclerData, RecyclerViewHolder<RecyclerData>> {
+public class TestAdapter3
+        extends DiffRecyclerViewAdapter<RecyclerData, RecyclerViewHolder<RecyclerData>> {
 
 
     @Override

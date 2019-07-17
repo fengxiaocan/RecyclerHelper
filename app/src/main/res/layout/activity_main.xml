@@ -11,10 +11,34 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <Button
-        android:id="@+id/bt_add"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="添加数据"
-        app:layout_constraintBottom_toBottomOf="@+id/recycler_view" />
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/recycler_view">
+
+        <Button
+            android:id="@+id/bt_set"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设置数据" />
+
+        <Button
+            android:id="@+id/bt_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="添加数据" />
+
+        <Button
+            android:id="@+id/bt_instert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="插入数据" />
+
+        <Button
+            android:id="@+id/bt_delect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="删除数据" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,11 +7,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.evil.helper.recycler.decoration.RecyclerDividerProps;
-import com.evil.helper.recycler.decoration.RecyclerViewDivider;
-import com.evil.helper.recycler.inface.IRecycleData;
-import com.evil.helper.recycler.inface.OnAdapterItemClickListener;
-import com.evil.helper.recycler.recyclerhelper.RecyclerHelper;
+import com.evil.recycler.decoration.RecyclerDividerProps;
+import com.evil.recycler.decoration.RecyclerViewDivider;
+import com.evil.recycler.inface.IRecyclerData;
+import com.evil.recycler.inface.OnAdapterItemClickListener;
+import com.evil.recycler.helper.RecyclerHelper;
 
 import java.util.List;
 
@@ -38,8 +38,8 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
     private void initView() {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mTestAdapter = new TestAdapter2();
-        mTestAdapter.setOnItemClickListener(new OnAdapterItemClickListener<IRecycleData>() {
-            public void onItemClick(View view, List<IRecycleData> list, int position) {
+        mTestAdapter.setOnItemClickListener(new OnAdapterItemClickListener<RecyclerData>() {
+            public void onItemClick(View view, List<RecyclerData> list, int position) {
                 Toast.makeText(TestActivity.this, "点击content", Toast.LENGTH_SHORT).show();
             }
         });
@@ -95,14 +95,6 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.bt_load:
                 mTestAdapter.showLoadingView();
                 break;
-        }
-    }
-
-    private class RecyclerData implements IRecycleData {
-
-        @Override
-        public int getRecycleType() {
-            return 0;
         }
     }
 }

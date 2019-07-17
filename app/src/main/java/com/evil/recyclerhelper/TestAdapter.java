@@ -5,30 +5,26 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.evil.helper.recycler.adapter.SwipeRecyclerViewAdapter;
-import com.evil.helper.recycler.holder.SwipeRecyclerViewHolder;
-import com.evil.helper.recycler.inface.IRecycleData;
+import com.evil.recycler.adapter.SwipeRecyclerViewAdapter;
+import com.evil.recycler.holder.SwipeRecyclerViewHolder;
+import com.evil.recycler.inface.IRecyclerData;
 
-public class TestAdapter extends SwipeRecyclerViewAdapter<IRecycleData,SwipeRecyclerViewHolder<IRecycleData>> {
+public class TestAdapter extends SwipeRecyclerViewAdapter<RecyclerData,SwipeRecyclerViewHolder<RecyclerData>> {
 	
 	@Override
-	public SwipeRecyclerViewHolder<IRecycleData> onCreateWithMenuHolder(
+	public SwipeRecyclerViewHolder<RecyclerData> onCreateWithMenuHolder(
 			View layout,int viewType)
 	{
-		return new SwipeRecyclerViewHolder<IRecycleData>(layout) {
+		return new SwipeRecyclerViewHolder<RecyclerData>(layout) {
 			private TextView mTextView;
 			
 			public void initMenu(View menuLayout) {
 			}
 			
 			public void setData(
-					RecyclerView.Adapter adapter,IRecycleData iRecycleData,int position)
+					RecyclerView.Adapter adapter, RecyclerData data,int position)
 			{
-				String text = "哈哈哈";
-				for (int i = 0;i < position;i++) {
-					text += "\n哈哈哈";
-				}
-				mTextView.setText(text);
+				mTextView.setText(data.name);
 			}
 			
 			public void initView(View rootView) {
@@ -48,7 +44,7 @@ public class TestAdapter extends SwipeRecyclerViewAdapter<IRecycleData,SwipeRecy
 	}
 	
 	@Override
-	public SwipeRecyclerViewHolder<IRecycleData> createViewHolder(View view,int viewType) {
+	public SwipeRecyclerViewHolder<RecyclerData> createViewHolder(View view,int viewType) {
 		return null;
 	}
 	
