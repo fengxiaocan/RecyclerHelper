@@ -10,9 +10,11 @@
              .adapter(mTestAdapter)
              .init();            
      
-        ComRecyclerViewAdapter:一个可以添加头部跟尾部View的 recyclerview adapter，数据需实现IRecyclerData接口
-        MultipleRecyclerViewAdapter:一个可以实现多种类型的View的 recyclerview adapter，数据需实现IRecyclerData接口
+        ComRecyclerViewAdapter:一个可以添加头部跟尾部View的 recyclerview adapter，可以设置Loading、EmptyView、ErrorView等状态,数据需实现IRecyclerData接口
+        MultipleRecyclerViewAdapter:一个可以实现多种类型的View的 recyclerview adapter，只能设置EmptyView，数据需实现IRecyclerData接口
         SwipeRecyclerViewAdapter:一个可以支持侧滑删除（目前只支持右侧滑动）的 recyclerview adapter，数据需实现IRecyclerData接口
+        DiffRecyclerViewAdapter:一个实现了DiffUtil的 recyclerview adapter，数据需实现IDiffData接口
+        RecyclerViewAdapter:一个普通的的 recyclerview adapter，数据需实现IDiffData接口
      
 #2.引入说明:
         Step 1. Add the JitPack repository to your build file
