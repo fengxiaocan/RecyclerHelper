@@ -3,6 +3,7 @@ package com.evil.recycler.holder;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import androidx.annotation.IdRes;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +21,15 @@ public abstract class BaseRecyclerHolder extends RecyclerView.ViewHolder {
     public BaseRecyclerHolder(View itemView) {
         super(itemView);
         initView(itemView);
+    }
+
+    public static void removeParent(View view){
+        if (view != null){
+            ViewParent parent = view.getParent();
+            if (parent != null && parent instanceof ViewGroup){
+                ((ViewGroup) parent).removeView(view);
+            }
+        }
     }
 
     public void isStaggeredGridFullSpan(boolean isFull) {

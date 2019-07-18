@@ -18,17 +18,14 @@ public class ErrorRecyclerView {
 
     public ErrorRecyclerView(int viewType, View rootView) {
         this.viewType = viewType;
-        if (rootView.getParent() != null) {
-            if (rootView.getParent() instanceof ViewGroup) {
-                ((ViewGroup) rootView.getParent()).removeView(rootView);
-            }
-        }
+        BaseRecyclerHolder.removeParent(rootView);
         this.holder = new SimpleRecyclerHolder(rootView);
         this.holder.isStaggeredGridFullSpan(true);
     }
 
     public ErrorRecyclerView(int viewType, BaseRecyclerHolder holder) {
         this.viewType = viewType;
+        BaseRecyclerHolder.removeParent(holder.itemView);
         this.holder = holder;
         this.holder.isStaggeredGridFullSpan(true);
     }
@@ -45,6 +42,7 @@ public class ErrorRecyclerView {
     }
 
     public void setHolder(BaseRecyclerHolder holder) {
+        BaseRecyclerHolder.removeParent(holder.itemView);
         this.holder = holder;
         this.holder.isStaggeredGridFullSpan(true);
     }

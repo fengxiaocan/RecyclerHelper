@@ -1,6 +1,7 @@
 package com.evil.recycler.adapter;
 
 import android.content.Context;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,12 +107,24 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
 
     public void addHeader(View header) {
         checkHeader();
+        for (RecyclerViewHeader viewHeader : mHeaders) {
+            if (viewHeader.getHolder().getItemView().equals(header)) {
+                return;
+            }
+        }
+        BaseRecyclerHolder.removeParent(header);
         mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE - mHeaders.size(), header));
         notifyDataSetChanged();
     }
 
     public void addHeader(BaseRecyclerHolder header) {
         checkHeader();
+        for (RecyclerViewHeader viewHeader : mHeaders) {
+            if (viewHeader.getHolder().equals(header)) {
+                return;
+            }
+        }
+        BaseRecyclerHolder.removeParent(header.itemView);
         mHeaders.add(new RecyclerViewHeader(EXTEND_RECYCLER_HEADER_TYPE - mHeaders.size(), header));
         notifyDataSetChanged();
     }
@@ -124,12 +137,24 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
 
     public void addFooter(View footer) {
         checkFooter();
+        for (RecyclerViewFooter viewFooter : mFooters) {
+            if (viewFooter.getHolder().getItemView().equals(footer)) {
+                return;
+            }
+        }
+        BaseRecyclerHolder.removeParent(footer);
         mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE - mFooters.size(), footer));
         notifyDataSetChanged();
     }
 
     public void addFooter(BaseRecyclerHolder footer) {
         checkFooter();
+        for (RecyclerViewFooter viewFooter : mFooters) {
+            if (viewFooter.getHolder().equals(footer)) {
+                return;
+            }
+        }
+        BaseRecyclerHolder.removeParent(footer.itemView);
         mFooters.add(new RecyclerViewFooter(EXTEND_RECYCLER_FOOTER_TYPE - mFooters.size(), footer));
         notifyDataSetChanged();
     }
