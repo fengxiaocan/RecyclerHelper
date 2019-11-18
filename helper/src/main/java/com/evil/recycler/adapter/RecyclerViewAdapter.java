@@ -3,6 +3,7 @@ package com.evil.recycler.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -10,8 +11,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.evil.recycler.holder.BaseRecyclerHolder;
-import com.evil.recycler.holder.ViewHolderHepler;
 import com.evil.recycler.holder.RecyclerViewHolder;
+import com.evil.recycler.holder.ViewHolderHepler;
 import com.evil.recycler.inface.OnAdapterItemClickListener;
 import com.evil.recycler.inface.OnItemChildClickListener;
 import com.evil.recycler.inface.OnItemChildLongClickListener;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
         extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
-    protected View mEmptyView;
+    protected FrameLayout mEmptyLayouts;//中间的容器布局
     protected List<T> mDatas;
     protected OnAdapterItemClickListener<T> mOnItemClickListener;
     protected OnItemChildClickListener<T> mOnItemChildClickListener;
@@ -74,12 +75,12 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
 
     @Override
     public T getFirstData() {
-        return ListUtils.getFirstData(mDatas);
+        return ObjectUtils.getFirstData(mDatas);
     }
 
     @Override
     public T getLastData() {
-        return ListUtils.getLastData(mDatas);
+        return ObjectUtils.getLastData(mDatas);
     }
 
     @Override
@@ -279,14 +280,12 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
     public void onBindViewHolder(@NonNull BaseRecyclerHolder holder, final int position) {
         holder.onBindData(this, position);
         if (holder instanceof RecyclerViewHolder) {
-            final List<T> datas = getDatas();
             T t = null;
-            if (datas != null && position < datas.size()) {
-                t = datas.get(position);
+            if (position < getDataCount()) {
+                t = getData(position);
             }
 
             RecyclerViewHolder viewHolder = (RecyclerViewHolder) holder;
-            viewHolder.setData(this, t, position);
 
             ViewHolderHepler.setData(viewHolder, t);
             ViewHolderHepler.setRealPosition(viewHolder, position);
@@ -294,11 +293,12 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
             ViewHolderHepler.setOnItemChildLongClickListener(viewHolder,
                     mOnItemChildLongClickListener);
 
+            viewHolder.setData(this, t, position);
             if (mOnItemClickListener != null) {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mOnItemClickListener.onItemClick(v, datas, position);
+                        mOnItemClickListener.onItemClick(v, getDatas(), position);
                     }
                 });
             }
@@ -309,7 +309,7 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
     @Override
     public BaseRecyclerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (isEmpty() && isHasEmptyView()) {
-            return new ExtensionViewHolder(mEmptyView);
+            return new ExtensionViewHolder(mEmptyLayouts);
         }
         View view;
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
@@ -394,11 +394,29 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
         holder.onViewAttachedToWindow();
     }
 
-    public void setEmptyView(View emptyView) {
-        if (mEmptyView != emptyView) {
-            mEmptyView = emptyView;
-            notifyDataSetChanged();
+    public void setEmptyView(ViewGroup view, int layoutRes) {
+        if (view != null) {
+            View inflate = LayoutInflater.from(view.getContext()).inflate(layoutRes, view, false);
+            setEmptyView(inflate);
         }
+    }
+
+    public void setEmptyView(View emptyView) {
+        if (emptyView == null) {
+            return;
+        }
+        if (mEmptyLayouts == null) {
+            mEmptyLayouts = new FrameLayout(emptyView.getContext());
+            mEmptyLayouts.setLayoutParams(
+                    new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT));
+        }
+        int index = mEmptyLayouts.indexOfChild(emptyView);
+        if (index <0){
+            mEmptyLayouts.removeAllViews();
+            mEmptyLayouts.addView(emptyView);
+        }
+        notifyDataSetChanged();
     }
 
     public boolean isEmpty() {
@@ -406,7 +424,7 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
     }
 
     public boolean isHasEmptyView() {
-        return mEmptyView != null;
+        return mEmptyLayouts != null && mEmptyLayouts.getChildCount() > 0;
     }
 
     public boolean isNotRealEmpty() {

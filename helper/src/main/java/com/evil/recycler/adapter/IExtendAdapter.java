@@ -11,7 +11,7 @@ import java.util.List;
  * @desc ...
  */
 public interface IExtendAdapter<T> {
-    int EMPTY_VIEW_TYPE = Integer.MIN_VALUE;
+    int EMPTY_VIEW_TYPE = -Integer.MIN_VALUE;
 
     //获取数据集
     List<T> getDatas();

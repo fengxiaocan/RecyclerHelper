@@ -606,12 +606,12 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
 
     @Override
     public T getFirstData() {
-        return ListUtils.getFirstData(mDatas);
+        return ObjectUtils.getFirstData(mDatas);
     }
 
     @Override
     public T getLastData() {
-        return ListUtils.getLastData(mDatas);
+        return ObjectUtils.getLastData(mDatas);
     }
 
     @Override

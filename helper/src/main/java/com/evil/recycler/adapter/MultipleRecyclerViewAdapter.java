@@ -3,6 +3,7 @@ package com.evil.recycler.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -11,8 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.evil.recycler.holder.BaseRecyclerHolder;
 import com.evil.recycler.holder.RecyclerViewHolder;
+import com.evil.recycler.holder.ViewHolderHepler;
 import com.evil.recycler.inface.IRecyclerData;
 import com.evil.recycler.inface.OnAdapterItemClickListener;
+import com.evil.recycler.inface.OnItemChildClickListener;
+import com.evil.recycler.inface.OnItemChildLongClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +24,28 @@ import java.util.List;
 public abstract class MultipleRecyclerViewAdapter<T extends IRecyclerData, V extends RecyclerViewHolder<T>>
         extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
 
-    protected View mEmptyView;
+    protected FrameLayout mEmptyLayouts;//中间的容器布局
     protected List<T> mDatas;
     protected OnAdapterItemClickListener<T> mOnItemClickListener;
+    protected OnItemChildClickListener<T> mOnItemChildClickListener;
+    protected OnItemChildLongClickListener<T> mOnItemChildLongClickListener;
 
-    public void setOnItemClickListener(OnAdapterItemClickListener<T> onItemClickListener) {
-        mOnItemClickListener = onItemClickListener;
+    public void setOnItemClickListener(OnAdapterItemClickListener<T> mOnItemClickListener)
+    {
+        this.mOnItemClickListener = mOnItemClickListener;
     }
+
+    public void setOnItemChildClickListener(OnItemChildClickListener<T> mOnItemChildClickListener)
+    {
+        this.mOnItemChildClickListener = mOnItemChildClickListener;
+    }
+
+    public void setOnItemChildLongClickListener(
+            OnItemChildLongClickListener<T> mOnItemChildlongClickListener)
+    {
+        this.mOnItemChildLongClickListener = mOnItemChildlongClickListener;
+    }
+
 
     @Override
     public List<T> getDatas() {
@@ -58,12 +77,12 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecyclerData, V ext
 
     @Override
     public T getFirstData() {
-        return ListUtils.getFirstData(mDatas);
+        return ObjectUtils.getFirstData(mDatas);
     }
 
     @Override
     public T getLastData() {
-        return ListUtils.getLastData(mDatas);
+        return ObjectUtils.getLastData(mDatas);
     }
 
     @Override
@@ -180,7 +199,7 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecyclerData, V ext
                 mDatas.addAll(datas);
             } else {
                 //position位于中间
-                mDatas.addAll(position,datas);
+                mDatas.addAll(position, datas);
             }
         }
     }
@@ -207,7 +226,7 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecyclerData, V ext
                 notifyItemRangeInserted(size1, itemCount);
             } else {
                 //position位于中间
-                mDatas.addAll(position,datas);
+                mDatas.addAll(position, datas);
                 notifyItemRangeInserted(position, itemCount);
             }
         }
@@ -237,7 +256,7 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecyclerData, V ext
     public void removeAndNotify(T t) {
         if (mDatas != null) {
             int index = mDatas.indexOf(t);
-            if (index>=0) {
+            if (index >= 0) {
                 mDatas.remove(index);
                 notifyItemRemoved(index);
             }
@@ -246,7 +265,7 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecyclerData, V ext
 
     @Override
     public void clear() {
-        if (mDatas != null){
+        if (mDatas != null) {
             mDatas.clear();
         }
     }
@@ -261,31 +280,37 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecyclerData, V ext
     @Override
     public void onBindViewHolder(@NonNull BaseRecyclerHolder holder, final int position) {
         holder.onBindData(this, position);
-        //		if (!isEmpty()) {
-        final List<T> datas = getDatas();
-        T t = null;
-        if (datas != null && position < datas.size()) {
-            t = datas.get(position);
-        }
         if (holder instanceof RecyclerViewHolder) {
-            ((RecyclerViewHolder) holder).setData(this, t, position);
+            T t = null;
+            if (position < getDataCount()) {
+                t = getData(position);
+            }
+            RecyclerViewHolder viewHolder = (RecyclerViewHolder) holder;
+
+            ViewHolderHepler.setData(viewHolder, t);
+            ViewHolderHepler.setRealPosition(viewHolder, position);
+            ViewHolderHepler.setOnItemChildClickListener(viewHolder, mOnItemChildClickListener);
+            ViewHolderHepler.setOnItemChildLongClickListener(viewHolder,
+                    mOnItemChildLongClickListener);
+
+            viewHolder.setData(this, t, position);
+
             if (mOnItemClickListener != null) {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mOnItemClickListener.onItemClick(v, datas, position);
+                        mOnItemClickListener.onItemClick(v, getDatas(), position);
                     }
                 });
             }
         }
-        //		}
     }
 
     @NonNull
     @Override
     public BaseRecyclerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (isEmpty() && isHasEmptyView()) {
-            return new ExtensionViewHolder(mEmptyView);
+            return new ExtensionViewHolder(mEmptyLayouts);
         }
         View view;
         if (attachParent()) {
@@ -368,9 +393,29 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecyclerData, V ext
         holder.onViewAttachedToWindow();
     }
 
+    public void setEmptyView(ViewGroup view, int layoutRes) {
+        if (view != null) {
+            View inflate = LayoutInflater.from(view.getContext()).inflate(layoutRes, view, false);
+            setEmptyView(inflate);
+        }
+    }
+
     public void setEmptyView(View emptyView) {
-        if (mEmptyView != emptyView) {
-            mEmptyView = emptyView;
+        if (emptyView == null) {
+            return;
+        }
+        if (mEmptyLayouts == null) {
+            mEmptyLayouts = new FrameLayout(emptyView.getContext());
+            mEmptyLayouts.setLayoutParams(
+                    new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT));
+        }
+        int index = mEmptyLayouts.indexOfChild(emptyView);
+        if (index < 0) {
+            mEmptyLayouts.removeAllViews();
+            mEmptyLayouts.addView(emptyView);
+        }
+        if (isEmpty()) {
             notifyDataSetChanged();
         }
     }
@@ -380,7 +425,7 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecyclerData, V ext
     }
 
     public boolean isHasEmptyView() {
-        return mEmptyView != null;
+        return mEmptyLayouts != null && mEmptyLayouts.getChildCount() > 0;
     }
 
     public boolean isNotRealEmpty() {
