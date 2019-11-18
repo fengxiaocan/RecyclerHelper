@@ -10,13 +10,12 @@ import java.util.List;
  * @create 12/6/18
  * @desc ...
  */
-public interface OnAdapterItemClickListener<T> {
+public interface OnItemChildClickListener<T> {
+
     /**
      * On item click.
      *
      * @param view the view
-     * @param list the list
-     * @param position the position
      */
-    void onItemClick(View view, List<T> list, int position);
+    void onItemChildClick(View view, T data, int position);
 }

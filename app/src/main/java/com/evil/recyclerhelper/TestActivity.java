@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import com.evil.recycler.decoration.RecyclerDividerProps;
 import com.evil.recycler.decoration.RecyclerViewDivider;
-import com.evil.recycler.inface.IRecyclerData;
 import com.evil.recycler.inface.OnAdapterItemClickListener;
 import com.evil.recycler.helper.RecyclerHelper;
 
@@ -55,7 +54,7 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         mTestAdapter.addHeader(LayoutInflater.from(this).inflate(R.layout.view_header,mRecyclerView,false));
         mTestAdapter.addFooter(LayoutInflater.from(this).inflate(R.layout.view_footer,mRecyclerView,false));
         mTestAdapter.setEmptyCompatHeaderOrFooter(true);
-        mTestAdapter.setAutoShowEmpty(true);
+        mTestAdapter.setUseEmpty(true);
         mTestAdapter.showDefaultView();
 
         mBtAdd = (Button) findViewById(R.id.bt_add);

@@ -15,7 +15,6 @@ public class EmptyRecyclerView {
     private int viewType ;
     private BaseRecyclerHolder holder;
 
-
     public EmptyRecyclerView(int viewType, View rootView) {
         this.viewType = viewType;
         BaseRecyclerHolder.removeParent(rootView);

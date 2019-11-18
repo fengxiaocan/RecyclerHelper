@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.evil.recycler.holder.BaseRecyclerHolder;
-import com.evil.recycler.holder.EmptyViewHolder;
 import com.evil.recycler.holder.RecyclerViewHolder;
 import com.evil.recycler.inface.IRecyclerData;
 import com.evil.recycler.inface.OnAdapterItemClickListener;
@@ -286,7 +285,7 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecyclerData, V ext
     @Override
     public BaseRecyclerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (isEmpty() && isHasEmptyView()) {
-            return new EmptyViewHolder(mEmptyView);
+            return new ExtensionViewHolder(mEmptyView);
         }
         View view;
         if (attachParent()) {
@@ -324,11 +323,11 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecyclerData, V ext
         if (isEmpty() && isHasEmptyView()) {
             return 1;
         }
-        return getRealItemCount();
+        return getDataCount();
     }
 
     @Override
-    public int getRealItemCount() {
+    public int getDataCount() {
         if (mDatas != null) {
             return mDatas.size();
         }
@@ -377,7 +376,7 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecyclerData, V ext
     }
 
     public boolean isEmpty() {
-        return getRealItemCount() == 0;
+        return getDataCount() == 0;
     }
 
     public boolean isHasEmptyView() {
@@ -385,7 +384,7 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecyclerData, V ext
     }
 
     public boolean isNotRealEmpty() {
-        return getRealItemCount() > 0;
+        return getDataCount() > 0;
     }
 
     public boolean isNotEmpty() {

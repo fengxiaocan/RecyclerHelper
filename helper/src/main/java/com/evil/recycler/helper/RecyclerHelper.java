@@ -1,15 +1,8 @@
 package com.evil.recycler.helper;
 
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
-import com.evil.recycler.DiffCallBack;
-import com.evil.recycler.adapter.IExtendAdapter;
-import com.evil.recycler.inface.IDiffData;
-
-import java.util.List;
 
 public class RecyclerHelper {
     private RecyclerView mRecyclerView;
@@ -42,50 +35,6 @@ public class RecyclerHelper {
                         0);
             }
         }
-    }
-
-    public static <T extends IDiffData> void setDiffDataToAdapter(IExtendAdapter<T> dataToAdapter,
-            List<T> data)
-    {
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(
-                new DiffCallBack<T>(dataToAdapter.getDatas(), data), false);
-        //利用DiffUtil.DiffResult对象的dispatchUpdatesTo（）方法，传入RecyclerView的Adapter
-        diffResult.dispatchUpdatesTo((RecyclerView.Adapter) dataToAdapter);
-        //将新数据给Adapter
-        dataToAdapter.setDatas(data);
-    }
-
-    public static <T extends IDiffData> void setDiffDataToAdapter(IExtendAdapter<T> dataToAdapter,
-            List<T> data, boolean detectMoves)
-    {
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(
-                new DiffCallBack<T>(dataToAdapter.getDatas(), data), detectMoves);
-        //利用DiffUtil.DiffResult对象的dispatchUpdatesTo（）方法，传入RecyclerView的Adapter
-        diffResult.dispatchUpdatesTo((RecyclerView.Adapter) dataToAdapter);
-        //将新数据给Adapter
-        dataToAdapter.setDatas(data);
-    }
-
-    public static <T extends IDiffData> void setDiffDataAsynToAdapter(IExtendAdapter<T> dataToAdapter,
-            List<T> data)
-    {
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(
-                new DiffCallBack<T>(dataToAdapter.getDatas(), data), false);
-        //利用DiffUtil.DiffResult对象的dispatchUpdatesTo（）方法，传入RecyclerView的Adapter
-        diffResult.dispatchUpdatesTo((RecyclerView.Adapter) dataToAdapter);
-        //将新数据给Adapter
-        dataToAdapter.setDatas(data);
-    }
-
-    public static <T extends IDiffData> void setDiffDataAsynToAdapter(IExtendAdapter<T> dataToAdapter,
-            List<T> data, boolean detectMoves)
-    {
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(
-                new DiffCallBack<T>(dataToAdapter.getDatas(), data), detectMoves);
-        //利用DiffUtil.DiffResult对象的dispatchUpdatesTo（）方法，传入RecyclerView的Adapter
-        diffResult.dispatchUpdatesTo((RecyclerView.Adapter) dataToAdapter);
-        //将新数据给Adapter
-        dataToAdapter.setDatas(data);
     }
 
     public GridManager gridManager() {

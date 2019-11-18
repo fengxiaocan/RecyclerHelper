@@ -82,8 +82,8 @@ public interface IExtendAdapter<T> {
     //移除对应数据并刷新
     void removeAndNotify(T t);
 
-    //获取真实的条目的数量
-    int getRealItemCount();
+    //获取data数据条目的数量
+    int getDataCount();
 
     /**
      * On create layout res int.

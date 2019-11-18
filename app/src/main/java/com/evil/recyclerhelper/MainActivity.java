@@ -18,7 +18,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private RecyclerView mRecyclerView;
-    private TestAdapter3 mTestAdapter;
+    private TestAdapter2 mTestAdapter;
     private Button mBtAdd;
     private Button mBtSet;
     private Button mBtInstert;
@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initView() {
         mRecyclerView = findViewById(R.id.recycler_view);
-        mTestAdapter = new TestAdapter3();
+        mTestAdapter = new TestAdapter2();
         RecyclerHelper.with(mRecyclerView).linearManager().matchWidth().animation().adapter(
                 mTestAdapter).init();
         mRecyclerView.addItemDecoration(new RecyclerViewDivider(RecyclerDividerProps.with(
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     RecyclerData data = new RecyclerData();
                     lists.add(data);
                 }
-                mTestAdapter.setDiffDatas(lists);
+                mTestAdapter.setDatasAndNotify(lists);
                 break;
             case R.id.bt_instert:
                 List<RecyclerData> list2 = new ArrayList<>();
@@ -76,7 +76,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mTestAdapter.insertDatasAndNotify(RecyclerData.random.nextInt(6), list2);
                 break;
             case R.id.bt_delect:
-                mTestAdapter.removeAndNotify(RecyclerData.random.nextInt(5));
+//                mTestAdapter.removeAndNotify(RecyclerData.random.nextInt(5));
+                mTestAdapter.removeAndNotify(1);
                 break;
         }
     }

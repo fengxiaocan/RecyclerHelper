@@ -10,9 +10,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.evil.recycler.holder.BaseRecyclerHolder;
-import com.evil.recycler.holder.EmptyViewHolder;
+import com.evil.recycler.holder.ViewHolderHepler;
 import com.evil.recycler.holder.RecyclerViewHolder;
 import com.evil.recycler.inface.OnAdapterItemClickListener;
+import com.evil.recycler.inface.OnItemChildClickListener;
+import com.evil.recycler.inface.OnItemChildLongClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +24,25 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
     protected View mEmptyView;
     protected List<T> mDatas;
     protected OnAdapterItemClickListener<T> mOnItemClickListener;
+    protected OnItemChildClickListener<T> mOnItemChildClickListener;
+    protected OnItemChildLongClickListener<T> mOnItemChildLongClickListener;
 
-    public void setOnItemClickListener(OnAdapterItemClickListener<T> onItemClickListener) {
-        mOnItemClickListener = onItemClickListener;
+    public void setOnItemClickListener(OnAdapterItemClickListener<T> mOnItemClickListener)
+    {
+        this.mOnItemClickListener = mOnItemClickListener;
     }
+
+    public void setOnItemChildClickListener(OnItemChildClickListener<T> mOnItemChildClickListener)
+    {
+        this.mOnItemChildClickListener = mOnItemChildClickListener;
+    }
+
+    public void setOnItemChildLongClickListener(
+            OnItemChildLongClickListener<T> mOnItemChildlongClickListener)
+    {
+        this.mOnItemChildLongClickListener = mOnItemChildlongClickListener;
+    }
+
 
     @Override
     public List<T> getDatas() {
@@ -116,7 +133,9 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
     @Override
     public void addDataAndNotify(T data) {
         addData(data);
-        notifyItemInserted(mDatas.size() - 1);
+        if (isNotRealEmpty()) {
+            notifyItemInserted(getDataCount() - 1);
+        }
     }
 
     @Override
@@ -148,12 +167,12 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
             mDatas.add(data);
             notifyDataSetChanged();
         } else {
-            if (position < 0) {
+            if (position <= 0) {
                 mDatas.add(0, data);
                 notifyItemInserted(0);
             } else if (position >= mDatas.size()) {
                 mDatas.add(data);
-                notifyItemInserted(mDatas.size() - 1);
+                notifyItemInserted(getDataCount() - 1);
             } else {
                 mDatas.add(position, data);
                 notifyItemInserted(position);
@@ -179,7 +198,7 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
                 mDatas.addAll(datas);
             } else {
                 //position位于中间
-                mDatas.addAll(position,datas);
+                mDatas.addAll(position, datas);
             }
         }
     }
@@ -206,7 +225,7 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
                 notifyItemRangeInserted(size1, itemCount);
             } else {
                 //position位于中间
-                mDatas.addAll(position,datas);
+                mDatas.addAll(position, datas);
                 notifyItemRangeInserted(position, itemCount);
             }
         }
@@ -221,8 +240,8 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
 
     @Override
     public void removeAndNotify(int position) {
-            remove(position);
-            notifyItemRemoved(position);
+        remove(position);
+        notifyItemRemoved(position);
     }
 
     @Override
@@ -236,7 +255,7 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
     public void removeAndNotify(T t) {
         if (mDatas != null) {
             int index = mDatas.indexOf(t);
-            if (index>=0) {
+            if (index >= 0) {
                 mDatas.remove(index);
                 notifyItemRemoved(index);
             }
@@ -245,7 +264,7 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
 
     @Override
     public void clear() {
-        if (mDatas != null){
+        if (mDatas != null) {
             mDatas.clear();
         }
     }
@@ -258,15 +277,23 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
 
     @Override
     public void onBindViewHolder(@NonNull BaseRecyclerHolder holder, final int position) {
-        //		if (!isEmpty()) {
         holder.onBindData(this, position);
-        final List<T> datas = getDatas();
-        T t = null;
-        if (datas != null && position < datas.size()) {
-            t = datas.get(position);
-        }
         if (holder instanceof RecyclerViewHolder) {
-            ((RecyclerViewHolder) holder).setData(this, t, position);
+            final List<T> datas = getDatas();
+            T t = null;
+            if (datas != null && position < datas.size()) {
+                t = datas.get(position);
+            }
+
+            RecyclerViewHolder viewHolder = (RecyclerViewHolder) holder;
+            viewHolder.setData(this, t, position);
+
+            ViewHolderHepler.setData(viewHolder, t);
+            ViewHolderHepler.setRealPosition(viewHolder, position);
+            ViewHolderHepler.setOnItemChildClickListener(viewHolder, mOnItemChildClickListener);
+            ViewHolderHepler.setOnItemChildLongClickListener(viewHolder,
+                    mOnItemChildLongClickListener);
+
             if (mOnItemClickListener != null) {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -276,23 +303,23 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
                 });
             }
         }
-        //		}
     }
 
     @NonNull
     @Override
     public BaseRecyclerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (isEmpty() && isHasEmptyView()) {
-            return new EmptyViewHolder(mEmptyView);
+            return new ExtensionViewHolder(mEmptyView);
         }
         View view;
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        int resource = onCreateLayoutRes(viewType);
         if (attachParent()) {
-            view = LayoutInflater.from(parent.getContext()).inflate(onCreateLayoutRes(viewType),
-                    parent, false);//解决高度不全问题
-
+            //解决高度不全问题
+            view = layoutInflater.inflate(resource, parent, false);
         } else {
-            view = LayoutInflater.from(parent.getContext()).inflate(onCreateLayoutRes(viewType),
-                    null);//解决宽度不能铺满
+            //解决宽度不能铺满
+            view = layoutInflater.inflate(resource, null);
         }
         return createViewHolder(view, viewType);
     }
@@ -322,11 +349,11 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
         if (isEmpty() && isHasEmptyView()) {
             return 1;
         }
-        return getRealItemCount();
+        return getDataCount();
     }
 
     @Override
-    public int getRealItemCount() {
+    public int getDataCount() {
         if (mDatas != null) {
             return mDatas.size();
         }
@@ -375,7 +402,7 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
     }
 
     public boolean isEmpty() {
-        return getRealItemCount() == 0;
+        return getDataCount() == 0;
     }
 
     public boolean isHasEmptyView() {
@@ -383,7 +410,7 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
     }
 
     public boolean isNotRealEmpty() {
-        return getRealItemCount() > 0;
+        return getDataCount() > 0;
     }
 
     public boolean isNotEmpty() {

@@ -8,6 +8,6 @@ import android.view.View;
  * @create 12/6/18
  * @desc ...
  */
-public interface OnFooterClickListener {
+public interface OnFooterItemClickListener {
     void onFooterClick(View view,int position);
 }

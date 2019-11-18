@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  * @desc ...
  */
 public abstract class BaseRecyclerHolder extends RecyclerView.ViewHolder {
+
     protected boolean isStaggeredGridFullSpan = false;//在流式布局的情况下是否需要占满全屏
 
     public BaseRecyclerHolder(View itemView) {
@@ -23,10 +24,10 @@ public abstract class BaseRecyclerHolder extends RecyclerView.ViewHolder {
         initView(itemView);
     }
 
-    public static void removeParent(View view){
-        if (view != null){
+    public static void removeParent(View view) {
+        if (view != null) {
             ViewParent parent = view.getParent();
-            if (parent != null && parent instanceof ViewGroup){
+            if (parent != null && parent instanceof ViewGroup) {
                 ((ViewGroup) parent).removeView(view);
             }
         }
@@ -46,7 +47,9 @@ public abstract class BaseRecyclerHolder extends RecyclerView.ViewHolder {
         return itemView;
     }
 
-    public void onBindData(RecyclerView.Adapter adapter, int position) {}
+    public void onBindData(RecyclerView.Adapter adapter, int position) {
+        //绑定数据
+    }
 
     public final <T extends View> T findViewById(@IdRes int id) {
         if (id == View.NO_ID) {
@@ -55,9 +58,10 @@ public abstract class BaseRecyclerHolder extends RecyclerView.ViewHolder {
         return itemView.findViewById(id);
     }
 
-    public void onViewRecycled(){ }
+    public void onViewRecycled() {
+    }
 
-    public void onViewAttachedToWindow(){
+    public void onViewAttachedToWindow() {
         /**
          * 针对流式布局
          */
@@ -74,5 +78,6 @@ public abstract class BaseRecyclerHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public void onViewDetachedFromWindow(){ }
+    public void onViewDetachedFromWindow() {
+    }
 }

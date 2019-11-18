@@ -36,17 +36,13 @@ public abstract class SwipeRecyclerViewAdapter<T extends IRecyclerData, V extend
     @Override
     public BaseRecyclerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
-        if (isEmptyView(viewType)) {
-            return emptyRecyclerView.getHolder();
-        } else if (isLoadingView(viewType)) {
-            return loadingRecyclerView.getHolder();
-        } else if (isErrorView(viewType)) {
-            return errorRecyclerView.getHolder();
+        if (isContainer(viewType)) {
+            return getExtensionHolder();
         } else if (isFooter(viewType)) {
-            return getFooterHolder(viewType);
+            return getFooterHolder();
         } else if (isHeader(viewType)) {
-            return getHeaderHolder(viewType);
-        } else {
+            return getHeaderHolder();
+        } else  {
             LayoutInflater from = LayoutInflater.from(parent.getContext());
             View view;
             if (attachParent()) {

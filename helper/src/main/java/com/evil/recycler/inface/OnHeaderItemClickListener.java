@@ -8,6 +8,6 @@ import android.view.View;
  * @create 12/6/18
  * @desc ...
  */
-public interface OnHeaderClickListener {
+public interface OnHeaderItemClickListener {
     void onHeaderClick(View view,int position);
 }
