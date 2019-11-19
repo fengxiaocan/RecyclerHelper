@@ -111,6 +111,18 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
         }
     }
 
+    public LinearLayout getHeaderLayout() {
+        return mHeaderLayouts;
+    }
+
+    public LinearLayout getFooterLayout() {
+        return mFooterLayouts;
+    }
+
+    public FrameLayout getContainerLayout() {
+        return mContainerLayouts;
+    }
+
     public void addContainerView(int type, View view) {
         if (view == null) {
             return;
@@ -492,7 +504,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
             } else if (hasFooter() && position == getAllItemCount() - 1) {
                 return EXTEND_RECYCLER_FOOTER_TYPE;
             } else {
-                if (position < 0){
+                if (position < 0) {
                     return 0;
                 }
                 return getData(position - getHeaderCount()).recycleType();
@@ -705,9 +717,6 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     public void addDataAndNotify(T data) {
         initEmpty();
         if (data == null) {
-            if (isRealEmpty()) {
-                notifyDataSetChanged();
-            }
             return;
         }
         if (mDatas == null) {
@@ -716,7 +725,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
             notifyDataSetChanged();
         } else {
             mDatas.add(data);
-            notifyItemInserted(getAllItemCount() - getFooterCount() - 1);
+            notifyItemInserted(getDataCount() - 1 + getHeaderCount());
         }
     }
 
@@ -724,18 +733,14 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     public void addDatasAndNotify(List<T> datas) {
         initEmpty();
         if (ObjectUtils.isEmpty(datas)) {
-            if (isRealEmpty()) {
-                notifyDataSetChanged();
-            }
             return;
         }
         if (mDatas == null) {
             mDatas = datas;
             notifyDataSetChanged();
         } else {
-            int size = mDatas.size();
             mDatas.addAll(datas);
-            notifyItemRangeInserted(size + getHeaderCount(), datas.size());
+            notifyItemRangeInserted(getDataCount() - datas.size() + getHeaderCount(), datas.size());
         }
     }
 
@@ -763,9 +768,6 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     public void insertDataAndNotify(int position, T data) {
         initEmpty();
         if (data == null) {
-            if (isRealEmpty()) {
-                notifyDataSetChanged();
-            }
             return;
         }
         if (mDatas == null) {
@@ -778,7 +780,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
                 notifyItemInserted(getHeaderCount());
             } else if (position >= mDatas.size()) {
                 mDatas.add(data);
-                notifyItemInserted(getDataCount() - getFooterCount() - 1);
+                notifyItemInserted(getDataCount() - 1 + getHeaderCount());
             } else {
                 mDatas.add(position, data);
                 notifyItemInserted(position + getHeaderCount());
@@ -814,9 +816,6 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     public void insertDatasAndNotify(int position, List<T> datas) {
         initEmpty();
         if (ObjectUtils.isEmpty(datas)) {
-            if (isRealEmpty()) {
-                notifyDataSetChanged();
-            }
             return;
         }
         if (ObjectUtils.isEmpty(mDatas)) {
@@ -858,7 +857,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
             if (isRealEmpty()) {
                 notifyDataSetChanged();
             } else {
-                myNotifyItemRemoved(position ,false);
+                myNotifyItemRemoved(position, false);
             }
         }
     }
