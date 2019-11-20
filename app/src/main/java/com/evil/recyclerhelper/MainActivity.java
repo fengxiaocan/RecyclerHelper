@@ -23,6 +23,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mBtSet;
     private Button mBtInstert;
     private Button mBtDelect;
+    private Button mBtAddHeader;
+    private Button mBtAddFooter;
+    private Button mBtRemoveHeader;
+    private Button mBtRemoveFooter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBtInstert.setOnClickListener(this);
         mBtDelect = findViewById(R.id.bt_delect);
         mBtDelect.setOnClickListener(this);
+        mBtAddHeader =  findViewById(R.id.bt_add_header);
+        mBtAddHeader.setOnClickListener(this);
+        mBtAddFooter =  findViewById(R.id.bt_add_footer);
+        mBtAddFooter.setOnClickListener(this);
+        mBtRemoveHeader =  findViewById(R.id.bt_remove_header);
+        mBtRemoveHeader.setOnClickListener(this);
+        mBtRemoveFooter =  findViewById(R.id.bt_remove_footer);
+        mBtRemoveFooter.setOnClickListener(this);
+
+        mTestAdapter.setEmptyCompatHeaderOrFooter(true);
+        mTestAdapter.setUseEmpty(true);
+        mTestAdapter.setEmptyView(mRecyclerView,R.layout.view_empty);
     }
 
     @Override
@@ -76,8 +92,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mTestAdapter.insertDatasAndNotify(RecyclerData.random.nextInt(6), list2);
                 break;
             case R.id.bt_delect:
-//                mTestAdapter.removeAndNotify(RecyclerData.random.nextInt(5));
-                mTestAdapter.removeAndNotify(1);
+                mTestAdapter.removeAndNotify(0);
+                break;
+            case R.id.bt_add_header:
+                mTestAdapter.addHeader(mRecyclerView,R.layout.view_header);
+                break;
+            case R.id.bt_add_footer:
+                mTestAdapter.addFooter(mRecyclerView,R.layout.view_footer);
+                break;
+            case R.id.bt_remove_header:
+                mTestAdapter.removeHeader(0);
+                break;
+            case R.id.bt_remove_footer:
+                mTestAdapter.removeFooter(0);
                 break;
         }
     }

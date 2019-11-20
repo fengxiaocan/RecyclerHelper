@@ -42,7 +42,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
 
     protected SparseArray<View> mContainerView;//中间容器布局需要容纳的View的集合
 
-    protected boolean emptyCompatHeaderOrFooter = false;//中间的布局是否兼容头部或者脚部
+    protected boolean emptyCompatHeaderOrFooter = true;//中间的布局是否兼容头部或者脚部
     protected boolean useEmpty = true;
 
     protected OnHeaderItemClickListener mOnHeaderItemClickListener;
@@ -138,10 +138,14 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
         checkContainer();
         View view = LayoutInflater.from(parent.getContext()).inflate(resourid, parent, false);
         mContainerView.put(type, view);
+        if (type == EMPTY) {
+            setContainer(view);
+        }
     }
 
     public void setEmptyView(View view) {
         addContainerView(EMPTY, view);
+        setContainer(view);
     }
 
     public void setLoadingView(View view) {
@@ -164,8 +168,23 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
         addContainerView(ERROR, parent, resourid);
     }
 
+    /**
+     * 是否能展示头部或者尾巴
+     *
+     * @return
+     */
     private boolean canShowHealderOrFooter() {
-        return emptyCompatHeaderOrFooter || !isRealEmpty();
+        if (emptyCompatHeaderOrFooter) {
+            //带有兼容的
+            return true;
+        } else {
+            //不兼容并且是空的情况下
+            if (getEmptyViewCount() == 1) {
+                return false;
+            } else {
+                return true;
+            }
+        }
     }
 
     protected int getHeaderLayoutOrientation() {
@@ -247,18 +266,18 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
             mHeaderLayouts.removeView(header);
             if (mHeaderLayouts.getChildCount() == 0) {
                 if (canShowHealderOrFooter()) {
-                    myNotifyItemRemoved(0, true);
+                    myNotifyItemRemoved(0);
                 }
             }
         }
     }
 
     public void removeHeader(int index) {
-        if (mHeaderLayouts != null) {
+        if (getHeaderSize() > 0 && index < getHeaderSize()) {
             mHeaderLayouts.removeViewAt(index);
             if (mHeaderLayouts.getChildCount() == 0) {
                 if (canShowHealderOrFooter()) {
-                    myNotifyItemRemoved(0, true);
+                    myNotifyItemRemoved(0);
                 }
             }
         }
@@ -268,7 +287,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
         if (mHeaderLayouts != null) {
             mHeaderLayouts.removeAllViews();
             if (canShowHealderOrFooter()) {
-                myNotifyItemRemoved(0, true);
+                myNotifyItemRemoved(0);
             }
         }
     }
@@ -300,7 +319,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
         }
         BaseRecyclerHolder.removeParent(footer);
         mFooterLayouts.addView(footer);
-        if (getHeaderSize() == 1) {
+        if (mFooterLayouts.getChildCount() == 1) {
             if (canShowHealderOrFooter()) {
                 notifyItemInserted(getItemCount() - 1);
             }
@@ -322,7 +341,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
             index = mFooterLayouts.getChildCount();
         }
         mFooterLayouts.addView(footer, index);
-        if (getHeaderSize() == 1) {
+        if (mFooterLayouts.getChildCount() == 1) {
             if (canShowHealderOrFooter()) {
                 notifyItemInserted(getItemCount() - 1);
             }
@@ -344,18 +363,18 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
             mFooterLayouts.removeView(footer);
             if (mFooterLayouts.getChildCount() == 0) {
                 if (canShowHealderOrFooter()) {
-                    myNotifyItemRemoved(getItemCount() - 1, false);
+                    myNotifyItemRemoved(getItemCount() - 1);
                 }
             }
         }
     }
 
     public void removeFooter(int index) {
-        if (mFooterLayouts != null) {
+        if (getFooterSize() > 0 && index < getFooterSize()) {
             mFooterLayouts.removeViewAt(index);
             if (mFooterLayouts.getChildCount() == 0) {
                 if (canShowHealderOrFooter()) {
-                    myNotifyItemRemoved(getItemCount() - 1, false);
+                    myNotifyItemRemoved(getItemCount() - 1);
                 }
             }
         }
@@ -365,7 +384,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
         if (mFooterLayouts != null) {
             mFooterLayouts.removeAllViews();
             if (canShowHealderOrFooter()) {
-                myNotifyItemRemoved(getItemCount() - 1, false);
+                myNotifyItemRemoved(getItemCount() - 1);
             }
         }
     }
@@ -407,11 +426,11 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     }
 
     public int getHeaderCount() {
-        return (mHeaderLayouts != null && mHeaderLayouts.getChildCount() > 0) ? 1 : 0;
+        return (getHeaderSize() > 0) ? 1 : 0;
     }
 
     public int getFooterCount() {
-        return (mFooterLayouts != null && mFooterLayouts.getChildCount() > 0) ? 1 : 0;
+        return (getFooterSize() > 0) ? 1 : 0;
     }
 
     public boolean hasHeader() {
@@ -490,7 +509,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
             if (emptyCompatHeaderOrFooter) {
                 if (position == 0 && hasHeader()) {
                     return EXTEND_RECYCLER_HEADER_TYPE;
-                } else if (hasFooter() && position == getAllItemCount() - 1) {
+                } else if (hasFooter() && position == getAddViewCount() - 1) {
                     return EXTEND_RECYCLER_FOOTER_TYPE;
                 } else {
                     return EXTEND_RECYCLER_EXTENSION_TYPE;
@@ -725,7 +744,11 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
             notifyDataSetChanged();
         } else {
             mDatas.add(data);
-            notifyItemInserted(getDataCount() - 1 + getHeaderCount());
+            if (getDataCount() == 1) {
+                notifyDataSetChanged();
+            } else {
+                notifyItemInserted(getDataCount() - 1 + getHeaderCount());
+            }
         }
     }
 
@@ -740,7 +763,12 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
             notifyDataSetChanged();
         } else {
             mDatas.addAll(datas);
-            notifyItemRangeInserted(getDataCount() - datas.size() + getHeaderCount(), datas.size());
+            if (getDataCount() == datas.size()) {
+                notifyDataSetChanged();
+            } else {
+                notifyItemRangeInserted(getDataCount() - datas.size() + getHeaderCount(),
+                        datas.size());
+            }
         }
     }
 
@@ -774,7 +802,10 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
             mDatas = new ArrayList<>();
             mDatas.add(data);
             notifyDataSetChanged();
-        } else {
+        } else if (mDatas.size() == 0){
+            mDatas.add(data);
+            notifyDataSetChanged();
+        }else{
             if (position < 0) {
                 mDatas.add(0, data);
                 notifyItemInserted(getHeaderCount());
@@ -854,22 +885,22 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
         initEmpty();
         if (mDatas != null && position >= 0 && position < mDatas.size()) {
             mDatas.remove(position);
-            if (isRealEmpty()) {
-                notifyDataSetChanged();
-            } else {
-                myNotifyItemRemoved(position, false);
-            }
+            myNotifyItemRemoved(position);
         }
     }
 
-    private void myNotifyItemRemoved(int position, boolean isHeader) {
-        int index = position;
-        if (!isHeader) {
-            index += getHeaderCount();
+    private void myNotifyItemRemoved(int position) {
+        if (getEmptyViewCount() == 1) {
+            notifyDataSetChanged();
+        } else {
+            int itemCount = getDataCount() - position + getFooterCount();
+            if (itemCount <= 1) {
+                notifyDataSetChanged();
+            } else {
+                int index = position + getHeaderCount();
+                notifyItemRemoved(index);
+            }
         }
-        notifyItemRemoved(index);
-        int i = getDataCount() - position;
-        notifyItemRangeChanged(index, i + getFooterCount());
     }
 
     @Override
@@ -887,11 +918,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
             int index = mDatas.indexOf(t);
             if (index >= 0) {
                 mDatas.remove(index);
-                if (isRealEmpty()) {
-                    notifyDataSetChanged();
-                } else {
-                    myNotifyItemRemoved(index, false);
-                }
+                myNotifyItemRemoved(index);
             }
         }
     }
