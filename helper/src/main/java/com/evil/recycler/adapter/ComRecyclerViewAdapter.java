@@ -896,7 +896,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
         }
     }
 
-    private void initEmpty() {
+    protected void initEmpty() {
         if (useEmpty) {
             setContainer(getContainerView(EMPTY));
         } else {
