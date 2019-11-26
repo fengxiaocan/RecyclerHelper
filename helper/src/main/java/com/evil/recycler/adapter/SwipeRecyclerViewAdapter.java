@@ -4,6 +4,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+
 import com.evil.recycler.holder.BaseRecyclerHolder;
 import com.evil.recycler.holder.RecyclerViewHolder;
 import com.evil.recycler.holder.SwipeRecyclerViewHolder;
@@ -11,8 +13,6 @@ import com.evil.recycler.inface.IRecyclerData;
 import com.evil.recycler.inface.OnMenuItemClickListener;
 import com.evil.recycler.menu.IMenuDragView;
 import com.evil.recycler.menu.MenuDragLayout;
-
-import androidx.annotation.NonNull;
 
 /**
  * @author noah
@@ -23,10 +23,6 @@ import androidx.annotation.NonNull;
 public abstract class SwipeRecyclerViewAdapter<T extends IRecyclerData, V extends SwipeRecyclerViewHolder<T>>
         extends ComRecyclerViewAdapter<T, RecyclerViewHolder<T>> {
     protected OnMenuItemClickListener mOnMenuItemClickListener;
-
-    public OnMenuItemClickListener getOnMenuItemClickListener() {
-        return mOnMenuItemClickListener;
-    }
 
     public void setOnMenuItemClickListener(OnMenuItemClickListener onMenuItemClickListener) {
         mOnMenuItemClickListener = onMenuItemClickListener;
@@ -42,7 +38,7 @@ public abstract class SwipeRecyclerViewAdapter<T extends IRecyclerData, V extend
             return getFooterHolder();
         } else if (isHeader(viewType)) {
             return getHeaderHolder();
-        } else  {
+        } else {
             LayoutInflater from = LayoutInflater.from(parent.getContext());
             View view;
             if (attachParent()) {
@@ -81,6 +77,41 @@ public abstract class SwipeRecyclerViewAdapter<T extends IRecyclerData, V extend
 
     protected IMenuDragView createMenuDragLayou(ViewGroup parent) {
         return new MenuDragLayout(parent.getContext());
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull BaseRecyclerHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
+        if (holder instanceof SwipeRecyclerViewHolder) {
+            SwipeRecyclerViewHolder viewHolder = (SwipeRecyclerViewHolder) holder;
+            final int realPosition = position - getHeaderCount();
+            if (mOnItemClickListener != null) {
+                viewHolder.getContentView().setOnClickListener(new OnItemClick(realPosition));
+            }
+            if (mOnMenuItemClickListener != null) {
+                if (viewHolder.getMenuView() instanceof ViewGroup) {
+                    for (int i = 0; i < ((ViewGroup) viewHolder.getMenuView()).getChildCount(); i++) {
+                        View child = ((ViewGroup) viewHolder.getMenuView()).getChildAt(i);
+                        final int childPosition = i;
+                        if (child != null) {
+                            child.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mOnMenuItemClickListener.onMenuItemClick(v, realPosition, childPosition);
+                                }
+                            });
+                        }
+                    }
+                } else {
+                    viewHolder.getMenuView().setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mOnMenuItemClickListener.onMenuItemClick(v, realPosition, 0);
+                        }
+                    });
+                }
+            }
+        }
     }
 
     /**

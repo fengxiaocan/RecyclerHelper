@@ -996,7 +996,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
         holder.onViewAttachedToWindow();
     }
 
-    private class OnItemClick implements View.OnClickListener {
+    class OnItemClick implements View.OnClickListener {
         private int position;
 
         public OnItemClick(int position) {

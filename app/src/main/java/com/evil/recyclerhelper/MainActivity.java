@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.evil.recycler.decoration.RecyclerDividerProps;
 import com.evil.recycler.decoration.RecyclerViewDivider;
 import com.evil.recycler.helper.RecyclerHelper;
+import com.evil.recycler.inface.OnAdapterItemClickListener;
+import com.evil.recycler.inface.OnMenuItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,18 +53,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBtInstert.setOnClickListener(this);
         mBtDelect = findViewById(R.id.bt_delect);
         mBtDelect.setOnClickListener(this);
-        mBtAddHeader =  findViewById(R.id.bt_add_header);
+        mBtAddHeader = findViewById(R.id.bt_add_header);
         mBtAddHeader.setOnClickListener(this);
-        mBtAddFooter =  findViewById(R.id.bt_add_footer);
+        mBtAddFooter = findViewById(R.id.bt_add_footer);
         mBtAddFooter.setOnClickListener(this);
-        mBtRemoveHeader =  findViewById(R.id.bt_remove_header);
+        mBtRemoveHeader = findViewById(R.id.bt_remove_header);
         mBtRemoveHeader.setOnClickListener(this);
-        mBtRemoveFooter =  findViewById(R.id.bt_remove_footer);
+        mBtRemoveFooter = findViewById(R.id.bt_remove_footer);
         mBtRemoveFooter.setOnClickListener(this);
 
         mTestAdapter.setEmptyCompatHeaderOrFooter(true);
         mTestAdapter.setUseEmpty(true);
-        mTestAdapter.setEmptyView(mRecyclerView,R.layout.view_empty);
+        mTestAdapter.setEmptyView(mRecyclerView, R.layout.view_empty);
+        mTestAdapter.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            @Override
+            public void onMenuItemClick(View v, int position, int menuPosition) {
+                Toast.makeText(MainActivity.this,
+                        "position=" + position + " menuPosition=" + menuPosition,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+        mTestAdapter.setOnItemClickListener(new OnAdapterItemClickListener<RecyclerData>() {
+            @Override
+            public void onItemClick(View view, List<RecyclerData> list, int position) {
+                Toast.makeText(MainActivity.this, "position=" + position, Toast.LENGTH_SHORT)
+                     .show();
+            }
+        });
     }
 
     @Override
@@ -95,10 +113,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mTestAdapter.removeAndNotify(0);
                 break;
             case R.id.bt_add_header:
-                mTestAdapter.addHeader(mRecyclerView,R.layout.view_header);
+                mTestAdapter.addHeader(mRecyclerView, R.layout.view_header);
                 break;
             case R.id.bt_add_footer:
-                mTestAdapter.addFooter(mRecyclerView,R.layout.view_footer);
+                mTestAdapter.addFooter(mRecyclerView, R.layout.view_footer);
                 break;
             case R.id.bt_remove_header:
                 mTestAdapter.removeHeader(0);

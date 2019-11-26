@@ -49,31 +49,5 @@ public abstract class SwipeRecyclerViewHolder<T extends IRecyclerData>
 
     @Override
     public void onBindData(RecyclerView.Adapter adapter, final int position) {
-        SwipeRecyclerViewAdapter viewAdapter = (SwipeRecyclerViewAdapter) adapter;
-        final OnMenuItemClickListener onMenuItemClickListener =
-                viewAdapter.getOnMenuItemClickListener();
-        if (onMenuItemClickListener != null) {
-            if (menuView instanceof ViewGroup) {
-                for (int i = 0; i < ((ViewGroup) menuView).getChildCount(); i++) {
-                    View child = ((ViewGroup) menuView).getChildAt(i);
-                    final int childPosition = i;
-                    if (child != null) {
-                        child.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                onMenuItemClickListener.onMenuItemClick(v, position, childPosition);
-                            }
-                        });
-                    }
-                }
-            } else {
-                menuView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onMenuItemClickListener.onMenuItemClick(v, position, 0);
-                    }
-                });
-            }
-        }
     }
 }
