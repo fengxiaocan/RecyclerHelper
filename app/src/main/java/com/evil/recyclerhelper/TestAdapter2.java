@@ -22,6 +22,11 @@ public class TestAdapter2
     @Override
     public RecyclerViewHolder<RecyclerData> createViewHolder(View view, int viewType) {
         return new RecyclerViewHolder<RecyclerData>(view) {
+            @Override
+            public void onBindData(RecyclerData data) {
+                mTvTitle.setText(data.name);
+            }
+
             private TextView mTvTitle;
 
             @Override
@@ -29,11 +34,6 @@ public class TestAdapter2
                 mTvTitle = findViewById(R.id.tv_title);
             }
 
-            @Override
-            public void setData(RecyclerView.Adapter adapter, RecyclerData data, int position)
-            {
-                mTvTitle.setText(data.name);
-            }
         };
     }
 
@@ -47,14 +47,11 @@ public class TestAdapter2
     public SwipeRecyclerViewHolder<RecyclerData> onCreateWithMenuHolder(View layout, int viewType) {
         return new SwipeRecyclerViewHolder<RecyclerData>(layout) {
             @Override
-            public void initMenu(View menuLayout) {
-
+            public void onBindData(RecyclerData data) {
             }
 
             @Override
-            public void setData(RecyclerView.Adapter adapter, RecyclerData recyclerData,
-                    int position)
-            {
+            public void initMenu(View menuLayout) {
 
             }
 

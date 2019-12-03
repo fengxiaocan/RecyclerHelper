@@ -2,6 +2,8 @@ package com.evil.recycler.inface;
 
 import android.view.View;
 
+import com.evil.recycler.holder.BaseRecyclerHolder;
+
 import java.util.List;
 
 /**
@@ -15,8 +17,7 @@ public interface OnAdapterItemClickListener<T> {
      * On item click.
      *
      * @param view the view
-     * @param list the list
      * @param position the position
      */
-    void onItemClick(View view, List<T> list, int position);
+    void onItemClick(View view, BaseRecyclerHolder baseRecyclerHolder, int position);
 }

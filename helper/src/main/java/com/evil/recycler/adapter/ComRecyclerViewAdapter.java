@@ -47,9 +47,10 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
 
     protected OnHeaderItemClickListener mOnHeaderItemClickListener;
     protected OnFooterItemClickListener mOnFooterItemClickListener;
-    protected OnAdapterItemClickListener<T> mOnItemClickListener;
     protected OnItemChildClickListener<T> mOnItemChildClickListener;
     protected OnItemChildLongClickListener<T> mOnItemChildLongClickListener;
+
+    protected OnAdapterItemClickListener<T> mOnItemClickListener;
 
     public void setOnItemClickListener(OnAdapterItemClickListener<T> mOnItemClickListener)
     {
@@ -225,6 +226,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
         }
         BaseRecyclerHolder.removeParent(header);
         mHeaderLayouts.addView(header);
+        addHeaderClick(header);
         if (mHeaderLayouts.getChildCount() == 1) {
             if (canShowHealderOrFooter()) {
                 notifyItemInserted(0);
@@ -250,6 +252,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
             index = mHeaderLayouts.getChildCount();
         }
         mHeaderLayouts.addView(header, index);
+        addHeaderClick(header);
         if (mHeaderLayouts.getChildCount() == 1) {
             if (canShowHealderOrFooter()) {
                 notifyItemInserted(0);
@@ -316,7 +319,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     }
 
     public void addFooter(View footer) {
-        if (footer == null){
+        if (footer == null) {
             return;
         }
         checkFooter(footer.getContext());
@@ -328,6 +331,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
         }
         BaseRecyclerHolder.removeParent(footer);
         mFooterLayouts.addView(footer);
+        addFooterClick(footer);
         if (mFooterLayouts.getChildCount() == 1) {
             if (canShowHealderOrFooter()) {
                 notifyItemInserted(getItemCount() - 1);
@@ -336,7 +340,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     }
 
     public void addFooter(View footer, int index) {
-        if (footer == null){
+        if (footer == null) {
             return;
         }
         checkFooter(footer.getContext());
@@ -353,6 +357,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
             index = mFooterLayouts.getChildCount();
         }
         mFooterLayouts.addView(footer, index);
+        addFooterClick(footer);
         if (mFooterLayouts.getChildCount() == 1) {
             if (canShowHealderOrFooter()) {
                 notifyItemInserted(getItemCount() - 1);
@@ -494,10 +499,12 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
 
     public void setOnHeaderClickListener(OnHeaderItemClickListener onHeaderItemClickListener) {
         mOnHeaderItemClickListener = onHeaderItemClickListener;
+        addHeaderClicks();
     }
 
     public void setOnFooterClickListener(OnFooterItemClickListener onFooterItemClickListener) {
         mOnFooterItemClickListener = onFooterItemClickListener;
+        addFooterClicks();
     }
 
 
@@ -571,7 +578,9 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
             } else {
                 view = from.inflate(onCreateLayoutRes(viewType), null);
             }
-            return createViewHolder(view, viewType);
+            V viewHolder = createViewHolder(view, viewType);
+            viewHolder.selfAdapter = this;
+            return viewHolder;
         }
     }
 
@@ -579,45 +588,59 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     @Override
     public void onBindViewHolder(@NonNull BaseRecyclerHolder holder, int position) {
         holder.onBindData(this, position);
-        if (holder instanceof HeaderViewHolder) {
-            if (mOnHeaderItemClickListener != null) {
-                for (int i = 0; i < mHeaderLayouts.getChildCount(); i++) {
-                    View child = mHeaderLayouts.getChildAt(i);
-                    child.setOnClickListener(new TOnClickListener<Integer>(position) {
-                        @Override
-                        public void onClick(View v) {
-                            mOnHeaderItemClickListener.onHeaderClick(v, t);
-                        }
-                    });
-                }
-            }
-        } else if (holder instanceof FooterViewHolder) {
-            if (mOnFooterItemClickListener != null) {
-                for (int i = 0; i < mFooterLayouts.getChildCount(); i++) {
-                    View child = mFooterLayouts.getChildAt(i);
-                    child.setOnClickListener(new TOnClickListener<Integer>(position) {
-                        @Override
-                        public void onClick(View v) {
-                            mOnFooterItemClickListener.onFooterClick(v, t);
-                        }
-                    });
-                }
-            }
-        } else if (holder instanceof RecyclerViewHolder) {
-            final int realPosition = position - getHeaderCount();
+        if (holder instanceof RecyclerViewHolder) {
             RecyclerViewHolder viewHolder = (RecyclerViewHolder) holder;
-            T t = getData(realPosition);
+            T t = getData(position - getHeaderCount());
 
             ViewHolderHepler.setData(viewHolder, t);
-            ViewHolderHepler.setRealPosition(viewHolder, position);
             ViewHolderHepler.setOnItemChildClickListener(viewHolder, mOnItemChildClickListener);
             ViewHolderHepler.setOnItemChildLongClickListener(viewHolder,
                     mOnItemChildLongClickListener);
+            ViewHolderHepler.setOnItemClickListener(viewHolder, mOnItemClickListener);
 
-            viewHolder.setData(this, t, realPosition);
-            if (mOnItemClickListener != null) {
-                holder.itemView.setOnClickListener(new OnItemClick(realPosition));
+            viewHolder.onBindData(t);
+        }
+    }
+
+    private void addFooterClicks() {
+        if (mFooterLayouts != null) {
+            for (int i = 0; i < mFooterLayouts.getChildCount(); i++) {
+                addFooterClick(mFooterLayouts.getChildAt(i));
             }
+        }
+    }
+
+    private void addHeaderClicks() {
+        if (mFooterLayouts != null) {
+            for (int i = 0; i < mHeaderLayouts.getChildCount(); i++) {
+                addFooterClick(mHeaderLayouts.getChildAt(i));
+            }
+        }
+    }
+
+    private void addFooterClick(View child) {
+        if (mOnFooterItemClickListener != null) {
+            child.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnFooterItemClickListener != null) {
+                        mOnFooterItemClickListener.onFooterClick(v, mFooterLayouts.indexOfChild(v));
+                    }
+                }
+            });
+        }
+    }
+
+    private void addHeaderClick(View child) {
+        if (mOnHeaderItemClickListener != null) {
+            child.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnHeaderItemClickListener != null) {
+                        mOnHeaderItemClickListener.onHeaderClick(v, mHeaderLayouts.indexOfChild(v));
+                    }
+                }
+            });
         }
     }
 
@@ -626,15 +649,15 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     }
 
     protected ExtensionViewHolder getExtensionHolder() {
-        return new ExtensionViewHolder(mContainerLayouts);
+        return new ExtensionViewHolder(mContainerLayouts, this);
     }
 
     protected HeaderViewHolder getHeaderHolder() {
-        return new HeaderViewHolder(mHeaderLayouts);
+        return new HeaderViewHolder(mHeaderLayouts, this);
     }
 
     protected FooterViewHolder getFooterHolder() {
-        return new FooterViewHolder(mFooterLayouts);
+        return new FooterViewHolder(mFooterLayouts, this);
     }
 
     public abstract boolean attachParent();
@@ -995,20 +1018,4 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     public void onViewAttachedToWindow(@NonNull BaseRecyclerHolder holder) {
         holder.onViewAttachedToWindow();
     }
-
-    class OnItemClick implements View.OnClickListener {
-        private int position;
-
-        public OnItemClick(int position) {
-            this.position = position;
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (mOnItemClickListener != null) {
-                mOnItemClickListener.onItemClick(v, getDatas(), position);
-            }
-        }
-    }
-
 }

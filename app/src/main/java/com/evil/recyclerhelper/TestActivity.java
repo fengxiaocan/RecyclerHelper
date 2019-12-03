@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.evil.recycler.decoration.RecyclerDividerProps;
 import com.evil.recycler.decoration.RecyclerViewDivider;
+import com.evil.recycler.holder.BaseRecyclerHolder;
 import com.evil.recycler.inface.OnAdapterItemClickListener;
 import com.evil.recycler.helper.RecyclerHelper;
 
@@ -38,7 +39,9 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mTestAdapter = new TestAdapter2();
         mTestAdapter.setOnItemClickListener(new OnAdapterItemClickListener<RecyclerData>() {
-            public void onItemClick(View view, List<RecyclerData> list, int position) {
+            @Override
+            public void onItemClick(View view, BaseRecyclerHolder baseRecyclerHolder, int position)
+            {
                 Toast.makeText(TestActivity.this, "点击content", Toast.LENGTH_SHORT).show();
             }
         });

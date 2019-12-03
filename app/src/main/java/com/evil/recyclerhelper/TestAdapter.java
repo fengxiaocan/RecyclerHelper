@@ -1,13 +1,11 @@
 package com.evil.recyclerhelper;
 
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
 import android.widget.TextView;
 
 import com.evil.recycler.adapter.SwipeRecyclerViewAdapter;
 import com.evil.recycler.holder.SwipeRecyclerViewHolder;
-import com.evil.recycler.inface.IRecyclerData;
 
 public class TestAdapter extends SwipeRecyclerViewAdapter<RecyclerData,SwipeRecyclerViewHolder<RecyclerData>> {
 	
@@ -16,15 +14,14 @@ public class TestAdapter extends SwipeRecyclerViewAdapter<RecyclerData,SwipeRecy
 			View layout,int viewType)
 	{
 		return new SwipeRecyclerViewHolder<RecyclerData>(layout) {
+			@Override
+			public void onBindData(RecyclerData data) {
+				mTextView.setText(data.name);
+			}
+
 			private TextView mTextView;
 			
 			public void initMenu(View menuLayout) {
-			}
-			
-			public void setData(
-					RecyclerView.Adapter adapter, RecyclerData data,int position)
-			{
-				mTextView.setText(data.name);
 			}
 			
 			public void initView(View rootView) {

@@ -9,6 +9,8 @@ import androidx.annotation.IdRes;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.evil.recycler.adapter.IExtendAdapter;
+
 /**
  * @author noah
  * @email fengxiaocan@gmail.com
@@ -16,8 +18,20 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  * @desc ...
  */
 public abstract class BaseRecyclerHolder extends RecyclerView.ViewHolder {
-
+    public IExtendAdapter selfAdapter;
     protected boolean isStaggeredGridFullSpan = false;//在流式布局的情况下是否需要占满全屏
+
+    public void removeAndNotifySelf() {
+        selfAdapter.removeAndNotify(getLayoutPosition());
+    }
+
+    public RecyclerView.Adapter getAdapter() {
+        return ((RecyclerView.Adapter) selfAdapter);
+    }
+
+    public IExtendAdapter getSelfAdapter() {
+        return selfAdapter;
+    }
 
     public BaseRecyclerHolder(View itemView) {
         super(itemView);

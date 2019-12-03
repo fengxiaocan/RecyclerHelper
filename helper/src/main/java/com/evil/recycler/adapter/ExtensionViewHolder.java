@@ -5,8 +5,9 @@ import android.view.View;
 import com.evil.recycler.holder.BaseRecyclerHolder;
 
 class ExtensionViewHolder extends BaseRecyclerHolder {
-    public ExtensionViewHolder(View itemView) {
+    public ExtensionViewHolder(View itemView,IExtendAdapter adapter) {
         super(itemView);
+        selfAdapter = adapter;
         isStaggeredGridFullSpan = true;
     }
 

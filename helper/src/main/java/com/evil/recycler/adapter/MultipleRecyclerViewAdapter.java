@@ -288,21 +288,11 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecyclerData, V ext
             RecyclerViewHolder viewHolder = (RecyclerViewHolder) holder;
 
             ViewHolderHepler.setData(viewHolder, t);
-            ViewHolderHepler.setRealPosition(viewHolder, position);
             ViewHolderHepler.setOnItemChildClickListener(viewHolder, mOnItemChildClickListener);
-            ViewHolderHepler.setOnItemChildLongClickListener(viewHolder,
-                    mOnItemChildLongClickListener);
+            ViewHolderHepler.setOnItemChildLongClickListener(viewHolder, mOnItemChildLongClickListener);
+            ViewHolderHepler.setOnItemClickListener(viewHolder, mOnItemClickListener);
 
-            viewHolder.setData(this, t, position);
-
-            if (mOnItemClickListener != null) {
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mOnItemClickListener.onItemClick(v, getDatas(), position);
-                    }
-                });
-            }
+            viewHolder.onBindData(t);
         }
     }
 
@@ -310,7 +300,7 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecyclerData, V ext
     @Override
     public BaseRecyclerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (isEmpty() && isHasEmptyView()) {
-            return new ExtensionViewHolder(mEmptyLayouts);
+            return new ExtensionViewHolder(mEmptyLayouts,this);
         }
         View view;
         if (attachParent()) {
@@ -320,7 +310,9 @@ public abstract class MultipleRecyclerViewAdapter<T extends IRecyclerData, V ext
             view = LayoutInflater.from(parent.getContext()).inflate(onCreateLayoutRes(viewType),
                     null);//解决宽度不能铺满
         }
-        return createViewHolder(view, viewType);
+        V viewHolder = createViewHolder(view, viewType);
+        viewHolder.selfAdapter = this;
+        return viewHolder;
     }
 
     public abstract boolean attachParent();

@@ -28,8 +28,7 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
     protected OnItemChildClickListener<T> mOnItemChildClickListener;
     protected OnItemChildLongClickListener<T> mOnItemChildLongClickListener;
 
-    public void setOnItemClickListener(OnAdapterItemClickListener<T> mOnItemClickListener)
-    {
+    public void setOnItemClickListener(OnAdapterItemClickListener<T> mOnItemClickListener) {
         this.mOnItemClickListener = mOnItemClickListener;
     }
 
@@ -277,7 +276,7 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
     }
 
     @Override
-    public void onBindViewHolder(@NonNull BaseRecyclerHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final BaseRecyclerHolder holder, int position) {
         holder.onBindData(this, position);
         if (holder instanceof RecyclerViewHolder) {
             T t = null;
@@ -288,20 +287,11 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
             RecyclerViewHolder viewHolder = (RecyclerViewHolder) holder;
 
             ViewHolderHepler.setData(viewHolder, t);
-            ViewHolderHepler.setRealPosition(viewHolder, position);
             ViewHolderHepler.setOnItemChildClickListener(viewHolder, mOnItemChildClickListener);
-            ViewHolderHepler.setOnItemChildLongClickListener(viewHolder,
-                    mOnItemChildLongClickListener);
+            ViewHolderHepler.setOnItemChildLongClickListener(viewHolder, mOnItemChildLongClickListener);
+            ViewHolderHepler.setOnItemClickListener(viewHolder, mOnItemClickListener);
 
-            viewHolder.setData(this, t, position);
-            if (mOnItemClickListener != null) {
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mOnItemClickListener.onItemClick(v, getDatas(), position);
-                    }
-                });
-            }
+            viewHolder.onBindData(t);
         }
     }
 
@@ -309,7 +299,7 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
     @Override
     public BaseRecyclerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (isEmpty() && isHasEmptyView()) {
-            return new ExtensionViewHolder(mEmptyLayouts);
+            return new ExtensionViewHolder(mEmptyLayouts,this);
         }
         View view;
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
@@ -321,7 +311,9 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
             //解决宽度不能铺满
             view = layoutInflater.inflate(resource, null);
         }
-        return createViewHolder(view, viewType);
+        V viewHolder = createViewHolder(view, viewType);
+        viewHolder.selfAdapter = this;
+        return viewHolder;
     }
 
     public abstract boolean attachParent();
@@ -412,7 +404,7 @@ public abstract class RecyclerViewAdapter<T, V extends RecyclerViewHolder<T>>
                             ViewGroup.LayoutParams.MATCH_PARENT));
         }
         int index = mEmptyLayouts.indexOfChild(emptyView);
-        if (index <0){
+        if (index < 0) {
             mEmptyLayouts.removeAllViews();
             mEmptyLayouts.addView(emptyView);
         }

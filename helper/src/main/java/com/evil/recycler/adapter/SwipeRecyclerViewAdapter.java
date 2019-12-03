@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import com.evil.recycler.holder.BaseRecyclerHolder;
 import com.evil.recycler.holder.RecyclerViewHolder;
 import com.evil.recycler.holder.SwipeRecyclerViewHolder;
+import com.evil.recycler.holder.ViewHolderHepler;
 import com.evil.recycler.inface.IRecyclerData;
 import com.evil.recycler.inface.OnMenuItemClickListener;
 import com.evil.recycler.menu.IMenuDragView;
@@ -69,9 +70,12 @@ public abstract class SwipeRecyclerViewAdapter<T extends IRecyclerData, V extend
                 holder.setMenuView(dragView);
                 holder.setContentView(view);
                 holder.initMenu(dragView);
+                holder.selfAdapter = this;
                 return holder;
             }
-            return createViewHolder(view, viewType);
+            RecyclerViewHolder<T> viewHolder = createViewHolder(view, viewType);
+            viewHolder.selfAdapter = this;
+            return viewHolder;
         }
     }
 
@@ -80,38 +84,12 @@ public abstract class SwipeRecyclerViewAdapter<T extends IRecyclerData, V extend
     }
 
     @Override
-    public void onBindViewHolder(@NonNull BaseRecyclerHolder holder, int position) {
-        super.onBindViewHolder(holder, position);
+    public void onBindViewHolder(@NonNull final BaseRecyclerHolder holder, int position) {
         if (holder instanceof SwipeRecyclerViewHolder) {
             SwipeRecyclerViewHolder viewHolder = (SwipeRecyclerViewHolder) holder;
-            final int realPosition = position - getHeaderCount();
-            if (mOnItemClickListener != null) {
-                viewHolder.getContentView().setOnClickListener(new OnItemClick(realPosition));
-            }
-            if (mOnMenuItemClickListener != null) {
-                if (viewHolder.getMenuView() instanceof ViewGroup) {
-                    for (int i = 0; i < ((ViewGroup) viewHolder.getMenuView()).getChildCount(); i++) {
-                        View child = ((ViewGroup) viewHolder.getMenuView()).getChildAt(i);
-                        final int childPosition = i;
-                        if (child != null) {
-                            child.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    mOnMenuItemClickListener.onMenuItemClick(v, realPosition, childPosition);
-                                }
-                            });
-                        }
-                    }
-                } else {
-                    viewHolder.getMenuView().setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mOnMenuItemClickListener.onMenuItemClick(v, realPosition, 0);
-                        }
-                    });
-                }
-            }
+            ViewHolderHepler.setOnMenuItemClickListener(viewHolder,mOnMenuItemClickListener);
         }
+        super.onBindViewHolder(holder, position);
     }
 
     /**
