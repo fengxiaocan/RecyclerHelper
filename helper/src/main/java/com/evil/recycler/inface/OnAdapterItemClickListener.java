@@ -20,5 +20,5 @@ public interface OnAdapterItemClickListener<T> {
      * @param view the view
      * @param position the position
      */
-    void onItemClick(View view, RecyclerViewHolder baseRecyclerHolder, int position);
+    void onItemClick(View view, RecyclerViewHolder<T> baseRecyclerHolder, int position);
 }

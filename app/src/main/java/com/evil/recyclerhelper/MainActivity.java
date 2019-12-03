@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.evil.recycler.decoration.RecyclerDividerProps;
 import com.evil.recycler.decoration.RecyclerViewDivider;
 import com.evil.recycler.helper.RecyclerHelper;
-import com.evil.recycler.holder.BaseRecyclerHolder;
+import com.evil.recycler.holder.RecyclerViewHolder;
 import com.evil.recycler.inface.OnAdapterItemClickListener;
 import com.evil.recycler.inface.OnFooterItemClickListener;
 import com.evil.recycler.inface.OnHeaderItemClickListener;
@@ -78,22 +78,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         mTestAdapter.setOnItemClickListener(new OnAdapterItemClickListener<RecyclerData>() {
             @Override
-            public void onItemClick(View view, BaseRecyclerHolder baseRecyclerHolder, int position)
+            public void onItemClick(View view, RecyclerViewHolder<RecyclerData> baseRecyclerHolder,
+                    int position)
             {
-                Toast.makeText(MainActivity.this, "条目 position=" + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "条目 position=" + position, Toast.LENGTH_SHORT)
+                     .show();
+
             }
+
         });
         mTestAdapter.setOnHeaderClickListener(new OnHeaderItemClickListener() {
             @Override
             public void onHeaderClick(View view, int position) {
-                Toast.makeText(MainActivity.this, "头部 position=" + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "头部 position=" + position, Toast.LENGTH_SHORT)
+                     .show();
             }
         });
         mTestAdapter.setOnFooterClickListener(new OnFooterItemClickListener() {
             @Override
             public void onFooterClick(View view, int position) {
-                Toast.makeText(MainActivity.this, "尾部 position=" + position,
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "尾部 position=" + position, Toast.LENGTH_SHORT)
+                     .show();
             }
         });
     }
