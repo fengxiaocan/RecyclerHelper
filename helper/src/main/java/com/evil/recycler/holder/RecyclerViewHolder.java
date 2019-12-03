@@ -3,6 +3,7 @@ package com.evil.recycler.holder;
 import android.view.View;
 
 import com.evil.recycler.adapter.ComRecyclerViewAdapter;
+import com.evil.recycler.adapter.IExtendAdapter;
 import com.evil.recycler.inface.OnAdapterItemClickListener;
 import com.evil.recycler.inface.OnItemChildClickListener;
 import com.evil.recycler.inface.OnItemChildLongClickListener;
@@ -54,7 +55,14 @@ public abstract class RecyclerViewHolder<T> extends BaseRecyclerHolder
     }
 
     public List<T> getAdapterDatas() {
+        IExtendAdapter<T> selfAdapter = this.selfAdapter;
         return selfAdapter.getDatas();
+    }
+
+    @Override
+    public IExtendAdapter<T> getSelfAdapter() {
+        IExtendAdapter<T> selfAdapter = this.selfAdapter;
+        return selfAdapter;
     }
 
     public abstract void onBindData(T t);
