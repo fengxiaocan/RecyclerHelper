@@ -1,6 +1,5 @@
 package com.evil.recycler.holder;
 
-import android.os.Build;
 import android.view.View;
 
 import com.evil.recycler.adapter.ComRecyclerViewAdapter;
@@ -41,7 +40,8 @@ public abstract class RecyclerViewHolder<T> extends BaseRecyclerHolder
                 @Override
                 public void onClick(View v) {
                     if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onItemClick(v, RecyclerViewHolder.this, getDataPosition());
+                        mOnItemClickListener.onItemClick(v, RecyclerViewHolder.this,
+                                getDataPosition());
                     }
                 }
             });

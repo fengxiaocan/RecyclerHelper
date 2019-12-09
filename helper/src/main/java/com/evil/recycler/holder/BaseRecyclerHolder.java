@@ -79,10 +79,10 @@ public abstract class BaseRecyclerHolder extends RecyclerView.ViewHolder {
         /**
          * 针对流式布局
          */
-        ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
-        if (layoutParams != null) {
-            if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
-                if (isStaggeredGridFullSpan) {
+        if (isStaggeredGridFullSpan) {
+            ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
+            if (layoutParams != null) {
+                if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
                     StaggeredGridLayoutManager.LayoutParams params =
                             (StaggeredGridLayoutManager.LayoutParams) layoutParams;
                     //占领全部空间;

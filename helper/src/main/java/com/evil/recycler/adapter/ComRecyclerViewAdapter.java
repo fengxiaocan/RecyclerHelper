@@ -477,7 +477,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
             return manager.getSpanCount();
         } else if (isFooter(itemViewType)) {
             return manager.getSpanCount();
-        } else if (isFooter(itemViewType)) {
+        } else if (isContainer(itemViewType)) {
             return manager.getSpanCount();
         }
         return 1;
