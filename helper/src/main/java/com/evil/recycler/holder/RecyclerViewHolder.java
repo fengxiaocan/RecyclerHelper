@@ -86,7 +86,7 @@ public abstract class RecyclerViewHolder<T> extends BaseRecyclerHolder
 
     protected int getDataPosition() {
         if (selfAdapter instanceof ComRecyclerViewAdapter) {
-            return getLayoutPosition() - ((ComRecyclerViewAdapter) selfAdapter).getHeaderSize();
+            return getLayoutPosition() - ((ComRecyclerViewAdapter) selfAdapter).getHeaderCount();
         } else {
             return getLayoutPosition();
         }

@@ -206,7 +206,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
         mHeaderLayouts.setOrientation(getHeaderLayoutOrientation());
     }
 
-    public int getHeaderSize() {
+    public int getHeaderChildSize() {
         if (mHeaderLayouts == null) {
             return 0;
         }
@@ -271,7 +271,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     }
 
     public void removeHeader(View header) {
-        if (getHeaderSize() > 0) {
+        if (getHeaderChildSize() > 0) {
             mHeaderLayouts.removeView(header);
             if (mHeaderLayouts.getChildCount() == 0) {
                 if (canShowHealderOrFooter()) {
@@ -282,7 +282,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     }
 
     public void removeHeader(int index) {
-        if (getHeaderSize() > 0 && index < getHeaderSize()) {
+        if (getHeaderChildSize() > 0 && index < getHeaderChildSize()) {
             mHeaderLayouts.removeViewAt(index);
             if (mHeaderLayouts.getChildCount() == 0) {
                 if (canShowHealderOrFooter()) {
@@ -293,7 +293,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     }
 
     public void removeAllHeader() {
-        if (getHeaderSize() > 0) {
+        if (getHeaderChildSize() > 0) {
             mHeaderLayouts.removeAllViews();
             if (canShowHealderOrFooter()) {
                 myNotifyItemRemoved(0);
@@ -311,7 +311,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
         mFooterLayouts.setOrientation(getFooterLayoutOrientation());
     }
 
-    public int getFooterSize() {
+    public int getFooterChildSize() {
         if (mFooterLayouts == null) {
             return 0;
         }
@@ -376,7 +376,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     }
 
     public void removeFooter(View footer) {
-        if (getFooterSize() > 0) {
+        if (getFooterChildSize() > 0) {
             mFooterLayouts.removeView(footer);
             if (mFooterLayouts.getChildCount() == 0) {
                 if (canShowHealderOrFooter()) {
@@ -387,7 +387,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     }
 
     public void removeFooter(int index) {
-        if (getFooterSize() > 0 && index < getFooterSize()) {
+        if (getFooterChildSize() > 0 && index < getFooterChildSize()) {
             mFooterLayouts.removeViewAt(index);
             if (mFooterLayouts.getChildCount() == 0) {
                 if (canShowHealderOrFooter()) {
@@ -398,7 +398,7 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     }
 
     public void removeAllFooter() {
-        if (getFooterSize() > 0) {
+        if (getFooterChildSize() > 0) {
             mFooterLayouts.removeAllViews();
             if (canShowHealderOrFooter()) {
                 myNotifyItemRemoved(getItemCount() - 1);
@@ -443,11 +443,11 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
     }
 
     public int getHeaderCount() {
-        return (getHeaderSize() > 0) ? 1 : 0;
+        return (getHeaderChildSize() > 0) ? 1 : 0;
     }
 
     public int getFooterCount() {
-        return (getFooterSize() > 0) ? 1 : 0;
+        return (getFooterChildSize() > 0) ? 1 : 0;
     }
 
     public boolean hasHeader() {
