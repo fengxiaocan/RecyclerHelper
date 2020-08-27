@@ -2,7 +2,7 @@ package com.evil.recycler.menu;
 
 import android.content.Context;
 import android.os.Build;
-import androidx.annotation.NonNull;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import android.util.AttributeSet;
@@ -20,26 +20,26 @@ import android.widget.FrameLayout;
 public class MenuDragLayout extends FrameLayout implements IMenuDragView {
 	MenuDragHelper mMenuDragHelper;
 	
-	public MenuDragLayout(@NonNull Context context) {
+	public MenuDragLayout( Context context) {
 		super(context);
 		mMenuDragHelper = new MenuDragHelper(this);
 	}
 	
 	public MenuDragLayout(
-			@NonNull Context context,@Nullable AttributeSet attrs)
+			 Context context,@Nullable AttributeSet attrs)
 	{
 		super(context,attrs);
 		mMenuDragHelper = new MenuDragHelper(this);
 	}
 	
-	public MenuDragLayout(@NonNull Context context,@Nullable AttributeSet attrs,int defStyleAttr) {
+	public MenuDragLayout( Context context,@Nullable AttributeSet attrs,int defStyleAttr) {
 		super(context,attrs,defStyleAttr);
 		mMenuDragHelper = new MenuDragHelper(this);
 	}
 	
 	@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 	public MenuDragLayout(
-			@NonNull Context context,@Nullable AttributeSet attrs,int defStyleAttr,int defStyleRes)
+			 Context context,@Nullable AttributeSet attrs,int defStyleAttr,int defStyleRes)
 	{
 		super(context,attrs,defStyleAttr,defStyleRes);
 		mMenuDragHelper = new MenuDragHelper(this);

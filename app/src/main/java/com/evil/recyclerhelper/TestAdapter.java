@@ -25,7 +25,7 @@ public class TestAdapter extends SwipeRecyclerViewAdapter<RecyclerData,SwipeRecy
 			}
 			
 			public void initView(View rootView) {
-				mTextView = findViewById(R.id.tv_title);
+				mTextView = (TextView) findViewById(R.id.tv_title);
 			}
 		};
 	}

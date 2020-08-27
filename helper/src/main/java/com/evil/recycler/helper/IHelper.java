@@ -1,11 +1,15 @@
 package com.evil.recycler.helper;
 
 import android.content.Context;
+
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
+
+import com.evil.recycler.drag.DragOrSwipeCallback;
 
 /**
  * @author noah
@@ -56,13 +60,45 @@ public abstract class IHelper {
         snapHelper.attachToRecyclerView(recyclerView);
         return this;
     }
-    
+
+    public IHelper itemTouch(ItemTouchHelper.Callback callback) {
+        ItemTouchHelper mItemHelper = new ItemTouchHelper(callback);
+        mItemHelper.attachToRecyclerView(recyclerView);
+        return this;
+    }
+
+    public IHelper dragOrSwipe(boolean canDrag, boolean canSwipe) {
+        return itemTouch(new DragOrSwipeCallback(canDrag, canSwipe));
+    }
+
+    public IHelper dragAndSwipe() {
+        return dragOrSwipe(true,true);
+    }
+
+    public IHelper dragAndSwipe(DragOrSwipeCallback.SelectAnimation animation) {
+        return itemTouch(new DragOrSwipeCallback(true, true,animation));
+    }
+
+    public IHelper drag() {
+        return itemTouch(new DragOrSwipeCallback(true, false));
+    }
+
+    public IHelper drag(DragOrSwipeCallback.SelectAnimation animation) {
+        return itemTouch(new DragOrSwipeCallback(true, false,animation));
+    }
+
+    public IHelper swipe() {
+        return itemTouch(new DragOrSwipeCallback(false, true,null));
+    }
+
     public IHelper adapter(RecyclerView.Adapter adapter) {
         recyclerView.setAdapter(adapter);
         return this;
     }
 
-    Context getContext() {return recyclerView.getContext();}
+    Context getContext() {
+        return recyclerView.getContext();
+    }
 
     public abstract void init();
 }

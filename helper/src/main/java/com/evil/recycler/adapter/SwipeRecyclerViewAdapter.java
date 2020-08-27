@@ -4,7 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
+
 
 import com.evil.recycler.holder.BaseRecyclerHolder;
 import com.evil.recycler.holder.RecyclerViewHolder;
@@ -29,9 +29,9 @@ public abstract class SwipeRecyclerViewAdapter<T extends IRecyclerData, V extend
         mOnMenuItemClickListener = onMenuItemClickListener;
     }
 
-    @NonNull
+
     @Override
-    public BaseRecyclerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
+    public BaseRecyclerHolder onCreateViewHolder( ViewGroup parent, int viewType)
     {
         if (isContainer(viewType)) {
             return getExtensionHolder();
@@ -84,7 +84,7 @@ public abstract class SwipeRecyclerViewAdapter<T extends IRecyclerData, V extend
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final BaseRecyclerHolder holder, int position) {
+    public void onBindViewHolder( final BaseRecyclerHolder holder, int position) {
         if (holder instanceof SwipeRecyclerViewHolder) {
             SwipeRecyclerViewHolder viewHolder = (SwipeRecyclerViewHolder) holder;
             ViewHolderHepler.setOnMenuItemClickListener(viewHolder,mOnMenuItemClickListener);

@@ -3,99 +3,90 @@ package com.evil.recycler.holder;
 import android.view.View;
 
 import com.evil.recycler.adapter.ComRecyclerViewAdapter;
-import com.evil.recycler.adapter.IExtendAdapter;
 import com.evil.recycler.inface.OnAdapterItemClickListener;
 import com.evil.recycler.inface.OnItemChildClickListener;
 import com.evil.recycler.inface.OnItemChildLongClickListener;
 
 import java.util.List;
 
-public abstract class RecyclerViewHolder<T> extends BaseRecyclerHolder
-        implements View.OnClickListener, View.OnLongClickListener {
-    T data;
-    OnItemChildClickListener<T> mOnItemChildClickListener;
-    OnItemChildLongClickListener<T> mOnItemChildLongClickListener;
-    OnAdapterItemClickListener<T> mOnItemClickListener;
+public abstract class RecyclerViewHolder<D> extends BaseRecyclerHolder
+        implements View.OnClickListener, View.OnLongClickListener{
+    D data;
+    OnItemChildClickListener<D> mOnItemChildClickListener;
+    OnItemChildLongClickListener<D> mOnItemChildLongClickListener;
+    OnAdapterItemClickListener<D> mOnItemClickListener;
 
-    public RecyclerViewHolder(View itemView) {
+    public RecyclerViewHolder(View itemView){
         super(itemView);
     }
 
-    void setOnItemChildClickListener(OnItemChildClickListener<T> onItemChildClickListener)
+    void setOnItemChildClickListener(OnItemChildClickListener<D> onItemChildClickListener)
     {
-        this.mOnItemChildClickListener = onItemChildClickListener;
+        this.mOnItemChildClickListener=onItemChildClickListener;
     }
 
     void setOnItemChildLongClickListener(
-            OnItemChildLongClickListener<T> mOnItemChildLongClickListener)
+            OnItemChildLongClickListener<D> mOnItemChildLongClickListener)
     {
-        this.mOnItemChildLongClickListener = mOnItemChildLongClickListener;
+        this.mOnItemChildLongClickListener=mOnItemChildLongClickListener;
     }
 
-    void setOnItemClickListener(OnAdapterItemClickListener<T> listener)
+    void setOnItemClickListener(OnAdapterItemClickListener<D> listener)
     {
-        this.mOnItemClickListener = listener;
-        if (mOnItemClickListener != null) {
-            itemView.setOnClickListener(new View.OnClickListener() {
+        this.mOnItemClickListener=listener;
+        if(mOnItemClickListener!=null){
+            itemView.setOnClickListener(new View.OnClickListener(){
                 @Override
-                public void onClick(View v) {
-                    if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onItemClick(v, RecyclerViewHolder.this,
-                                getDataPosition());
+                public void onClick(View v){
+                    if(mOnItemClickListener!=null){
+                        mOnItemClickListener.onItemClick(v,RecyclerViewHolder.this,getDataPosition());
                     }
                 }
             });
         }
     }
 
-    void setData(T data) {
-        this.data = data;
+    void setData(D data){
+        this.data=data;
     }
 
-    public List<T> getAdapterDatas() {
-        IExtendAdapter<T> selfAdapter = this.selfAdapter;
+    public List<D> getAdapterDatas(){
         return selfAdapter.getDatas();
     }
 
-    @Override
-    public IExtendAdapter<T> getSelfAdapter() {
-        IExtendAdapter<T> selfAdapter = this.selfAdapter;
-        return selfAdapter;
-    }
+    public abstract void onBindData(D t);
 
-    public abstract void onBindData(T t);
-
-    public void addOnClickListener(View view) {
-        if (view != null) {
+    public void addOnClickListener(View view){
+        if(view!=null){
             view.setOnClickListener(this);
         }
     }
 
-    public void addOnLongClickListener(View view) {
-        if (view != null) {
+    public void addOnLongClickListener(View view){
+        if(view!=null){
             view.setOnLongClickListener(this);
         }
     }
 
     @Override
-    public void onClick(View v) {
-        if (mOnItemChildClickListener != null) {
-            mOnItemChildClickListener.onItemChildClick(v, data, getDataPosition());
+    public void onClick(View v){
+        if(mOnItemChildClickListener!=null){
+            mOnItemChildClickListener.onItemChildClick(v,data,getDataPosition());
         }
     }
 
-    protected int getDataPosition() {
-        if (selfAdapter instanceof ComRecyclerViewAdapter) {
-            return getLayoutPosition() - ((ComRecyclerViewAdapter) selfAdapter).getHeaderCount();
-        } else {
+    public int getDataPosition(){
+        if(selfAdapter instanceof ComRecyclerViewAdapter){
+            return getLayoutPosition()-((ComRecyclerViewAdapter)selfAdapter).getHeaderCount();
+        } else{
             return getLayoutPosition();
         }
     }
 
     @Override
-    public boolean onLongClick(View v) {
-        if (mOnItemChildLongClickListener != null) {
-            return mOnItemChildLongClickListener.onItemChildLongClick(v, data, getDataPosition());
+    public boolean onLongClick(View v){
+        if(mOnItemChildLongClickListener!=null){
+            return mOnItemChildLongClickListener.onItemChildLongClick(v,data,getDataPosition());
         }
         return false;
     }
@@ -104,11 +95,11 @@ public abstract class RecyclerViewHolder<T> extends BaseRecyclerHolder
      * 移除自身
      */
     @Override
-    public void removeAndNotifySelf() {
-        if (selfAdapter instanceof ComRecyclerViewAdapter) {
-            ComRecyclerViewAdapter selfAdapter1 = (ComRecyclerViewAdapter) this.selfAdapter;
+    public void removeAndNotifySelf(){
+        if(selfAdapter instanceof ComRecyclerViewAdapter){
+            ComRecyclerViewAdapter selfAdapter1=(ComRecyclerViewAdapter)this.selfAdapter;
             selfAdapter1.removeAndNotify(getDataPosition());
-        } else {
+        } else{
             selfAdapter.removeAndNotify(getLayoutPosition());
         }
     }

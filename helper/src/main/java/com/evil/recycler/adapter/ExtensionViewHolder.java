@@ -5,7 +5,7 @@ import android.view.View;
 import com.evil.recycler.holder.BaseRecyclerHolder;
 
 class ExtensionViewHolder extends BaseRecyclerHolder {
-    public ExtensionViewHolder(View itemView,IExtendAdapter adapter) {
+    public ExtensionViewHolder(View itemView,BaseRecyclerViewAdapter adapter) {
         super(itemView);
         selfAdapter = adapter;
         isStaggeredGridFullSpan = true;
@@ -14,5 +14,14 @@ class ExtensionViewHolder extends BaseRecyclerHolder {
     @Override
     public void initView(View rootView) {
 
+    }
+
+    @Override
+    public final boolean canDrag(){
+        return false;
+    }
+    @Override
+    public final boolean canSwipe(){
+        return false;
     }
 }

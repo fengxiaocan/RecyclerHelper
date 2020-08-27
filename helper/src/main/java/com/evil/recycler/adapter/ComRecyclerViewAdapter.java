@@ -8,165 +8,140 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.evil.recycler.holder.BaseRecyclerHolder;
 import com.evil.recycler.holder.RecyclerViewHolder;
-import com.evil.recycler.holder.ViewHolderHepler;
 import com.evil.recycler.inface.IRecyclerData;
-import com.evil.recycler.inface.OnAdapterItemClickListener;
 import com.evil.recycler.inface.OnFooterItemClickListener;
 import com.evil.recycler.inface.OnHeaderItemClickListener;
-import com.evil.recycler.inface.OnItemChildClickListener;
-import com.evil.recycler.inface.OnItemChildLongClickListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends RecyclerViewHolder<T>>
-        extends RecyclerView.Adapter<BaseRecyclerHolder> implements IExtendAdapter<T> {
+public abstract class ComRecyclerViewAdapter<T extends IRecyclerData,V extends RecyclerViewHolder<T>>
+        extends BaseRecyclerViewAdapter<T,V>{
 
-    public static final int EXTEND_RECYCLER_EXTENSION_TYPE = -0xFFFFFD;//扩展布局
-    public static final int EXTEND_RECYCLER_HEADER_TYPE = -0xFFFFFE;//头部
-    public static final int EXTEND_RECYCLER_FOOTER_TYPE = -0xFFFFFF;//脚部
-    public static final int EMPTY = 0;
-    public static final int LOADING = 1;
-    public static final int ERROR = 2;
+    public static final int EXTEND_RECYCLER_EXTENSION_TYPE=-0xFFFFFD;//扩展布局
+    public static final int EXTEND_RECYCLER_HEADER_TYPE=-0xFFFFFE;//头部
+    public static final int EXTEND_RECYCLER_FOOTER_TYPE=-0xFFFFFF;//脚部
+    public static final int EMPTY=0;
+    public static final int LOADING=1;
+    public static final int ERROR=2;
 
-    protected List<T> mDatas;
     protected LinearLayout mHeaderLayouts;
     protected LinearLayout mFooterLayouts;
     protected FrameLayout mContainerLayouts;//中间的容器布局
 
     protected SparseArray<View> mContainerView;//中间容器布局需要容纳的View的集合
 
-    protected boolean emptyCompatHeaderOrFooter = true;//中间的布局是否兼容头部或者脚部
-    protected boolean useEmpty = true;
+    protected boolean emptyCompatHeaderOrFooter=true;//中间的布局是否兼容头部或者脚部
+    protected boolean useEmpty=true;//是否需要自动使用空布局???
 
     protected OnHeaderItemClickListener mOnHeaderItemClickListener;
     protected OnFooterItemClickListener mOnFooterItemClickListener;
-    protected OnItemChildClickListener<T> mOnItemChildClickListener;
-    protected OnItemChildLongClickListener<T> mOnItemChildLongClickListener;
 
-    protected OnAdapterItemClickListener<T> mOnItemClickListener;
-
-    public void setOnItemClickListener(OnAdapterItemClickListener<T> mOnItemClickListener)
-    {
-        this.mOnItemClickListener = mOnItemClickListener;
+    public void setUseEmpty(boolean useEmpty){
+        this.useEmpty=useEmpty;
+        initEmpty();
     }
 
-    public void setOnItemChildClickListener(OnItemChildClickListener<T> mOnItemChildClickListener)
-    {
-        this.mOnItemChildClickListener = mOnItemChildClickListener;
+    public void setEmptyCompatHeaderOrFooter(boolean emptyCompatHeaderOrFooter){
+        this.emptyCompatHeaderOrFooter=emptyCompatHeaderOrFooter;
     }
 
-    public void setOnItemChildLongClickListener(
-            OnItemChildLongClickListener<T> mOnItemChildlongClickListener)
-    {
-        this.mOnItemChildLongClickListener = mOnItemChildlongClickListener;
-    }
-
-    public void setUseEmpty(boolean useEmpty) {
-        this.useEmpty = useEmpty;
-    }
-
-    public void setEmptyCompatHeaderOrFooter(boolean emptyCompatHeaderOrFooter) {
-        this.emptyCompatHeaderOrFooter = emptyCompatHeaderOrFooter;
-    }
-
-    public void showLoadingView() {
+    public void showLoadingView(){
         showExtensionView(LOADING);
     }
 
-    public void showErrorView() {
+    public void showErrorView(){
         showExtensionView(ERROR);
     }
 
-    public void showEmptyView() {
+    public void showEmptyView(){
         showExtensionView(EMPTY);
     }
 
-    public void showExtensionView(int type) {
+    public void showExtensionView(int type){
         clear();
         setContainer(getContainerView(type));
         notifyDataSetChanged();
     }
 
-    public void showDefaultView() {
+    public void showDefaultView(){
         setContainer(null);
         notifyDataSetChanged();
     }
 
-    public View getContainerView(int type) {
-        if (mContainerView != null) {
+    public View getContainerView(int type){
+        if(mContainerView!=null){
             return mContainerView.get(type);
         }
         return null;
     }
 
-    private void checkContainer() {
-        if (mContainerView == null) {
-            mContainerView = new SparseArray<>();
+    private void checkContainer(){
+        if(mContainerView==null){
+            mContainerView=new SparseArray<>();
         }
     }
 
-    public LinearLayout getHeaderLayout() {
+    public LinearLayout getHeaderLayout(){
         return mHeaderLayouts;
     }
 
-    public LinearLayout getFooterLayout() {
+    public LinearLayout getFooterLayout(){
         return mFooterLayouts;
     }
 
-    public FrameLayout getContainerLayout() {
+    public FrameLayout getContainerLayout(){
         return mContainerLayouts;
     }
 
-    public void addContainerView(int type, View view) {
-        if (view == null) {
+    public void addContainerView(int type,View view){
+        if(view==null){
             return;
         }
         checkContainer();
-        mContainerView.put(type, view);
+        mContainerView.put(type,view);
     }
 
-    public void addContainerView(int type, ViewGroup parent, int resourid) {
-        if (parent == null || resourid == 0) {
+    public void addContainerView(int type,ViewGroup parent,int resourid){
+        if(parent==null||resourid==0){
             return;
         }
         checkContainer();
-        View view = LayoutInflater.from(parent.getContext()).inflate(resourid, parent, false);
-        mContainerView.put(type, view);
-        if (type == EMPTY) {
+        View view=LayoutInflater.from(parent.getContext())
+                                .inflate(resourid,parent,false);
+        mContainerView.put(type,view);
+        if(type==EMPTY){
             setContainer(view);
         }
     }
 
-    public void setEmptyView(View view) {
-        addContainerView(EMPTY, view);
+    public void setEmptyView(View view){
+        addContainerView(EMPTY,view);
         setContainer(view);
     }
 
-    public void setLoadingView(View view) {
-        addContainerView(LOADING, view);
+    public void setLoadingView(View view){
+        addContainerView(LOADING,view);
     }
 
-    public void setErrorView(View view) {
-        addContainerView(ERROR, view);
+    public void setErrorView(View view){
+        addContainerView(ERROR,view);
     }
 
-    public void setEmptyView(ViewGroup parent, int resourid) {
-        addContainerView(EMPTY, parent, resourid);
+    public void setEmptyView(ViewGroup parent,int resourid){
+        addContainerView(EMPTY,parent,resourid);
     }
 
-    public void setLoadingView(ViewGroup parent, int resourid) {
-        addContainerView(LOADING, parent, resourid);
+    public void setLoadingView(ViewGroup parent,int resourid){
+        addContainerView(LOADING,parent,resourid);
     }
 
-    public void setErrorView(ViewGroup parent, int resourid) {
-        addContainerView(ERROR, parent, resourid);
+    public void setErrorView(ViewGroup parent,int resourid){
+        addContainerView(ERROR,parent,resourid);
     }
 
     /**
@@ -174,348 +149,344 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
      *
      * @return
      */
-    private boolean canShowHealderOrFooter() {
-        if (emptyCompatHeaderOrFooter) {
+    private boolean canShowHealderOrFooter(){
+        if(emptyCompatHeaderOrFooter){
             //带有兼容的
             return true;
-        } else {
+        } else{
             //不兼容并且是空的情况下
-            if (getEmptyViewCount() == 1) {
+            if(getEmptyViewCount()==1){
                 return false;
-            } else {
+            } else{
                 return true;
             }
         }
     }
 
-    protected int getHeaderLayoutOrientation() {
+    protected int getHeaderLayoutOrientation(){
         return LinearLayout.VERTICAL;
     }
 
-    protected int getFooterLayoutOrientation() {
+    protected int getFooterLayoutOrientation(){
         return LinearLayout.VERTICAL;
     }
 
-    private void checkHeader(Context context) {
-        if (mHeaderLayouts == null) {
-            mHeaderLayouts = new LinearLayout(context);
-            mHeaderLayouts.setLayoutParams(
-                    new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT));
+    private void checkHeader(Context context){
+        if(mHeaderLayouts==null){
+            mHeaderLayouts=new LinearLayout(context);
+            mHeaderLayouts.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                                                         ViewGroup.LayoutParams.WRAP_CONTENT));
         }
         mHeaderLayouts.setOrientation(getHeaderLayoutOrientation());
     }
 
-    public int getHeaderChildSize() {
-        if (mHeaderLayouts == null) {
+    public int getHeaderChildSize(){
+        if(mHeaderLayouts==null){
             return 0;
         }
         return mHeaderLayouts.getChildCount();
     }
 
-    public void addHeader(View header) {
-        if (header == null) {
+    public void addHeader(View header){
+        if(header==null){
             return;
         }
         checkHeader(header.getContext());
-        for (int i = 0; i < mHeaderLayouts.getChildCount(); i++) {
-            View child = mHeaderLayouts.getChildAt(i);
-            if (child.equals(header)) {
+        for(int i=0;i<mHeaderLayouts.getChildCount();i++){
+            View child=mHeaderLayouts.getChildAt(i);
+            if(child.equals(header)){
                 return;
             }
         }
         BaseRecyclerHolder.removeParent(header);
         mHeaderLayouts.addView(header);
         addHeaderClick(header);
-        if (mHeaderLayouts.getChildCount() == 1) {
-            if (canShowHealderOrFooter()) {
+        if(mHeaderLayouts.getChildCount()==1){
+            if(canShowHealderOrFooter()){
                 notifyItemInserted(0);
             }
         }
     }
 
-    public void addHeader(View header, int index) {
-        if (header == null) {
+    public void addHeader(View header,int index){
+        if(header==null){
             return;
         }
         checkHeader(header.getContext());
-        for (int i = 0; i < mHeaderLayouts.getChildCount(); i++) {
-            View child = mHeaderLayouts.getChildAt(i);
-            if (child.equals(header)) {
+        for(int i=0;i<mHeaderLayouts.getChildCount();i++){
+            View child=mHeaderLayouts.getChildAt(i);
+            if(child.equals(header)){
                 return;
             }
         }
         BaseRecyclerHolder.removeParent(header);
-        if (index < 0) {
-            index = 0;
-        } else if (index > mHeaderLayouts.getChildCount()) {
-            index = mHeaderLayouts.getChildCount();
+        if(index<0){
+            index=0;
+        } else if(index>mHeaderLayouts.getChildCount()){
+            index=mHeaderLayouts.getChildCount();
         }
-        mHeaderLayouts.addView(header, index);
+        mHeaderLayouts.addView(header,index);
         addHeaderClick(header);
-        if (mHeaderLayouts.getChildCount() == 1) {
-            if (canShowHealderOrFooter()) {
+        if(mHeaderLayouts.getChildCount()==1){
+            if(canShowHealderOrFooter()){
                 notifyItemInserted(0);
             }
         }
     }
 
-    public void addHeader(ViewGroup parent, int layoutRes) {
-        View header = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
+    public void addHeader(ViewGroup parent,int layoutRes){
+        View header=LayoutInflater.from(parent.getContext())
+                                  .inflate(layoutRes,parent,false);
         addHeader(header);
     }
 
-    public void addHeader(ViewGroup parent, int layoutRes, int index) {
-        View header = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
-        addHeader(header, index);
+    public void addHeader(ViewGroup parent,int layoutRes,int index){
+        View header=LayoutInflater.from(parent.getContext())
+                                  .inflate(layoutRes,parent,false);
+        addHeader(header,index);
     }
 
-    public void removeHeader(View header) {
-        if (getHeaderChildSize() > 0) {
+    public void removeHeader(View header){
+        if(getHeaderChildSize()>0){
             mHeaderLayouts.removeView(header);
-            if (mHeaderLayouts.getChildCount() == 0) {
-                if (canShowHealderOrFooter()) {
+            if(mHeaderLayouts.getChildCount()==0){
+                if(canShowHealderOrFooter()){
                     myNotifyItemRemoved(0);
                 }
             }
         }
     }
 
-    public void removeHeader(int index) {
-        if (getHeaderChildSize() > 0 && index < getHeaderChildSize()) {
+    public void removeHeader(int index){
+        if(getHeaderChildSize()>0&&index<getHeaderChildSize()){
             mHeaderLayouts.removeViewAt(index);
-            if (mHeaderLayouts.getChildCount() == 0) {
-                if (canShowHealderOrFooter()) {
+            if(mHeaderLayouts.getChildCount()==0){
+                if(canShowHealderOrFooter()){
                     myNotifyItemRemoved(0);
                 }
             }
         }
     }
 
-    public void removeAllHeader() {
-        if (getHeaderChildSize() > 0) {
+    public void removeAllHeader(){
+        if(getHeaderChildSize()>0){
             mHeaderLayouts.removeAllViews();
-            if (canShowHealderOrFooter()) {
+            if(canShowHealderOrFooter()){
                 myNotifyItemRemoved(0);
             }
         }
     }
 
-    private void checkFooter(Context context) {
-        if (mFooterLayouts == null) {
-            mFooterLayouts = new LinearLayout(context);
-            mFooterLayouts.setLayoutParams(
-                    new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT));
+    private void checkFooter(Context context){
+        if(mFooterLayouts==null){
+            mFooterLayouts=new LinearLayout(context);
+            RecyclerView.LayoutParams params=new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                                                           ViewGroup.LayoutParams.WRAP_CONTENT);
+            mFooterLayouts.setLayoutParams(params);
         }
         mFooterLayouts.setOrientation(getFooterLayoutOrientation());
     }
 
-    public int getFooterChildSize() {
-        if (mFooterLayouts == null) {
+    public int getFooterChildSize(){
+        if(mFooterLayouts==null){
             return 0;
         }
         return mFooterLayouts.getChildCount();
     }
 
-    public void addFooter(View footer) {
-        if (footer == null) {
+    public void addFooter(View footer){
+        if(footer==null){
             return;
         }
         checkFooter(footer.getContext());
-        for (int i = 0; i < mFooterLayouts.getChildCount(); i++) {
-            View child = mFooterLayouts.getChildAt(i);
-            if (child.equals(footer)) {
+        for(int i=0;i<mFooterLayouts.getChildCount();i++){
+            View child=mFooterLayouts.getChildAt(i);
+            if(child.equals(footer)){
                 return;
             }
         }
         BaseRecyclerHolder.removeParent(footer);
         mFooterLayouts.addView(footer);
         addFooterClick(footer);
-        if (mFooterLayouts.getChildCount() == 1) {
-            if (canShowHealderOrFooter()) {
-                notifyItemInserted(getItemCount() - 1);
+        if(mFooterLayouts.getChildCount()==1){
+            if(canShowHealderOrFooter()){
+                notifyItemInserted(getItemCount()-1);
             }
         }
     }
 
-    public void addFooter(View footer, int index) {
-        if (footer == null) {
+    public void addFooter(View footer,int index){
+        if(footer==null){
             return;
         }
         checkFooter(footer.getContext());
-        for (int i = 0; i < mFooterLayouts.getChildCount(); i++) {
-            View child = mFooterLayouts.getChildAt(i);
-            if (child.equals(footer)) {
+        for(int i=0;i<mFooterLayouts.getChildCount();i++){
+            View child=mFooterLayouts.getChildAt(i);
+            if(child.equals(footer)){
                 return;
             }
         }
         BaseRecyclerHolder.removeParent(footer);
-        if (index < 0) {
-            index = 0;
-        } else if (index > mFooterLayouts.getChildCount()) {
-            index = mFooterLayouts.getChildCount();
+        if(index<0){
+            index=0;
+        } else if(index>mFooterLayouts.getChildCount()){
+            index=mFooterLayouts.getChildCount();
         }
-        mFooterLayouts.addView(footer, index);
+        mFooterLayouts.addView(footer,index);
         addFooterClick(footer);
-        if (mFooterLayouts.getChildCount() == 1) {
-            if (canShowHealderOrFooter()) {
-                notifyItemInserted(getItemCount() - 1);
+        if(mFooterLayouts.getChildCount()==1){
+            if(canShowHealderOrFooter()){
+                notifyItemInserted(getItemCount()-1);
             }
         }
     }
 
-    public void addFooter(ViewGroup parent, int layoutRes) {
-        View footer = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
+    public void addFooter(ViewGroup parent,int layoutRes){
+        View footer=LayoutInflater.from(parent.getContext())
+                                  .inflate(layoutRes,parent,false);
         addFooter(footer);
     }
 
-    public void addFooter(ViewGroup parent, int layoutRes, int index) {
-        View footer = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
-        addFooter(footer, index);
+    public void addFooter(ViewGroup parent,int layoutRes,int index){
+        View footer=LayoutInflater.from(parent.getContext())
+                                  .inflate(layoutRes,parent,false);
+        addFooter(footer,index);
     }
 
-    public void removeFooter(View footer) {
-        if (getFooterChildSize() > 0) {
+    public void removeFooter(View footer){
+        if(getFooterChildSize()>0){
             mFooterLayouts.removeView(footer);
-            if (mFooterLayouts.getChildCount() == 0) {
-                if (canShowHealderOrFooter()) {
-                    myNotifyItemRemoved(getItemCount() - 1);
+            if(mFooterLayouts.getChildCount()==0){
+                if(canShowHealderOrFooter()){
+                    myNotifyItemRemoved(getItemCount()-1);
                 }
             }
         }
     }
 
-    public void removeFooter(int index) {
-        if (getFooterChildSize() > 0 && index < getFooterChildSize()) {
+    public void removeFooter(int index){
+        if(getFooterChildSize()>0&&index<getFooterChildSize()){
             mFooterLayouts.removeViewAt(index);
-            if (mFooterLayouts.getChildCount() == 0) {
-                if (canShowHealderOrFooter()) {
-                    myNotifyItemRemoved(getItemCount() - 1);
+            if(mFooterLayouts.getChildCount()==0){
+                if(canShowHealderOrFooter()){
+                    myNotifyItemRemoved(getItemCount()-1);
                 }
             }
         }
     }
 
-    public void removeAllFooter() {
-        if (getFooterChildSize() > 0) {
+    public void removeAllFooter(){
+        if(getFooterChildSize()>0){
             mFooterLayouts.removeAllViews();
-            if (canShowHealderOrFooter()) {
-                myNotifyItemRemoved(getItemCount() - 1);
+            if(canShowHealderOrFooter()){
+                myNotifyItemRemoved(getItemCount()-1);
             }
         }
     }
 
-    private void checkContainer(Context context) {
-        if (mContainerLayouts == null) {
-            mContainerLayouts = new FrameLayout(context);
-            mContainerLayouts.setLayoutParams(
-                    new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT));
+    private void checkContainer(Context context){
+        if(mContainerLayouts==null){
+            mContainerLayouts=new FrameLayout(context);
+            mContainerLayouts.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                                                            ViewGroup.LayoutParams.MATCH_PARENT));
         }
     }
 
-    protected void setContainer(View view) {
-        if (view == null) {
+    protected void setContainer(View view){
+        if(view==null){
             clearContainer();
-        } else {
+        } else{
             checkContainer(view.getContext());
-            if (mContainerLayouts.indexOfChild(view) < 0) {
+            if(mContainerLayouts.indexOfChild(view)<0){
                 mContainerLayouts.removeAllViews();
                 mContainerLayouts.addView(view);
             }
         }
     }
 
-    public void clearContainer() {
-        if (mContainerLayouts != null) {
+    public void clearContainer(){
+        if(mContainerLayouts!=null){
             mContainerLayouts.removeAllViews();
         }
     }
 
-    protected int getContainerSize() {
-        return mContainerLayouts != null && mContainerLayouts.getChildCount() > 0 ? 1 : 0;
+    protected int getContainerSize(){
+        return mContainerLayouts!=null&&mContainerLayouts.getChildCount()>0 ? 1 : 0;
     }
 
-    @Override
-    public int getDataCount() {
-        return mDatas == null ? 0 : mDatas.size();
+    public int getHeaderCount(){
+        return (getHeaderChildSize()>0) ? 1 : 0;
     }
 
-    public int getHeaderCount() {
-        return (getHeaderChildSize() > 0) ? 1 : 0;
+    public int getFooterCount(){
+        return (getFooterChildSize()>0) ? 1 : 0;
     }
 
-    public int getFooterCount() {
-        return (getFooterChildSize() > 0) ? 1 : 0;
+    public boolean hasHeader(){
+        return getHeaderCount()>0;
     }
 
-    public boolean hasHeader() {
-        return getHeaderCount() > 0;
+    public boolean hasFooter(){
+        return getFooterCount()>0;
     }
 
-    public boolean hasFooter() {
-        return getFooterCount() > 0;
+    public boolean isContainer(int viewType){
+        return viewType==EXTEND_RECYCLER_EXTENSION_TYPE;
     }
 
-    public boolean isContainer(int viewType) {
-        return viewType == EXTEND_RECYCLER_EXTENSION_TYPE;
+    public boolean isHeader(int viewType){
+        return viewType==EXTEND_RECYCLER_HEADER_TYPE;
     }
 
-    public boolean isHeader(int viewType) {
-        return viewType == EXTEND_RECYCLER_HEADER_TYPE;
+    public boolean isFooter(int viewType){
+        return viewType==EXTEND_RECYCLER_FOOTER_TYPE;
     }
 
-    public boolean isFooter(int viewType) {
-        return viewType == EXTEND_RECYCLER_FOOTER_TYPE;
-    }
-
-    public int getGridLayoutSpanSize(GridLayoutManager manager, int position) {
+    public int getGridLayoutSpanSize(GridLayoutManager manager,int position){
         //如果是头布局或者是脚布局返回为1;
-        int itemViewType = getItemViewType(position);
-        if (isHeader(itemViewType)) {
+        int itemViewType=getItemViewType(position);
+        if(isHeader(itemViewType)){
             return manager.getSpanCount();
-        } else if (isFooter(itemViewType)) {
+        } else if(isFooter(itemViewType)){
             return manager.getSpanCount();
-        } else if (isContainer(itemViewType)) {
+        } else if(isContainer(itemViewType)){
             return manager.getSpanCount();
         }
         return 1;
     }
 
     @Override
-    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(RecyclerView recyclerView){
         super.onAttachedToRecyclerView(recyclerView);
-        final RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-        if (manager instanceof GridLayoutManager) {
-            ((GridLayoutManager) manager).setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+        final RecyclerView.LayoutManager manager=recyclerView.getLayoutManager();
+        if(manager instanceof GridLayoutManager){
+            ((GridLayoutManager)manager).setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup(){
                 @Override
-                public int getSpanSize(int position) {
-                    return getGridLayoutSpanSize((GridLayoutManager) manager, position);
+                public int getSpanSize(int position){
+                    return getGridLayoutSpanSize((GridLayoutManager)manager,position);
                 }
             });
         }
     }
 
-    public void setOnHeaderClickListener(OnHeaderItemClickListener onHeaderItemClickListener) {
-        mOnHeaderItemClickListener = onHeaderItemClickListener;
+    public void setOnHeaderClickListener(OnHeaderItemClickListener onHeaderItemClickListener){
+        mOnHeaderItemClickListener=onHeaderItemClickListener;
         addHeaderClicks();
     }
 
-    public void setOnFooterClickListener(OnFooterItemClickListener onFooterItemClickListener) {
-        mOnFooterItemClickListener = onFooterItemClickListener;
+    public void setOnFooterClickListener(OnFooterItemClickListener onFooterItemClickListener){
+        mOnFooterItemClickListener=onFooterItemClickListener;
         addFooterClicks();
     }
 
-
-    protected int getEmptyViewCount() {
-        if (mContainerLayouts == null || mContainerLayouts.getChildCount() == 0) {
+    protected int getEmptyViewCount(){
+        if(mContainerLayouts==null||mContainerLayouts.getChildCount()==0){
             return 0;
         }
-        if (!useEmpty) {
+        if(!useEmpty){
             return 0;
         }
-        if (getDataCount() != 0) {
+        if(getDataCount()!=0){
             return 0;
         }
         return 1;
@@ -523,499 +494,285 @@ public abstract class ComRecyclerViewAdapter<T extends IRecyclerData, V extends 
 
 
     @Override
-    public int getItemViewType(int position) {
-        if (getEmptyViewCount() == 1) {
-            if (emptyCompatHeaderOrFooter) {
-                if (position == 0 && hasHeader()) {
+    public int getItemViewType(int position){
+        if(getEmptyViewCount()==1){
+            if(emptyCompatHeaderOrFooter){
+                if(position==0&&hasHeader()){
                     return EXTEND_RECYCLER_HEADER_TYPE;
-                } else if (hasFooter() && position == getAddViewCount() - 1) {
+                } else if(hasFooter()&&position==getAddViewCount()-1){
                     return EXTEND_RECYCLER_FOOTER_TYPE;
-                } else {
+                } else{
                     return EXTEND_RECYCLER_EXTENSION_TYPE;
                 }
-            } else {
+            } else{
                 return EXTEND_RECYCLER_EXTENSION_TYPE;
             }
-        } else {
-            if (position == 0 && hasHeader()) {
+        } else{
+            if(position==0&&hasHeader()){
                 return EXTEND_RECYCLER_HEADER_TYPE;
-            } else if (hasFooter() && position == getAllItemCount() - 1) {
+            } else if(hasFooter()&&position==getAllItemCount()-1){
                 return EXTEND_RECYCLER_FOOTER_TYPE;
-            } else {
-                if (position < 0) {
+            } else{
+                if(position<0){
                     return 0;
                 }
-                return getData(position - getHeaderCount()).recycleType();
+                return getData(position-getHeaderCount()).recycleType();
             }
         }
     }
 
     @Override
-    public int getItemCount() {
-        if (getEmptyViewCount() == 0) {
-            return getDataCount() + getHeaderCount() + getFooterCount();
-        } else {
+    public int getItemCount(){
+        if(getEmptyViewCount()==0){
+            return getDataCount()+getHeaderCount()+getFooterCount();
+        } else{
             return emptyCompatHeaderOrFooter ? getAddViewCount() : getContainerSize();
         }
     }
 
 
-    @NonNull
     @Override
-    public BaseRecyclerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
+    public BaseRecyclerHolder onCreateViewHolder(ViewGroup parent,int viewType)
     {
-        if (isContainer(viewType)) {
+        if(isContainer(viewType)){
             return getExtensionHolder();
-        } else if (isFooter(viewType)) {
+        } else if(isFooter(viewType)){
             return getFooterHolder();
-        } else if (isHeader(viewType)) {
+        } else if(isHeader(viewType)){
             return getHeaderHolder();
-        } else {
-            LayoutInflater from = LayoutInflater.from(parent.getContext());
-            View view;
-            if (attachParent()) {
-                view = from.inflate(onCreateLayoutRes(viewType), parent, false);
-            } else {
-                view = from.inflate(onCreateLayoutRes(viewType), null);
-            }
-            V viewHolder = createViewHolder(view, viewType);
-            viewHolder.selfAdapter = this;
-            return viewHolder;
+        } else{
+            return super.onCreateViewHolder(parent,viewType);
         }
     }
 
-
-    @Override
-    public void onBindViewHolder(@NonNull BaseRecyclerHolder holder, int position) {
-        holder.onBindData(this, position);
-        if (holder instanceof RecyclerViewHolder) {
-            RecyclerViewHolder viewHolder = (RecyclerViewHolder) holder;
-            T t = getData(position - getHeaderCount());
-
-            ViewHolderHepler.setData(viewHolder, t);
-            ViewHolderHepler.setOnItemChildClickListener(viewHolder, mOnItemChildClickListener);
-            ViewHolderHepler.setOnItemChildLongClickListener(viewHolder,
-                    mOnItemChildLongClickListener);
-            ViewHolderHepler.setOnItemClickListener(viewHolder, mOnItemClickListener);
-
-            viewHolder.onBindData(t);
-        }
-    }
-
-    private void addFooterClicks() {
-        if (mFooterLayouts != null) {
-            for (int i = 0; i < mFooterLayouts.getChildCount(); i++) {
+    private void addFooterClicks(){
+        if(mFooterLayouts!=null){
+            for(int i=0;i<mFooterLayouts.getChildCount();i++){
                 addFooterClick(mFooterLayouts.getChildAt(i));
             }
         }
     }
 
-    private void addHeaderClicks() {
-        if (mFooterLayouts != null) {
-            for (int i = 0; i < mHeaderLayouts.getChildCount(); i++) {
+    private void addHeaderClicks(){
+        if(mFooterLayouts!=null){
+            for(int i=0;i<mHeaderLayouts.getChildCount();i++){
                 addFooterClick(mHeaderLayouts.getChildAt(i));
             }
         }
     }
 
-    private void addFooterClick(View child) {
-        if (mOnFooterItemClickListener != null) {
-            child.setOnClickListener(new View.OnClickListener() {
+    private void addFooterClick(View child){
+        if(mOnFooterItemClickListener!=null){
+            child.setOnClickListener(new View.OnClickListener(){
                 @Override
-                public void onClick(View v) {
-                    if (mOnFooterItemClickListener != null) {
-                        mOnFooterItemClickListener.onFooterClick(v, mFooterLayouts.indexOfChild(v));
+                public void onClick(View v){
+                    if(mOnFooterItemClickListener!=null){
+                        mOnFooterItemClickListener.onFooterClick(v,mFooterLayouts.indexOfChild(v));
                     }
                 }
             });
         }
     }
 
-    private void addHeaderClick(View child) {
-        if (mOnHeaderItemClickListener != null) {
-            child.setOnClickListener(new View.OnClickListener() {
+    private void addHeaderClick(View child){
+        if(mOnHeaderItemClickListener!=null){
+            child.setOnClickListener(new View.OnClickListener(){
                 @Override
-                public void onClick(View v) {
-                    if (mOnHeaderItemClickListener != null) {
-                        mOnHeaderItemClickListener.onHeaderClick(v, mHeaderLayouts.indexOfChild(v));
+                public void onClick(View v){
+                    if(mOnHeaderItemClickListener!=null){
+                        mOnHeaderItemClickListener.onHeaderClick(v,mHeaderLayouts.indexOfChild(v));
                     }
                 }
             });
         }
     }
 
-    protected int getAddViewCount() {
-        return getHeaderCount() + getFooterCount() + getContainerSize();
+    protected int getAddViewCount(){
+        return getHeaderCount()+getFooterCount()+getContainerSize();
     }
 
-    protected ExtensionViewHolder getExtensionHolder() {
-        return new ExtensionViewHolder(mContainerLayouts, this);
+    protected ExtensionViewHolder getExtensionHolder(){
+        return new ExtensionViewHolder(mContainerLayouts,this);
     }
 
-    protected HeaderViewHolder getHeaderHolder() {
-        return new HeaderViewHolder(mHeaderLayouts, this);
+    protected HeaderViewHolder getHeaderHolder(){
+        return new HeaderViewHolder(mHeaderLayouts,this);
     }
 
-    protected FooterViewHolder getFooterHolder() {
-        return new FooterViewHolder(mFooterLayouts, this);
+    protected FooterViewHolder getFooterHolder(){
+        return new FooterViewHolder(mFooterLayouts,this);
     }
 
-    public abstract boolean attachParent();
 
-    public abstract V createViewHolder(View view, int viewType);
+    protected void initEmpty(){
+        if(useEmpty){
+            setContainer(getContainerView(EMPTY));
+        } else{
+            setContainer(null);
+        }
+    }
 
+    public boolean isRealEmpty(){
+        return getDataCount()==0;
+    }
+
+    public boolean isNotRealEmpty(){
+        return getDataCount()>0;
+    }
+
+    public boolean isEmpty(){
+        return getAllItemCount()==0;
+    }
+
+    public boolean isNotEmpty(){
+        return getAllItemCount()>0;
+    }
+
+    protected int getAllItemCount(){
+        return getDataCount()+getHeaderCount()+getFooterCount();
+    }
 
     @Override
-    public T getData(int position) {
-        return mDatas.get(position);
-    }
-
-    @Override
-    public T getFirstData() {
-        return ObjectUtils.getFirstData(mDatas);
-    }
-
-    @Override
-    public T getLastData() {
-        return ObjectUtils.getLastData(mDatas);
-    }
-
-    @Override
-    public List<T> getDatas() {
-        return mDatas;
-    }
-
-    @Override
-    public void setDatas(List<T> datas) {
+    public void setDatas(T... datas){
         initEmpty();
-        mDatas = datas;
+        super.setDatas(datas);
     }
 
     @Override
-    public void setDatas(T... datas) {
+    public void setDatas(List<T> datas){
         initEmpty();
-        if (datas != null) {
-            if (mDatas == null) {
-                mDatas = new ArrayList<>();
-            }
-            mDatas.clear();
-            for (T data : datas) {
-                mDatas.add(data);
-            }
-        }
-    }
-
-
-    @Override
-    public void setDatasAndNotify(T... datas) {
-        initEmpty();
-        if (datas != null) {
-            if (mDatas == null) {
-                mDatas = new ArrayList<>();
-            }
-            mDatas.clear();
-            for (T data : datas) {
-                mDatas.add(data);
-            }
-        }
-        notifyDataSetChanged();
+        super.setDatas(datas);
     }
 
     @Override
-    public void setDatasAndNotify(List<T> datas) {
+    public void setDatasAndNotify(T... datas){
         initEmpty();
-        mDatas = datas;
-        notifyDataSetChanged();
+        super.setDatasAndNotify(datas);
     }
 
     @Override
-    public void addDatas(T... datas) {
+    public void setDatasAndNotify(List<T> datas){
         initEmpty();
-        if (ObjectUtils.isEmpty(datas)) {
-            return;
-        }
-        if (mDatas == null) {
-            mDatas = new ArrayList<>();
-        }
-        for (T data : datas) {
-            mDatas.add(data);
-        }
+        super.setDatasAndNotify(datas);
     }
 
     @Override
-    public void addDatas(List<T> datas) {
+    public void addDatas(T... datas){
         initEmpty();
-        if (ObjectUtils.isEmpty(datas)) {
-            return;
-        }
-        if (mDatas == null) {
-            mDatas = datas;
-        } else {
-            mDatas.addAll(datas);
-        }
+        super.addDatas(datas);
     }
 
     @Override
-    public void addData(T data) {
+    public void addDatas(List<T> datas){
         initEmpty();
-        if (data == null) {
-            return;
-        }
-        if (mDatas == null) {
-            mDatas = new ArrayList<>();
-        }
-        mDatas.add(data);
+        super.addDatas(datas);
     }
 
     @Override
-    public void addDataAndNotify(T data) {
+    public void addData(T data){
         initEmpty();
-        if (data == null) {
-            return;
-        }
-        if (mDatas == null) {
-            mDatas = new ArrayList<>();
-            mDatas.add(data);
-            notifyDataSetChanged();
-        } else {
-            mDatas.add(data);
-            if (getDataCount() == 1) {
-                notifyDataSetChanged();
-            } else {
-                notifyItemInserted(getDataCount() - 1 + getHeaderCount());
-            }
-        }
+        super.addData(data);
     }
 
     @Override
-    public void addDatasAndNotify(List<T> datas) {
+    public void addDataAndNotify(T data){
         initEmpty();
-        if (ObjectUtils.isEmpty(datas)) {
-            return;
-        }
-        if (mDatas == null) {
-            mDatas = datas;
-            notifyDataSetChanged();
-        } else {
-            mDatas.addAll(datas);
-            if (getDataCount() == datas.size()) {
-                notifyDataSetChanged();
-            } else {
-                notifyItemRangeInserted(getDataCount() - datas.size() + getHeaderCount(),
-                        datas.size());
-            }
-        }
+        super.addDataAndNotify(data);
     }
 
     @Override
-    public void insertData(int position, T data) {
+    public void addDatasAndNotify(List<T> datas){
         initEmpty();
-        if (data == null) {
-            return;
-        }
-        if (mDatas == null) {
-            mDatas = new ArrayList<>();
-            mDatas.add(data);
-        } else {
-            if (position <= 0) {
-                mDatas.add(0, data);
-            } else if (position >= mDatas.size()) {
-                mDatas.add(data);
-            } else {
-                mDatas.add(position, data);
-            }
-        }
+        super.addDatasAndNotify(datas);
     }
 
     @Override
-    public void insertDataAndNotify(int position, T data) {
+    public void insertData(int position,T data){
         initEmpty();
-        if (data == null) {
-            return;
-        }
-        if (mDatas == null) {
-            mDatas = new ArrayList<>();
-            mDatas.add(data);
-            notifyDataSetChanged();
-        } else if (mDatas.size() == 0) {
-            mDatas.add(data);
-            notifyDataSetChanged();
-        } else {
-            if (position < 0) {
-                mDatas.add(0, data);
-                notifyItemInserted(getHeaderCount());
-            } else if (position >= mDatas.size()) {
-                mDatas.add(data);
-                notifyItemInserted(getDataCount() - 1 + getHeaderCount());
-            } else {
-                mDatas.add(position, data);
-                notifyItemInserted(position + getHeaderCount());
-            }
-        }
+        super.insertData(position,data);
     }
 
     @Override
-    public void insertDatas(int position, List<T> datas) {
+    public void insertDataAndNotify(int position,T data){
         initEmpty();
-        if (ObjectUtils.isEmpty(datas)) {
-            return;
-        }
-        if (ObjectUtils.isEmpty(mDatas)) {
-            mDatas = datas;
-        } else {
-            if (position <= 0) {
-                //position位于第一
-                datas.addAll(mDatas);
-                mDatas = datas;
-            } else if (position >= mDatas.size()) {
-                //position位于最后
-                mDatas.addAll(datas);
-            } else {
-                //position位于中间
-                mDatas.addAll(position, datas);
-            }
-        }
-
+        super.insertDataAndNotify(position,data);
     }
 
     @Override
-    public void insertDatasAndNotify(int position, List<T> datas) {
+    public void insertDatas(int position,List<T> datas){
         initEmpty();
-        if (ObjectUtils.isEmpty(datas)) {
-            return;
-        }
-        if (ObjectUtils.isEmpty(mDatas)) {
-            mDatas = datas;
-            notifyDataSetChanged();
-        } else {
-            int size1 = mDatas.size();
-            int itemCount = datas.size();
-            if (position <= 0) {
-                //position位于第一
-                datas.addAll(mDatas);
-                mDatas = datas;
-                notifyItemRangeInserted(getHeaderCount(), itemCount);
-            } else if (position >= size1) {
-                //position位于最后
-                mDatas.addAll(datas);
-                notifyItemRangeInserted(size1 + getHeaderCount(), itemCount);
-            } else {
-                //position位于中间
-                mDatas.addAll(position, datas);
-                notifyItemRangeInserted(position + getHeaderCount(), itemCount);
-            }
-        }
+        super.insertDatas(position,datas);
     }
 
     @Override
-    public void remove(int position) {
+    public void insertDatasAndNotify(int position,List<T> datas){
         initEmpty();
-        if (mDatas != null && position >= 0 && position < mDatas.size()) {
-            mDatas.remove(position);
-        }
+        super.insertDatasAndNotify(position,datas);
     }
 
     @Override
-    public void removeAndNotify(int position) {
+    public void clear(){
         initEmpty();
-        if (mDatas != null && position >= 0 && position < mDatas.size()) {
+        super.clear();
+    }
+
+    @Override
+    public void clearAndNotify(){
+        initEmpty();
+        super.clearAndNotify();
+    }
+
+    @Override
+    public void remove(int position){
+        initEmpty();
+        super.remove(position);
+    }
+
+    @Override
+    public void removeAndNotify(int position){
+        initEmpty();
+        if(position >= 0&&position<mDatas.size()){
             mDatas.remove(position);
             myNotifyItemRemoved(position);
         }
     }
 
-    private void myNotifyItemRemoved(int position) {
-        if (getEmptyViewCount() == 1) {
+    private void myNotifyItemRemoved(int position){
+        if(getEmptyViewCount()==1){
             notifyDataSetChanged();
-        } else {
-            int itemCount = getDataCount() - position + getFooterCount();
-            if (itemCount <= 1) {
+        } else{
+            int itemCount=getDataCount()-position+getFooterCount();
+            if(itemCount<=1){
                 notifyDataSetChanged();
-            } else {
-                int index = position + getHeaderCount();
+            } else{
+                int index=position+getHeaderCount();
                 notifyItemRemoved(index);
             }
         }
     }
 
     @Override
-    public void remove(T t) {
+    public void remove(T t){
         initEmpty();
-        if (mDatas != null) {
+        if(mDatas!=null){
             mDatas.remove(t);
         }
     }
 
     @Override
-    public void removeAndNotify(T t) {
+    public void removeAndNotify(T t){
         initEmpty();
-        if (mDatas != null) {
-            int index = mDatas.indexOf(t);
-            if (index >= 0) {
+        if(mDatas!=null){
+            int index=mDatas.indexOf(t);
+            if(index >= 0){
                 mDatas.remove(index);
                 myNotifyItemRemoved(index);
             }
         }
     }
 
-    protected void initEmpty() {
-        if (useEmpty) {
-            setContainer(getContainerView(EMPTY));
-        } else {
-            setContainer(null);
-        }
-    }
-
     @Override
-    public void clear() {
-        if (mDatas != null) {
-            mDatas.clear();
-        }
-    }
-
-    @Override
-    public void clearAndNotify() {
-        clear();
-        notifyDataSetChanged();
-    }
-
-    public boolean isRealEmpty() {
-        return getDataCount() == 0;
-    }
-
-    public boolean isNotRealEmpty() {
-        return getDataCount() > 0;
-    }
-
-    public boolean isEmpty() {
-        return getAllItemCount() == 0;
-    }
-
-    public boolean isNotEmpty() {
-        return getAllItemCount() > 0;
-    }
-
-    protected int getAllItemCount() {
-        return getDataCount() + getHeaderCount() + getFooterCount();
-    }
-
-    @Override
-    public void registerAdapterDataObserver(@NonNull RecyclerView.AdapterDataObserver observer) {
-        super.registerAdapterDataObserver(observer);
-    }
-
-    @Override
-    public void onViewRecycled(@NonNull BaseRecyclerHolder holder) {
-        holder.onViewRecycled();
-    }
-
-    @Override
-    public void onViewDetachedFromWindow(@NonNull BaseRecyclerHolder holder) {
-        holder.onViewDetachedFromWindow();
-    }
-
-    @Override
-    public void onViewAttachedToWindow(@NonNull BaseRecyclerHolder holder) {
-        holder.onViewAttachedToWindow();
+    protected int itemOffset(){
+        return getHeaderCount();
     }
 }

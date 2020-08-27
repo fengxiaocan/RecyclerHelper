@@ -15,8 +15,8 @@ import com.evil.recycler.inface.OnMenuItemClickListener;
  * @create 20/6/18
  * @desc ...
  */
-public abstract class SwipeRecyclerViewHolder<T extends IRecyclerData>
-        extends RecyclerViewHolder<T> {
+public abstract class SwipeRecyclerViewHolder<D extends IRecyclerData>
+        extends RecyclerViewHolder<D> {
     private OnMenuItemClickListener mOnMenuItemClickListener;
     protected View contentView;
     protected View menuView;
@@ -54,7 +54,7 @@ public abstract class SwipeRecyclerViewHolder<T extends IRecyclerData>
 
     }
 
-    void setOnItemClickListener(OnAdapterItemClickListener<T> listener)
+    void setOnItemClickListener(OnAdapterItemClickListener<D> listener)
     {
         this.mOnItemClickListener = listener;
         if (mOnItemClickListener != null) {

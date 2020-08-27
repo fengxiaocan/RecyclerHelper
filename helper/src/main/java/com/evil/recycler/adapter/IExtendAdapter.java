@@ -10,7 +10,7 @@ import java.util.List;
  * @create 12/6/18
  * @desc ...
  */
-public interface IExtendAdapter<T> {
+interface IExtendAdapter<T> {
     int EMPTY_VIEW_TYPE = -Integer.MIN_VALUE;
 
     //获取数据集
@@ -36,21 +36,6 @@ public interface IExtendAdapter<T> {
 
     //添加单个数据
     void addData(T data);
-
-    //清空
-    void clear();
-
-    //清空并刷新
-    void clearAndNotify();
-
-    //获取对应位置的数据
-    T getData(int position);
-
-    //获取第一个位置的数据
-    T getFirstData();
-
-    //获取最后一个位置的数据
-    T getLastData();
 
     //插入数据集到对应位置
     void insertDatas(int position, List<T> datas);
@@ -81,6 +66,21 @@ public interface IExtendAdapter<T> {
 
     //移除对应数据并刷新
     void removeAndNotify(T t);
+
+    //清空
+    void clear();
+
+    //清空并刷新
+    void clearAndNotify();
+
+    //获取对应位置的数据
+    T getData(int position);
+
+    //获取第一个位置的数据
+    T getFirstData();
+
+    //获取最后一个位置的数据
+    T getLastData();
 
     //获取data数据条目的数量
     int getDataCount();

@@ -24,7 +24,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private RecyclerView mRecyclerView;
-    private TestAdapter2 mTestAdapter;
+    private TestAdapter4 mTestAdapter;
     private Button mBtAdd;
     private Button mBtSet;
     private Button mBtInstert;
@@ -43,11 +43,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initView() {
         mRecyclerView = findViewById(R.id.recycler_view);
-        mTestAdapter = new TestAdapter2();
-        RecyclerHelper.with(mRecyclerView).linearManager().matchWidth().animation().adapter(
+        mTestAdapter = new TestAdapter4();
+        RecyclerHelper.with(mRecyclerView).linearManager().matchWidth().animation().dragAndSwipe().adapter(
                 mTestAdapter).init();
+
         mRecyclerView.addItemDecoration(new RecyclerViewDivider(RecyclerDividerProps.with(
                 Color.BLACK).height(3).marginLeft(30).marginRight(50).build()));
+
+
         mBtAdd = findViewById(R.id.bt_add);
         mBtAdd.setOnClickListener(this);
         mBtSet = findViewById(R.id.bt_set);
@@ -68,14 +71,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mTestAdapter.setEmptyCompatHeaderOrFooter(true);
         mTestAdapter.setUseEmpty(true);
         mTestAdapter.setEmptyView(mRecyclerView, R.layout.view_empty);
-        mTestAdapter.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-            @Override
-            public void onMenuItemClick(View v, int position, int menuPosition) {
-                Toast.makeText(MainActivity.this,
-                        "position=" + position + "侧滑菜单 menuPosition=" + menuPosition,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+
+//        mTestAdapter.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+//            @Override
+//            public void onMenuItemClick(View v, int position, int menuPosition) {
+//                Toast.makeText(MainActivity.this,
+//                        "position=" + position + "侧滑菜单 menuPosition=" + menuPosition,
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        });
         mTestAdapter.setOnItemClickListener(new OnAdapterItemClickListener<RecyclerData>() {
             @Override
             public void onItemClick(View view, RecyclerViewHolder<RecyclerData> baseRecyclerHolder,
@@ -83,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             {
                 Toast.makeText(MainActivity.this, "条目 position=" + position, Toast.LENGTH_SHORT)
                      .show();
-
             }
 
         });

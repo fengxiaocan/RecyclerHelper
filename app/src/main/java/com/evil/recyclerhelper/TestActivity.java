@@ -10,12 +10,13 @@ import android.widget.Toast;
 import com.evil.recycler.decoration.RecyclerDividerProps;
 import com.evil.recycler.decoration.RecyclerViewDivider;
 import com.evil.recycler.holder.BaseRecyclerHolder;
+import com.evil.recycler.holder.RecyclerViewHolder;
 import com.evil.recycler.inface.OnAdapterItemClickListener;
 import com.evil.recycler.helper.RecyclerHelper;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,10 +41,12 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         mTestAdapter = new TestAdapter2();
         mTestAdapter.setOnItemClickListener(new OnAdapterItemClickListener<RecyclerData>() {
             @Override
-            public void onItemClick(View view, BaseRecyclerHolder baseRecyclerHolder, int position)
+            public void onItemClick(
+                    View view,RecyclerViewHolder<RecyclerData> baseRecyclerHolder,int position)
             {
                 Toast.makeText(TestActivity.this, "点击content", Toast.LENGTH_SHORT).show();
             }
+
         });
 
         RecyclerHelper.with(mRecyclerView).linearManager().matchWidth().animation().adapter(
@@ -70,12 +73,12 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
         mBtLoad.setOnClickListener(this);
         mRecyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override
-            public void onChildViewAttachedToWindow(@NonNull View view) {
+            public void onChildViewAttachedToWindow( View view) {
                 RecyclerView.ViewHolder viewHolder = mRecyclerView.getChildViewHolder(view);
             }
 
             @Override
-            public void onChildViewDetachedFromWindow(@NonNull View view) {
+            public void onChildViewDetachedFromWindow( View view) {
 
             }
         });
