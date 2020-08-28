@@ -1,5 +1,8 @@
 package com.evil.recycler.helper;
 
+import android.view.View;
+
+import androidx.annotation.IdRes;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -87,5 +90,13 @@ public class RecyclerHelper {
 
     public StaggeredGridManager fullyStaggeredManager(FullyStaggeredGridLayoutManager manager) {
         return new FullyStaggeredGridManager(mRecyclerView, manager);
+    }
+
+
+    public static final <T extends View> T findViewById(View view,@IdRes int id) {
+        if (id == View.NO_ID) {
+            return null;
+        }
+        return view.findViewById(id);
     }
 }

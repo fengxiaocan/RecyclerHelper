@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.evil.helper.R;
 import com.evil.recycler.adapter.BaseRecyclerViewAdapter;
+import com.evil.recycler.helper.RecyclerHelper;
 
 /**
  * @author noah
@@ -20,6 +21,7 @@ import com.evil.recycler.adapter.BaseRecyclerViewAdapter;
  * @desc ...
  */
 public abstract class BaseRecyclerHolder<D> extends RecyclerView.ViewHolder{
+
     public BaseRecyclerViewAdapter<D,RecyclerViewHolder<D>> selfAdapter;
     protected boolean isStaggeredGridFullSpan=false;//在流式布局的情况下是否需要占满全屏
 
@@ -60,13 +62,6 @@ public abstract class BaseRecyclerHolder<D> extends RecyclerView.ViewHolder{
 
     public void onBindData(RecyclerView.Adapter adapter,int position){
         //绑定数据
-    }
-
-    public final <T extends View> T  findViewById(@IdRes int id) {
-        if (id == View.NO_ID) {
-            return null;
-        }
-        return (T)itemView.findViewById(id);
     }
 
 

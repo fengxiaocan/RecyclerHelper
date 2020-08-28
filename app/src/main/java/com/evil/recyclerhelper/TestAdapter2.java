@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.evil.recycler.adapter.ComRecyclerViewAdapter;
 import com.evil.recycler.adapter.SwipeRecyclerViewAdapter;
+import com.evil.recycler.helper.RecyclerHelper;
 import com.evil.recycler.holder.RecyclerViewHolder;
 import com.evil.recycler.holder.SwipeRecyclerViewHolder;
 
@@ -31,7 +32,8 @@ public class TestAdapter2
 
             @Override
             public void initView(View rootView) {
-                mTvTitle = (TextView) findViewById(R.id.tv_title);
+
+                mTvTitle =  findViewById(R.id.tv_title);
             }
 
         };

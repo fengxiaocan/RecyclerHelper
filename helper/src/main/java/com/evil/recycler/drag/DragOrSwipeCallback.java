@@ -13,12 +13,12 @@ import java.util.List;
 
 
 public class DragOrSwipeCallback extends ItemTouchHelper.SimpleCallback {
+    private final SelectAnimation selectAnimation;
     protected boolean isCanDrag;
     protected boolean isCanSwipe;
-    private final SelectAnimation selectAnimation;
 
     public DragOrSwipeCallback(boolean canDrag, boolean canSwipe) {
-        this(canDrag, canSwipe, new DefaultAnimator());
+        this(canDrag, canSwipe, new DefaultAnimation());
     }
 
     public DragOrSwipeCallback(boolean canDrag, boolean canSwipe, SelectAnimation selectAnimation) {
@@ -122,7 +122,7 @@ public class DragOrSwipeCallback extends ItemTouchHelper.SimpleCallback {
     @Override
     public void onSelectedChanged(@Nullable RecyclerView.ViewHolder viewHolder, int actionState) {
         if (selectAnimation != null) {
-            selectAnimation.onSelected(viewHolder);
+            selectAnimation.onSelected(viewHolder, actionState);
         }
         super.onSelectedChanged(viewHolder, actionState);
     }
@@ -136,15 +136,15 @@ public class DragOrSwipeCallback extends ItemTouchHelper.SimpleCallback {
     }
 
     public interface SelectAnimation {
-        void onSelected(RecyclerView.ViewHolder viewHolder);
+        void onSelected(RecyclerView.ViewHolder viewHolder, int actionState);
 
         void onCancel(RecyclerView.ViewHolder viewHolder);
     }
 
-    private static class DefaultAnimator implements SelectAnimation {
+    public static class DefaultAnimation implements SelectAnimation {
         @Override
-        public void onSelected(RecyclerView.ViewHolder viewHolder) {
-            if (viewHolder != null && viewHolder.itemView != null) {
+        public void onSelected(RecyclerView.ViewHolder viewHolder, int actionState) {
+            if (viewHolder != null && viewHolder.itemView != null && actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
                 viewHolder.itemView.setScaleX(1.1f);
                 viewHolder.itemView.setScaleY(1.1f);
                 viewHolder.itemView.setAlpha(0.9f);

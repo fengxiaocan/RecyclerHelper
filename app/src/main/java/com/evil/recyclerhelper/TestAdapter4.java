@@ -23,7 +23,7 @@ public class TestAdapter4
 
             @Override
             public void initView(View rootView) {
-                mTvTitle = (TextView) findViewById(R.id.tv_title);
+                mTvTitle =  findViewById(R.id.tv_title);
             }
 
         };
