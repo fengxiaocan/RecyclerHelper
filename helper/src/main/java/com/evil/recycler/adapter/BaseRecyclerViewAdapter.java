@@ -258,9 +258,9 @@ public abstract class BaseRecyclerViewAdapter<T,V extends RecyclerViewHolder<T>>
             RecyclerViewHolder viewHolder=(RecyclerViewHolder)holder;
 
             ViewHolderHepler.setData(viewHolder,t);
+            ViewHolderHepler.setOnItemClickListener(viewHolder,mOnItemClickListener);
             ViewHolderHepler.setOnItemChildClickListener(viewHolder,mOnItemChildClickListener);
             ViewHolderHepler.setOnItemChildLongClickListener(viewHolder,mOnItemChildLongClickListener);
-            ViewHolderHepler.setOnItemClickListener(viewHolder,mOnItemClickListener);
 
             viewHolder.onBindData(t);
         }

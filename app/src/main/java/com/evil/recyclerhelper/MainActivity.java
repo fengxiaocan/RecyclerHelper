@@ -24,7 +24,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private RecyclerView mRecyclerView;
-    private TestAdapter4 mTestAdapter;
+    private TestSelectAdapter mTestAdapter;
     private Button mBtAdd;
     private Button mBtSet;
     private Button mBtInstert;
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initView() {
         mRecyclerView = findViewById(R.id.recycler_view);
-        mTestAdapter = new TestAdapter4();
+        mTestAdapter = new TestSelectAdapter();
         RecyclerHelper.with(mRecyclerView).linearManager().matchWidth().animation().dragAndSwipe().adapter(
                 mTestAdapter).init();
 
@@ -68,10 +68,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBtRemoveFooter = findViewById(R.id.bt_remove_footer);
         mBtRemoveFooter.setOnClickListener(this);
 
-        mTestAdapter.setEmptyCompatHeaderOrFooter(true);
-        mTestAdapter.setUseEmpty(true);
+//        mTestAdapter.setEmptyCompatHeaderOrFooter(true);
+//        mTestAdapter.setUseEmpty(true);
         mTestAdapter.setEmptyView(mRecyclerView, R.layout.view_empty);
-
+        mTestAdapter.setMultiSelected(true);
 //        mTestAdapter.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 //            @Override
 //            public void onMenuItemClick(View v, int position, int menuPosition) {
@@ -80,55 +80,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                        Toast.LENGTH_SHORT).show();
 //            }
 //        });
-        mTestAdapter.setOnItemClickListener(new OnAdapterItemClickListener<RecyclerData>() {
-            @Override
-            public void onItemClick(View view, RecyclerViewHolder<RecyclerData> baseRecyclerHolder,
-                    int position)
-            {
-                Toast.makeText(MainActivity.this, "条目 position=" + position, Toast.LENGTH_SHORT)
-                     .show();
-            }
-
-        });
-        mTestAdapter.setOnHeaderClickListener(new OnHeaderItemClickListener() {
-            @Override
-            public void onHeaderClick(View view, int position) {
-                Toast.makeText(MainActivity.this, "头部 position=" + position, Toast.LENGTH_SHORT)
-                     .show();
-            }
-        });
-        mTestAdapter.setOnFooterClickListener(new OnFooterItemClickListener() {
-            @Override
-            public void onFooterClick(View view, int position) {
-                Toast.makeText(MainActivity.this, "尾部 position=" + position, Toast.LENGTH_SHORT)
-                     .show();
-            }
-        });
+//        mTestAdapter.setOnItemClickListener(new OnAdapterItemClickListener<RecyclerData>() {
+//            @Override
+//            public void onItemClick(View view, RecyclerViewHolder<RecyclerData> baseRecyclerHolder,
+//                    int position)
+//            {
+//                Toast.makeText(MainActivity.this, "条目 position=" + position, Toast.LENGTH_SHORT)
+//                     .show();
+//            }
+//
+//        });
+//        mTestAdapter.setOnHeaderClickListener(new OnHeaderItemClickListener() {
+//            @Override
+//            public void onHeaderClick(View view, int position) {
+//                Toast.makeText(MainActivity.this, "头部 position=" + position, Toast.LENGTH_SHORT)
+//                     .show();
+//            }
+//        });
+//        mTestAdapter.setOnFooterClickListener(new OnFooterItemClickListener() {
+//            @Override
+//            public void onFooterClick(View view, int position) {
+//                Toast.makeText(MainActivity.this, "尾部 position=" + position, Toast.LENGTH_SHORT)
+//                     .show();
+//            }
+//        });
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bt_add:
-                List<RecyclerData> list = new ArrayList<>();
+                List<SelectorBean> list = new ArrayList<>();
                 for (int i = 0; i < 10; i++) {
-                    RecyclerData data = new RecyclerData();
+                    SelectorBean data = new SelectorBean();
                     list.add(data);
                 }
                 mTestAdapter.addDatasAndNotify(list);
                 break;
             case R.id.bt_set:
-                List<RecyclerData> lists = new ArrayList<>();
+                List<SelectorBean> lists = new ArrayList<>();
                 for (int i = 0; i < 10; i++) {
-                    RecyclerData data = new RecyclerData();
+                    SelectorBean data = new SelectorBean();
                     lists.add(data);
                 }
                 mTestAdapter.setDatasAndNotify(lists);
                 break;
             case R.id.bt_instert:
-                List<RecyclerData> list2 = new ArrayList<>();
+                List<SelectorBean> list2 = new ArrayList<>();
                 for (int i = 0; i < 10; i++) {
-                    RecyclerData data = new RecyclerData();
+                    SelectorBean data = new SelectorBean();
                     list2.add(data);
                 }
                 mTestAdapter.insertDatasAndNotify(RecyclerData.random.nextInt(6), list2);
@@ -136,18 +136,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.bt_delect:
                 mTestAdapter.removeAndNotify(0);
                 break;
-            case R.id.bt_add_header:
-                mTestAdapter.addHeader(mRecyclerView, R.layout.view_header);
-                break;
-            case R.id.bt_add_footer:
-                mTestAdapter.addFooter(mRecyclerView, R.layout.view_footer);
-                break;
-            case R.id.bt_remove_header:
-                mTestAdapter.removeHeader(0);
-                break;
-            case R.id.bt_remove_footer:
-                mTestAdapter.removeFooter(0);
-                break;
+//            case R.id.bt_add_header:
+//                mTestAdapter.addHeader(mRecyclerView, R.layout.view_header);
+//                break;
+//            case R.id.bt_add_footer:
+//                mTestAdapter.addFooter(mRecyclerView, R.layout.view_footer);
+//                break;
+//            case R.id.bt_remove_header:
+//                mTestAdapter.removeHeader(0);
+//                break;
+//            case R.id.bt_remove_footer:
+//                mTestAdapter.removeFooter(0);
+//                break;
         }
     }
 
